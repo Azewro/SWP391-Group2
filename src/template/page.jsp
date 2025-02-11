@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,19 +7,12 @@
     <title>G2Bus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
-    <style>
-
-    </style>
 </head>
 <body class="font-sans">
     <!-- HEADER -->
-    <div id="header"></div>
-<script>
-   
-</script>
+    <jsp:include page="header.html" />
 
-    
-    <!-- CONTENT (Chèn nội dung trang tại đây) -->
+    <!-- CONTENT -->
     <main class="p-12 text-center">
         <h1 class="text-2xl font-bold">Chào mừng đến với G2Bus</h1>
         <p class="text-gray-600">Hệ thống đặt vé xe khách hàng đầu Việt Nam.</p>
@@ -26,22 +20,6 @@
     </main>
     
     <!-- FOOTER -->
-    <div id="footer"></div>
-<script>
- fetch('header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header').innerHTML = data;
-        })
-        .catch(error => console.log('Lỗi khi load header:', error));
-
-    fetch('footer.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('footer').innerHTML = data;
-        })
-        .catch(error => console.log('Lỗi khi load footer:', error));
-</script>
-
+    <jsp:include page="footer.html" />
 </body>
 </html>
