@@ -8,20 +8,20 @@ public class DatabaseConnection {
 
     // URL của cơ sở dữ liệu
     private static final String DB_URL = "jdbc:mysql://localhost:3306/G2BusTicketSystem";
-    private static final String DB_USERNAME = "root"; // Thay bằng username của bạn
-    private static final String DB_PASSWORD = "";     // Thay bằng mật khẩu của bạn
+    private static final String DB_USERNAME = "root";
+    private static final String DB_PASSWORD = "";
 
     // Hàm để lấy kết nối
     public static Connection getConnection() throws SQLException {
         try {
-            // Đăng ký driver MySQL
+            // Register driver MySQL
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC Driver not found!");
             e.printStackTrace();
         }
 
-        // Tạo kết nối
+        // connect
         return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     }
 

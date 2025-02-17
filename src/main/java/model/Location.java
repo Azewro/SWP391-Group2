@@ -2,6 +2,8 @@ package model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "Locations")
 public class Location {
@@ -22,7 +24,7 @@ public class Location {
     private Ward ward;
 
     @Column(name = "latitude", precision = 10, scale = 8)
-    private Double latitude;
+    private BigDecimal latitude;
 
     @Column(name = "longitude", precision = 11, scale = 8)
     private Double longitude;
@@ -69,11 +71,11 @@ public class Location {
         this.ward = ward;
     }
 
-    public Double getLatitude() {
+    public BigDecimal  getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(BigDecimal  latitude) {
         this.latitude = latitude;
     }
 

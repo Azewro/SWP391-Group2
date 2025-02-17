@@ -46,6 +46,10 @@ public class User {
     @Column(name = "auth_type", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'local'")
     private String authType;
 
+    public User() {
+
+    }
+
     // Getters and Setters
     public int getUserId() {
         return userId;
@@ -141,5 +145,13 @@ public class User {
 
     public void setAuthType(String authType) {
         this.authType = authType;
+    }
+
+    public User(String username, String passwordHash, String email, String phone, String fullName) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.email = email;
+        this.phone = phone;
+        this.fullName = fullName;
     }
 }
