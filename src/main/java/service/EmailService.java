@@ -31,6 +31,7 @@ public class EmailService {
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
+            throw new RuntimeException("Không thể gửi email xác thực. Vui lòng thử lại!");
         }
     }
 }
