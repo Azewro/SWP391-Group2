@@ -1,5 +1,6 @@
 package dao;
 
+import model.Role;
 import model.User;
 import util.DatabaseConnection;
 
@@ -8,7 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static model.UserOAuth_.user;
+
 public class UserDAO {
+
+
 
     public boolean saveUser(User user) {
         String sql = "INSERT INTO Users (username, password_hash, email, phone, full_name, role_id, is_active, auth_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -70,5 +75,31 @@ public class UserDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public User findByUsernameOrEmail(String usernameOrEmail) {
+        String sql = "SELECT * FROM Users WHERE username = ? OR email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, usernameOrEmail);
+            stmt.setString(2, usernameOrEmail);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setPasswordHash(rs.getString("password_hash"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setFullName(rs.getString("full_name"));
+                user.setRoleId(rs.getInt("role_id"));
+                user.setActive(rs.getBoolean("is_active"));
+                return user;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

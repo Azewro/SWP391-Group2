@@ -59,7 +59,7 @@ public class GoogleCallbackServlet extends HttpServlet {
         session.setAttribute("user_fullname", fullName);
 
         if (userExists) {
-            response.sendRedirect("dashboard.jsp");
+            response.sendRedirect("index    .jsp");
         } else {
             saveUserToDatabase(email, fullName);
             response.sendRedirect("register2.jsp");

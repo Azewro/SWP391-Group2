@@ -50,6 +50,7 @@ public class User {
 
     }
 
+
     // Getters and Setters
     public int getUserId() {
         return userId;
@@ -122,6 +123,12 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public void setRoleId(int roleId) {
+        this.role = new Role();
+        this.role.setRoleId(roleId);
+    }
+
 
     public boolean isActive() {
         return isActive;

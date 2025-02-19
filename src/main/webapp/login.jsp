@@ -162,17 +162,23 @@
         <hr>
         <div class="login-form">
             <h2>Đăng nhập tài khoản</h2>
-            <form>
+            <form action="login" method="post">
                 <div class="input-group">
-                    <input type="text" placeholder="Số điện thoại" required>
+                    <input type="text" name="usernameOrEmail" placeholder="Số điện thoại hoặc Email" required>
                 </div>
                 <div class="input-group">
-                    <input type="password" placeholder="Mật khẩu" required>
+                    <input type="password" name="password" placeholder="Mật khẩu" required>
                 </div>
                 <button type="submit">Đăng nhập</button>
-                <a href="#">Quên mật khẩu?</a>
+                <a href="forgot-password.jsp">Quên mật khẩu?</a>
             </form>
+
+            <!-- Hiển thị thông báo lỗi -->
+            <% if (request.getAttribute("error") != null) { %>
+            <p style="color: red;"><%= request.getAttribute("error") %></p>
+            <% } %>
         </div>
+
     </div>
 </section>
 
