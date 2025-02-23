@@ -142,7 +142,8 @@
   </div>
 </header>
 
-
+  <!-- content -->
+  <%@ include file="./components/popularRoutes.jsp" %>
 
 <footer class="footer">
   <div class="footer-content">
