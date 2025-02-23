@@ -4,8 +4,6 @@ import dao.UserDAO;
 import model.User;
 import util.PasswordUtils;
 import java.io.IOException;
-import java.sql.SQLException;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,12 +20,7 @@ public class LoginServlet extends HttpServlet {
         String usernameOrEmail = request.getParameter("usernameOrEmail");
         String password = request.getParameter("password");
 
-        UserDAO userDAO = null;
-        try {
-            userDAO = new UserDAO();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        UserDAO userDAO = new UserDAO();
         User user = userDAO.findByUsernameOrEmail(usernameOrEmail);
 
         if (user != null && PasswordUtils.verifyPassword(password, user.getPasswordHash())) {

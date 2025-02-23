@@ -27,7 +27,7 @@ public class User {
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
-    @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "last_login")
@@ -37,19 +37,40 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private boolean isActive;
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
 
     @Column(name = "status_reason")
     private String statusReason;
 
-    @Column(name = "auth_type", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'local'")
-    private String authType;
+    @Column(name = "auth_type", length = 50)
+    private String authType = "local";
 
     public User() {
-
     }
 
+    public User(int userId, String username, String fullName, String email, String phone, int roleId, boolean isActive) {
+        this.userId = userId;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        setRoleId(roleId);
+        this.isActive = isActive;
+    }
+
+    public User(String username, String hashedPassword, String email, String phone, String fullName) {
+        this.username = username;
+        this.passwordHash = hashedPassword;
+        this.email = email;
+        this.phone = phone;
+        this.fullName = fullName;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     // Getters and Setters
     public int getUserId() {
@@ -104,10 +125,6 @@ public class User {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getLastLogin() {
         return lastLogin;
     }
@@ -124,11 +141,14 @@ public class User {
         this.role = role;
     }
 
+    public int getRoleId() {
+        return role != null ? role.getRoleId() : 0;
+    }
+
     public void setRoleId(int roleId) {
         this.role = new Role();
         this.role.setRoleId(roleId);
     }
-
 
     public boolean isActive() {
         return isActive;
@@ -152,13 +172,5 @@ public class User {
 
     public void setAuthType(String authType) {
         this.authType = authType;
-    }
-
-    public User(String username, String passwordHash, String email, String phone, String fullName) {
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.email = email;
-        this.phone = phone;
-        this.fullName = fullName;
     }
 }

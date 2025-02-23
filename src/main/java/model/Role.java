@@ -21,6 +21,22 @@ public class Role {
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<User> users;
 
+    // ✅ Constructor đầy đủ (Sửa lỗi role_id = 0, role_name = null)
+    public Role(int roleId, String roleName) {
+        this.roleId = roleId;
+        this.roleName = roleName;
+    }
+
+    // ✅ Constructor đầy đủ có mô tả
+    public Role(int roleId, String roleName, String description) {
+        this.roleId = roleId;
+        this.roleName = roleName;
+        this.description = description;
+    }
+
+    public Role() {
+    }
+
     // Getters and Setters
     public int getRoleId() {
         return roleId;
@@ -52,5 +68,14 @@ public class Role {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
