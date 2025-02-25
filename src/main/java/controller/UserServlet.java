@@ -50,7 +50,9 @@ public class UserServlet extends HttpServlet {
 
     private void listUsers(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String search = request.getParameter("search");
-        Boolean isActive = request.getParameter("status") != null ? Boolean.parseBoolean(request.getParameter("status")) : null;
+        String statusParam = request.getParameter("status");
+        Boolean isActive = (statusParam == null || statusParam.isEmpty()) ? null : Boolean.parseBoolean(statusParam);
+
 
         List<User> userList = userDAO.getAllUsers(search, isActive);
         List<Role> roleList = roleDAO.getAllRoles();

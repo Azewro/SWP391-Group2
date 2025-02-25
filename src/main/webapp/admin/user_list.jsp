@@ -31,7 +31,7 @@
 
     <!-- Bảng danh sách người dùng -->
     <div class="table-responsive mt-3">
-        <table class="table table-hover table-striped align-middle">
+        <table id="userTable" class="table table-hover table-striped align-middle">
             <thead class="table-dark">
             <tr>
                 <th>ID</th>
@@ -96,6 +96,42 @@
         </table>
     </div>
 </div>
+
+
+
+<!-- DataTables CSS & JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<!-- Kích hoạt DataTables -->
+<script>
+    $(document).ready(function () {
+        $('#userTable').DataTable({
+            "paging": true,         // Bật phân trang
+            "pageLength": 10,       // Hiển thị 10 user mỗi trang
+            "lengthChange": true,   // Cho phép chọn số dòng hiển thị
+            "searching": true,      // Bật ô tìm kiếm
+            "ordering": true,       // Bật sắp xếp cột
+            "info": true,           // Hiển thị tổng số user
+            "autoWidth": false,
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ người dùng mỗi trang",
+                "zeroRecords": "Không tìm thấy người dùng nào",
+                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ người dùng",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ tổng số _MAX_ người dùng)",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Tiếp",
+                    "previous": "Trước"
+                }
+            }
+        });
+    });
+</script>
 
 
 

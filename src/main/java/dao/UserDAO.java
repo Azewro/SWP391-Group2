@@ -179,6 +179,7 @@ public class UserDAO {
             stmt.setString(1, search);
             stmt.setString(2, "%" + search + "%");
             stmt.setString(3, "%" + search + "%");
+
             if (isActive == null) {
                 stmt.setNull(4, Types.BOOLEAN);
                 stmt.setNull(5, Types.BOOLEAN);
@@ -204,6 +205,7 @@ public class UserDAO {
         }
         return users;
     }
+
 
     public boolean updateUser(User user) throws SQLException {
         String sql = "UPDATE Users SET full_name = ?, email = ?, phone = ?, is_active = ?, role_id = ? WHERE user_id = ?";
