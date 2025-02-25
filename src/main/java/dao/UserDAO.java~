@@ -228,5 +228,14 @@ public class UserDAO {
         }
     }
 
+    public boolean restoreUser(int userId) throws SQLException {
+        String sql = "UPDATE Users SET is_active = true WHERE user_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
 
 }
