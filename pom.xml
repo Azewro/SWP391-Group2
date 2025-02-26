@@ -104,6 +104,14 @@
             <version>20210307</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+
     </dependencies>
 
 

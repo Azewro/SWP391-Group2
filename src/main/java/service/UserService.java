@@ -4,6 +4,7 @@ import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 import dao.UserDAO;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Random;
 public class UserService {
     private UserDAO userDAO;
 
-    public UserService() {
+    public UserService() throws SQLException {
         this.userDAO = new UserDAO();
     }
 
