@@ -3,4 +3,21 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+
+    <!-- Cấu hình Servlet -->
+    <servlet>
+        <servlet-name>PopularRoutesServlet</servlet-name>
+        <servlet-class>controller.PopularRoutesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PopularRoutesServlet</servlet-name>
+        <url-pattern>/</url-pattern> <!-- Tự động gọi Servlet khi vào URL gốc "/" -->
+    </servlet-mapping>
+
+    <!-- Cấu hình trang mặc định -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
 </web-app>

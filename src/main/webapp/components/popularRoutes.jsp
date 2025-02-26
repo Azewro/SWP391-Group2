@@ -1,5 +1,11 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%-- 
+    Document   : popularRoutes
+    Created on : 26 thg 2, 2025, 18:25:24
+    Author     : ktleg
+--%>
+
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -8,22 +14,28 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 <div class="popular-routes">
-    <h2>Tuyến phổ biến</h2>
-    <p>Được khách hàng tin tưởng và lựa chọn</p>
-    <div class="route-cards">
+    <h2 class="text-center text-success">TUYẾN PHỔ BIẾN</h2>
+    <p class="text-center text-muted">Được khách hàng tin tưởng và lựa chọn</p>
+    <div class="d-flex justify-content-center">
+      <div class="d-flex flex-row gap-3">
         <c:forEach var="route" items="${popularRoutes}">
-            <div class="route-card">
-                <span class="route-title">Tuyến xe từ ${route.startLocation.name}</span>
-                <div class="route-details">
-                    <c:forEach var="trip" items="${route.trips}">
-                        <div class="trip-info">
-                            <span class="trip-destination">${trip.endLocation}</span>
-                            <span class="trip-price">${trip.price}Ä</span>
-                            <span class="trip-distance">${trip.distance}km - ${trip.duration} - ${trip.departureDate}</span>
-                        </div>
-                    </c:forEach>
-                </div>
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Tuyến xe từ ${route.startLocation.name}</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>${route.endLocation.name}</span>
+                  <span class="text-success">${route.basePrice}đ</span>
+                </li>
+                <li class="list-group-item text-muted">
+                  ${route.distance}km - ${route.estimatedDuration} giờ - 01/03/2025
+                </li>
+              </ul>
             </div>
+          </div>
         </c:forEach>
+      </div>
     </div>
-</div>
+  </div>
+</head>
+</html>
