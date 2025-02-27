@@ -73,7 +73,7 @@ public class BusScheduleServlet extends HttpServlet {
             request.setAttribute("startLocation", startLocation);
             request.setAttribute("endLocation", endLocation);
             
-            request.getRequestDispatcher("busSchedule.jsp").forward(request, response);
+            request.getRequestDispatcher("/components/busSchedule.jsp").forward(request, response);
         } catch (SQLException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load bus schedules.");
