@@ -1,4 +1,4 @@
-package servlet;
+package controller;
 
 import dao.AdminRouteStopDAO;
 import model.Route;

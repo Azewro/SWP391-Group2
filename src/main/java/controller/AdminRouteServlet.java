@@ -1,4 +1,4 @@
-package servlet;
+package controller;
 
 import dao.AdminRouteDAO;
 import model.Route;
@@ -45,7 +45,9 @@ public class AdminRouteServlet extends HttpServlet {
 
     private void listRoutes(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String search = request.getParameter("search");
-        Integer locationId = request.getParameter("location") != null ? Integer.parseInt(request.getParameter("location")) : null;
+        String locationParam = request.getParameter("location");
+        Integer locationId = (locationParam == null || locationParam.isEmpty()) ? null : Integer.parseInt(locationParam);
+
 
         List<Route> routeList = routeDAO.getAllRoutes(search, locationId);
         request.setAttribute("routes", routeList);
@@ -83,12 +85,12 @@ public class AdminRouteServlet extends HttpServlet {
     }
 
     private void updateRoute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int routeId = Integer.parseInt(request.getParameter("routeId"));
+        int routeId = parseInteger(request.getParameter("routeId"), 0);
         String routeName = request.getParameter("routeName");
-        int startLocationId = Integer.parseInt(request.getParameter("startLocation"));
-        int endLocationId = Integer.parseInt(request.getParameter("endLocation"));
-        float distance = Float.parseFloat(request.getParameter("distance"));
-        int estimatedDuration = Integer.parseInt(request.getParameter("estimatedDuration"));
+        int startLocationId = parseInteger(request.getParameter("startLocation"), 0);
+        int endLocationId = parseInteger(request.getParameter("endLocation"), 0);
+        float distance = parseFloat(request.getParameter("distance"), 0);
+        int estimatedDuration = parseInteger(request.getParameter("estimatedDuration"), 0);
 
         Location startLocation = new Location(startLocationId, "");
         Location endLocation = new Location(endLocationId, "");
@@ -99,10 +101,10 @@ public class AdminRouteServlet extends HttpServlet {
     }
     private void addRoute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         String routeName = request.getParameter("routeName");
-        int startLocationId = Integer.parseInt(request.getParameter("startLocation"));
-        int endLocationId = Integer.parseInt(request.getParameter("endLocation"));
-        float distance = Float.parseFloat(request.getParameter("distance"));
-        int estimatedDuration = Integer.parseInt(request.getParameter("estimatedDuration"));
+        int startLocationId = parseInteger(request.getParameter("startLocation"), 0);
+        int endLocationId = parseInteger(request.getParameter("endLocation"), 0);
+        float distance = parseFloat(request.getParameter("distance"), 0);
+        int estimatedDuration = parseInteger(request.getParameter("estimatedDuration"), 0);
 
         Location startLocation = new Location(startLocationId, "");
         Location endLocation = new Location(endLocationId, "");
@@ -111,6 +113,23 @@ public class AdminRouteServlet extends HttpServlet {
         routeDAO.addRoute(route);
 
         response.sendRedirect("routes");
+    }
+
+
+    private int parseInteger(String value, int defaultValue) {
+        try {
+            return (value == null || value.isEmpty()) ? defaultValue : Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    private float parseFloat(String value, float defaultValue) {
+        try {
+            return (value == null || value.isEmpty()) ? defaultValue : Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
 
