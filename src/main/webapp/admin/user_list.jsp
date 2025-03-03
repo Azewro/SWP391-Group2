@@ -8,7 +8,13 @@
 <!-- Font Awesome (icon đẹp hơn) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<%@ include file="header.jsp" %>
 
+
+<div id="layoutSidenav">
+    <jsp:include page="sidebar.jsp"/>
+    <div id="layoutSidenav_content">
+        <main class="content-wrapper">
 <div class="container mt-4">
     <h2 class="mb-3">Quản lý Người Dùng</h2>
 
@@ -97,7 +103,9 @@
     </div>
 </div>
 
-
+        </main>
+    </div>
+</div>
 
 <!-- DataTables CSS & JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
@@ -134,4 +142,5 @@
 </script>
 
 
+<%@ include file="footer.jsp" %>
 
