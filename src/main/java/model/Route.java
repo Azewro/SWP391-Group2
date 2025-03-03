@@ -37,6 +37,26 @@ public class Route {
     @Column(name = "route_type", length = 50)
     private String routeType;
 
+    // ✅ Constructor không tham số (bắt buộc cho Hibernate)
+    public Route() {}
+
+    // ✅ Constructor chỉ có routeId (Dùng trong getRouteStops)
+    public Route(int routeId) {
+        this.routeId = routeId;
+    }
+
+    // ✅ Constructor đầy đủ tham số (Dùng khi lấy danh sách tuyến)
+    public Route(int routeId, String routeName, Location startLocation, Location endLocation,
+                 float distance, int estimatedDuration, BigDecimal basePrice) {
+        this.routeId = routeId;
+        this.routeName = routeName;
+        this.startLocation = startLocation;
+        this.endLocation = endLocation;
+        this.distance = distance;
+        this.estimatedDuration = estimatedDuration;
+        this.basePrice = basePrice;
+    }
+
     // Getters and Setters
     public int getRouteId() {
         return routeId;

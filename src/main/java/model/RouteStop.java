@@ -29,6 +29,50 @@ public class RouteStop {
     @Column(name = "estimated_time_from_start", nullable = false)
     private int estimatedTimeFromStart;
 
+    // ✅ Constructor không tham số (Bắt buộc cho Hibernate)
+    public RouteStop() {}
+
+    // ✅ Constructor chỉ có ID (Dùng để xóa hoặc tham chiếu đơn giản)
+    public RouteStop(int id) {
+        this.id = id;
+    }
+
+    // ✅ Constructor đầy đủ để lấy danh sách điểm dừng
+    public RouteStop(int id, Route route, BusStop stop, int stopOrder, BigDecimal distanceFromStart, int estimatedTimeFromStart) {
+        this.id = id;
+        this.route = route;
+        this.stop = stop;
+        this.stopOrder = stopOrder;
+        this.distanceFromStart = distanceFromStart;
+        this.estimatedTimeFromStart = estimatedTimeFromStart;
+    }
+
+    // ✅ Constructor dùng để thêm mới điểm dừng
+    public RouteStop(Route route, BusStop stop, int stopOrder, BigDecimal distanceFromStart, int estimatedTimeFromStart) {
+        this.route = route;
+        this.stop = stop;
+        this.stopOrder = stopOrder;
+        this.distanceFromStart = distanceFromStart;
+        this.estimatedTimeFromStart = estimatedTimeFromStart;
+    }
+
+    // ✅ Constructor dùng khi cập nhật điểm dừng (có ID)
+    public RouteStop(int id, int stopOrder, BigDecimal distanceFromStart, int estimatedTimeFromStart) {
+        this.id = id;
+        this.stopOrder = stopOrder;
+        this.distanceFromStart = distanceFromStart;
+        this.estimatedTimeFromStart = estimatedTimeFromStart;
+    }
+    public RouteStop(int id, BusStop stop, int stopOrder, BigDecimal distanceFromStart, int estimatedTimeFromStart) {
+        this.id = id;
+        this.stop = stop;
+        this.stopOrder = stopOrder;
+        this.distanceFromStart = distanceFromStart;
+        this.estimatedTimeFromStart = estimatedTimeFromStart;
+    }
+
+
+
     // Getters and Setters
     public int getId() {
         return id;
