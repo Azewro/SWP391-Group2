@@ -34,6 +34,12 @@ public class BusStop {
     @Column(name = "description")
     private String description;
 
+    public BusStop(int stopId, String stopName) {
+        this.stopId = stopId;
+        this.stopName = stopName;
+    }
+
+
     // Getters and Setters
     public int getStopId() {
         return stopId;
