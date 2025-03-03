@@ -122,8 +122,8 @@
   <nav class="nav-menu">
     <ul>
       <li><a href="#">TRANG CHỦ</a></li>
-      <li><a href="#">LỊCH TRÌNH</a></li>
-      <li><a href="#">TRA CỨU VÉ</a></li>
+      <li><a href="route">LỊCH TRÌNH</a></li>
+      <li><a href="ticketSearch.jsp">TRA CỨU VÉ</a></li>
       <li><a href="#">TIN TỨC</a></li>
       <li><a href="#">HÓA ĐƠN</a></li>
       <li><a href="#">LIÊN HỆ</a></li>
@@ -157,7 +157,7 @@
     <div class="footer-links">
       <ul>
         <li><a href="#">Về chúng tôi</a></li>
-        <li><a href="#">Lịch trình</a></li>
+        <li><a href="routes.jsp">Lịch trình</a></li>
         <li><a href="#">Tuyển dụng</a></li>
         <li><a href="#">Tin tức & Sự kiện</a></li>
         <li><a href="#">Mạng lưới văn phòng</a></li>

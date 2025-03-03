@@ -37,6 +37,12 @@ public class Route {
     @Column(name = "route_type", length = 50)
     private String routeType;
 
+    public Route(int routeId, String routeName, Location location, Location location1, float distance, int estimatedDuration, BigDecimal basePrice, int estimatedStops, String routeType) {
+    }
+
+    public Route() {
+    }
+
     // Getters and Setters
     public int getRouteId() {
         return routeId;

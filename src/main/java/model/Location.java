@@ -38,6 +38,11 @@ public class Location {
     @Column(name = "description")
     private String description;
 
+    public Location(int anInt, String string) {
+        this.locationId = anInt;
+    }
+    public Location() {}
+
     // Getters and Setters
     public int getLocationId() {
         return locationId;

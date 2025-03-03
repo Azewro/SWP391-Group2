@@ -34,6 +34,23 @@ public class Ticket {
     @Column(name = "status", length = 50, columnDefinition = "ENUM('Booked', 'Cancelled', 'Used') DEFAULT 'Booked'")
     private String status;
 
+    public Ticket(int ticketId, User user, BusTrip trip, Seat seat, LocalDateTime purchaseDate, BigDecimal price, String status) {
+        this.ticketId = ticketId;
+        this.user = user;
+        this.trip = trip;
+        this.seat = seat;
+        this.purchaseDate = purchaseDate;
+        this.price = price;
+        this.status = status;
+    }
+
+    public Ticket() {
+    }
+
+    public Ticket(int ticketId, int userId, int tripId, int seatId, String status) {
+
+    }
+
     // Getters and Setters
     public int getTicketId() {
         return ticketId;

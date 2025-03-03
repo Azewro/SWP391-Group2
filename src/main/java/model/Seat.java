@@ -24,6 +24,12 @@ public class Seat {
     @Column(name = "is_available", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean isAvailable;
 
+    public Seat(int seatId, int busId, int seatNumber, String seatType, boolean isAvailable) {
+    }
+
+    public Seat() {
+    }
+
     // Getters and Setters
     public int getSeatId() {
         return seatId;
