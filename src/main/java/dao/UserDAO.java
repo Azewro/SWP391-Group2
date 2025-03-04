@@ -90,6 +90,10 @@ public class UserDAO {
             stmt.setString(2, usernameOrEmail);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                    // In giá trị mật khẩu hash để debug
+                    String hashedPassword = rs.getString("password_hash");
+                    System.out.println("Password from DB: " + hashedPassword);
+
                     return new User(
                             rs.getInt("user_id"),
                             rs.getString("username"),
@@ -97,15 +101,20 @@ public class UserDAO {
                             rs.getString("email"),
                             rs.getString("phone"),
                             rs.getInt("role_id"),
-                            rs.getBoolean("is_active")
+                            rs.getBoolean("is_active"),
+                            hashedPassword // ⚠️ Bổ sung cột password_hash vào đối tượng User
                     );
+                } else {
+                    System.out.println("No user found with username or email: " + usernameOrEmail);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return null;
     }
+
     public boolean updatePassword(String email, String newPasswordHash) {
         String sql = "UPDATE Users SET password_hash = ? WHERE email = ?";
         try (Connection conn = DatabaseConnection.getConnection();
