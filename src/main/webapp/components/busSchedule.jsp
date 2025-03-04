@@ -1,20 +1,11 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Acer
-  Date: 2/17/2025
-  Time: 4:13 PM
-  To change this template use File | Settings | File Templates.
+<%-- 
+    Document   : busSchedule
+    Created on : 26 thg 2, 2025, 23:21:16
+    Author     : ktleg
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ Thống Bán Vé Xe Buýt</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-  <style>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -113,10 +104,60 @@
       color: black;
       font-size: 16px;
     }
+    .search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .search-bar input {
+            width: 30%;
+            margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .search-bar button {
+            background-color: #ff7e29;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .route-row {
+            background-color: #ffefef;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .search-button {
+            background-color: #ffe6e6;
+            color: #e74c3c;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
   </style>
-</head>
-<body>
-<header class="header">
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <header class="header">
   <div class="logo">
     <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="FUTA Bus Lines">
   </div>
@@ -142,12 +183,64 @@
     </button>
   </div>
 </header>
+  
+        <div class="container">
+    <h1 class="text-center my-4">Lịch trình xe buýt</h1>
 
-  <!-- content -->
-  <%@ include file="./components/popularRoutes.jsp" %>
+    <!-- Search Form -->
+    <form action="bus-schedule" method="get" class="search-bar">
+        <input type="text" name="startLocation" placeholder="Nhập điểm đi" value="${startLocation}" />
+        <span>⇄</span>
+        <input type="text" name="endLocation" placeholder="Nhập điểm đến" value="${endLocation}" />
+        <button type="submit">Tìm kiếm</button>
+    </form>
 
-
-<footer class="footer">
+    <!-- Bus Schedule Table -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Tuyến xe</th>
+            <th>Loại xe</th>
+            <th>Quãng đường</th>
+            <th>Thời gian hành trình</th>
+            <th>Giá vé</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="route" items="${busSchedules}">
+            <tr class="route-row">
+                <td>${route.startLocation.name} ⇄ ${route.endLocation.name}</td>
+                <td>${route.routeType != null ? route.routeType : "---"}</td>
+                <td>${route.distance} km</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${route.estimatedDuration >= 60}">
+                            ${route.estimatedDuration / 60} giờ ${route.estimatedDuration % 60} phút
+                        </c:when>
+                        <c:otherwise>
+                            ${route.estimatedDuration} phút
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td>
+                    <c:choose>
+                        <c:when test="${route.basePrice != null}">
+                            ${route.basePrice} đ
+                        </c:when>
+                        <c:otherwise>
+                            ---
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td><button class="search-button">Tìm tuyến xe</button></td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</div>
+        
+        <footer class="footer">
   <div class="footer-content">
     <div class="support-info">
       <h3>TRUNG TÂM TỔNG ĐÀI & CSKH</h3>
@@ -168,6 +261,5 @@
     </div>
   </div>
 </footer>
-</body>
+    </body>
 </html>
-
