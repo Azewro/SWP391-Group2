@@ -33,7 +33,14 @@ public class LoginServlet extends HttpServlet {
         if (user != null && PasswordUtils.verifyPassword(password, user.getPasswordHash())) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            response.sendRedirect("index.jsp"); // Chuyển hướng sau khi đăng nhập thành công
+            session.setAttribute("role_id", user.getRoleId()); // Lưu role_id vào session
+
+            // Kiểm tra nếu là admin, chuyển hướng đến admin dashboard
+            if (user.getRoleId() == 1) {
+                response.sendRedirect("admin/dashboard.jsp");
+            } else {
+                response.sendRedirect("index.jsp"); // Người dùng bình thường về trang chính
+            }
         } else {
             request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             request.getRequestDispatcher("login.jsp").forward(request, response);

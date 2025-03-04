@@ -2,17 +2,33 @@
 <%@ page import="java.util.List" %>
 <%@ page import="model.Route, model.Location" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome (icon đẹp hơn) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<%@ include file="header.jsp" %>
 
 
+<div id="layoutSidenav">
+  <jsp:include page="sidebar.jsp"/>
+  <div id="layoutSidenav_content">
+    <main class="content-wrapper">
+<div class="content-wrapper">
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Quản lý Tuyến Đường</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="dashboard.jsp">Dashboard</a></li>
+    <li class="breadcrumb-item active">Danh sách tuyến đường</li>
+  </ol>
 
-<div class="container mt-4">
-  <!-- Card Tìm kiếm -->
-  <div class="card shadow-lg">
+  <div class="card mb-4 shadow-sm">
     <div class="card-header bg-primary text-white">
-      <h3 class="mb-0"><i class="fas fa-route"></i> Quản lý Tuyến Đường</h3>
+      <h3 class="mb-0"><i class="fas fa-route"></i> Danh sách Tuyến Đường</h3>
     </div>
     <div class="card-body">
-      <form action="routes" method="GET" class="row g-3 align-items-end">
+      <form action="routes" method="GET" class="row g-3">
         <div class="col-md-4">
           <label class="form-label"><i class="fas fa-search"></i> Tìm theo tên tuyến</label>
           <input type="text" name="search" class="form-control" placeholder="Nhập tên tuyến..." value="${param.search}">
@@ -20,7 +36,7 @@
         <div class="col-md-3">
           <label class="form-label"><i class="fas fa-map-marker-alt"></i> Lọc theo khu vực</label>
           <select name="location" class="form-select">
-            <option value="">📍 Tất cả khu vực</option>
+            <option value="">Tất cả khu vực</option>
             <c:forEach var="location" items="${locations}">
               <option value="${location.locationId}" ${param.location == location.locationId ? 'selected' : ''}>
                   ${location.name}
@@ -38,8 +54,7 @@
     </div>
   </div>
 
-  <!-- Bảng danh sách tuyến đường -->
-  <div class="card shadow-lg mt-4">
+  <div class="card shadow-lg">
     <div class="card-body">
       <div class="table-responsive">
         <table id="routeTable" class="table table-hover table-bordered align-middle">
@@ -98,4 +113,12 @@
     </div>
   </div>
 </div>
+</div>
 
+
+    </main>
+  </div>
+</div>
+
+
+<%@ include file="footer.jsp" %>

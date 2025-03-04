@@ -59,6 +59,19 @@ public class User {
         this.isActive = isActive;
     }
 
+    public User(int userId, String username, String fullName, String email, String phone, int roleId, boolean isActive, String passwordHash) {
+        this.userId = userId;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.role = new Role(); // Đảm bảo có role
+        this.role.setRoleId(roleId);
+        this.isActive = isActive;
+        this.passwordHash = passwordHash;
+    }
+
+
     public User(String username, String hashedPassword, String email, String phone, String fullName) {
         this.username = username;
         this.passwordHash = hashedPassword;
