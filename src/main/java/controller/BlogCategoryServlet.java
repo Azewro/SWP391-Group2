@@ -20,7 +20,7 @@ import model.BlogCategory;
  *
  * @author author
  */
-@WebServlet("/blog-category")
+@WebServlet("/admin/blog-category")
 public class BlogCategoryServlet extends HttpServlet {
 
     private BlogDAO blogDAO;
@@ -40,7 +40,7 @@ public class BlogCategoryServlet extends HttpServlet {
             } else if (action.equals("edit")) {
                 showEditForm(request, response);
             } else if (action.equals("create")) {
-                request.getRequestDispatcher("./admin/create-blog-category.jsp").forward(request, response);
+                request.getRequestDispatcher("./create-blog-category.jsp").forward(request, response);
             } else if (action.equals("delete")) {
                 deleteCategory(request, response);
             }
@@ -85,14 +85,14 @@ public class BlogCategoryServlet extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("name", name);
-        request.getRequestDispatcher("./admin/blog-category-list.jsp").forward(request, response);
+        request.getRequestDispatcher("./blog-category-list.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         BlogCategory category = blogDAO.getCategory(id);
         request.setAttribute("category", category);
-        request.getRequestDispatcher("./admin/edit-blog-category.jsp").forward(request, response);
+        request.getRequestDispatcher("./edit-blog-category.jsp").forward(request, response);
     }
 
     private void createCategory(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {

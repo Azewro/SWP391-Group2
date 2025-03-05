@@ -26,7 +26,7 @@ import model.BlogCategory;
  *
  * @author author
  */
-@WebServlet("/blog")
+@WebServlet("/admin/blog")
 public class BlogServlet extends HttpServlet {
 
     private BlogDAO blogDAO;
@@ -54,7 +54,7 @@ public class BlogServlet extends HttpServlet {
                 request.setAttribute("ul", userDAO.getAllUsers("", Boolean.TRUE));
                 request.setAttribute("cls", blogDAO.getCategories("", 0, 1110));
 
-                request.getRequestDispatcher("./admin/createBlog.jsp").forward(request, response);
+                request.getRequestDispatcher("./createBlog.jsp").forward(request, response);
             } else {
                 listBlogs(request, response);
             }
@@ -104,7 +104,7 @@ public class BlogServlet extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
 
-        request.getRequestDispatcher("./admin/blog.jsp").forward(request, response);
+        request.getRequestDispatcher("./blog.jsp").forward(request, response);
     }
 
     private void createBlog(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
@@ -148,6 +148,6 @@ public class BlogServlet extends HttpServlet {
         request.setAttribute("blog", existingBlog);
         request.setAttribute("ul", userDAO.getAllUsers("", Boolean.TRUE));
         request.setAttribute("cls", blogDAO.getCategories("", 0, 1110));
-        request.getRequestDispatcher("./admin/edit-blog.jsp").forward(request, response);
+        request.getRequestDispatcher("./edit-blog.jsp").forward(request, response);
     }
 }
