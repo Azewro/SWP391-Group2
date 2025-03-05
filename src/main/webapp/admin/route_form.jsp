@@ -2,73 +2,83 @@
 <%@ page import="model.Route, model.Location" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<%@ include file="header.jsp" %>
 
-<div class="container mt-4">
-  <h2 class="mb-3">
-    <c:choose>
-      <c:when test="${route != null}">Chỉnh sửa Tuyến Đường</c:when>
-      <c:otherwise>Thêm Tuyến Đường Mới</c:otherwise>
-    </c:choose>
-  </h2>
+<div id="layoutSidenav">
+  <jsp:include page="sidebar.jsp"/>
+  <div id="layoutSidenav_content">
+    <main class="content-wrapper">
+      <div class="container-fluid px-4">
+        <h1 class="mt-4">Quản lý Tuyến Đường</h1>
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item"><a href="dashboard.jsp">Dashboard</a></li>
+          <li class="breadcrumb-item active">Thêm/Sửa Tuyến Đường</li>
+        </ol>
 
-  <form action="routes" method="POST">
-    <input type="hidden" name="action" value="update">
-    <input type="hidden" name="routeId" value="${route.routeId}">
+        <div class="card shadow-lg">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-route"></i> Tuyến Đường</h3>
+          </div>
+          <div class="card-body">
+            <form action="routes" method="POST">
+              <input type="hidden" name="action" value="${route == null ? 'add' : 'update'}">
+              <input type="hidden" name="route_id" value="${route.routeId}">
 
-    <div class="mb-3">
-      <label for="routeName" class="form-label">Tên Tuyến Đường</label>
-      <input type="text" name="routeName" id="routeName" class="form-control"
-             value="${route.routeName}" required>
-    </div>
+              <div class="mb-3">
+                <label class="form-label">Tên Tuyến</label>
+                <input type="text" name="route_name" class="form-control" required value="${route.routeName}">
+              </div>
 
-    <div class="mb-3">
-      <label for="startLocation" class="form-label">Điểm Xuất Phát</label>
-      <select name="startLocation" id="startLocation" class="form-select" required>
-        <c:forEach var="location" items="${locations}">
-          <option value="${location.locationId}" ${route.startLocation.locationId == location.locationId ? 'selected' : ''}>
-              ${location.name}
-          </option>
-        </c:forEach>
-      </select>
-    </div>
+              <div class="mb-3">
+                <label class="form-label">Điểm Xuất Phát</label>
+                <select name="start_location_id" class="form-select" required>
+                  <c:forEach var="location" items="${requestScope.locations}">
+                    <option value="${location.locationId}" ${route.startLocation.locationId == location.locationId ? 'selected' : ''}>
+                        ${location.name}
+                    </option>
+                  </c:forEach>
+                </select>
+              </div>
 
-    <div class="mb-3">
-      <label for="endLocation" class="form-label">Điểm Kết Thúc</label>
-      <select name="endLocation" id="endLocation" class="form-select" required>
-        <c:forEach var="location" items="${locations}">
-          <option value="${location.locationId}" ${route.endLocation.locationId == location.locationId ? 'selected' : ''}>
-              ${location.name}
-          </option>
-        </c:forEach>
-      </select>
-    </div>
+              <div class="mb-3">
+                <label class="form-label">Điểm Kết Thúc</label>
+                <select name="end_location_id" class="form-select" required>
+                  <c:forEach var="location" items="${requestScope.locations}">
+                    <option value="${location.locationId}" ${route.endLocation.locationId == location.locationId ? 'selected' : ''}>
+                        ${location.name}
+                    </option>
+                  </c:forEach>
+                </select>
+              </div>
 
-    <div class="mb-3">
-      <label for="distance" class="form-label">Khoảng Cách (km)</label>
-      <input type="number" name="distance" id="distance" class="form-control"
-             value="${route.distance}" step="0.1" required>
-    </div>
+              <div class="mb-3">
+                <label class="form-label">Khoảng Cách (km)</label>
+                <input type="number" step="0.1" name="distance" class="form-control" required value="${route.distance}">
+              </div>
 
-    <div class="mb-3">
-      <label for="estimatedDuration" class="form-label">Thời Gian Dự Kiến (phút)</label>
-      <input type="number" name="estimatedDuration" id="estimatedDuration" class="form-control"
-             value="${route.estimatedDuration}" required>
-    </div>
+              <div class="mb-3">
+                <label class="form-label">Thời Gian Dự Kiến (phút)</label>
+                <input type="number" name="estimated_duration" class="form-control" required value="${route.estimatedDuration}">
+              </div>
 
-    <div class="mb-3">
-      <label for="basePrice" class="form-label">Giá Vé Cơ Bản (VND)</label>
-      <input type="number" name="basePrice" id="basePrice" class="form-control"
-             value="${route.basePrice}" step="1000" required>
-    </div>
+              <div class="mb-3">
+                <label class="form-label">Giá Vé Cơ Bản (VNĐ)</label>
+                <input type="number" name="base_price" class="form-control" required value="${route.basePrice}">
+              </div>
 
-    <button type="submit" class="btn btn-primary">
-      <i class="fas fa-save"></i> Lưu Tuyến Đường
-    </button>
-    <a href="routes" class="btn btn-secondary">
-      <i class="fas fa-arrow-left"></i> Quay lại
-    </a>
-  </form>
+              <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Lưu</button>
+              <a href="route_list.jsp" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
 
-
+<%@ include file="footer.jsp" %>

@@ -6,6 +6,8 @@
 %>
 <!DOCTYPE html>
 <html lang="vi">
+
+
 <head>
     <meta charset="UTF-8">
     <title><%= isEdit ? "Chỉnh sửa người dùng" : "Thêm người dùng" %></title>

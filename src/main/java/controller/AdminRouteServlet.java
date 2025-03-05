@@ -10,127 +10,84 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @WebServlet("/admin/routes")
 public class AdminRouteServlet extends HttpServlet {
-    private AdminRouteDAO routeDAO;
-
-    @Override
-    public void init() throws ServletException {
-        try {
-            routeDAO = new AdminRouteDAO();
-        } catch (SQLException e) {
-            throw new ServletException("Lỗi kết nối database", e);
-        }
-    }
+    private final AdminRouteDAO routeDAO = new AdminRouteDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        try {
-            if ("edit".equals(action)) {
-                showEditForm(request, response);
-            } else if ("delete".equals(action)) {
-                deleteRoute(request, response);
+        if (action == null) {
+            String search = request.getParameter("search");
+            String locationFilter = request.getParameter("location");
+
+// Kiểm tra xem có điều kiện lọc hay không
+            List<Route> routes;
+            if ((search != null && !search.isEmpty()) || (locationFilter != null && !locationFilter.isEmpty())) {
+                routes = routeDAO.searchRoutes(search, locationFilter);
             } else {
-                listRoutes(request, response);
+                routes = routeDAO.getAllRoutes();
             }
-        } catch (SQLException e) {
-            throw new ServletException("Lỗi xử lý dữ liệu", e);
+
+// Set dữ liệu trước khi forward
+            request.setAttribute("routes", routes);
+            request.getRequestDispatcher("/admin/route_list.jsp").forward(request, response);
+
+
+        } else if (action.equals("edit")) {
+            // Lấy thông tin tuyến đường để chỉnh sửa
+            int routeId = Integer.parseInt(request.getParameter("id"));
+            Route route = routeDAO.getRouteById(routeId);
+            request.setAttribute("route", route);
+            request.getRequestDispatcher("/admin/routes_form.jsp").forward(request, response);
+        } else if (action.equals("delete")) {
+            // Xóa tuyến đường
+            int routeId = Integer.parseInt(request.getParameter("id"));
+            routeDAO.deleteRoute(routeId);
+            response.sendRedirect(request.getContextPath() + "/admin/routes");
         }
-    }
-
-    private void listRoutes(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-        String search = request.getParameter("search");
-        String locationParam = request.getParameter("location");
-        Integer locationId = (locationParam == null || locationParam.isEmpty()) ? null : Integer.parseInt(locationParam);
-
-
-        List<Route> routeList = routeDAO.getAllRoutes(search, locationId);
-        request.setAttribute("routes", routeList);
-        request.getRequestDispatcher("/admin/route_list.jsp").forward(request, response);
-    }
-
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-        int routeId = Integer.parseInt(request.getParameter("id"));
-        Route existingRoute = routeDAO.getRouteById(routeId);
-        request.setAttribute("route", existingRoute);
-        request.getRequestDispatcher("/admin/route_form.jsp").forward(request, response);
-    }
-
-    private void deleteRoute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int routeId = Integer.parseInt(request.getParameter("id"));
-        routeDAO.deleteRoute(routeId);
-        response.sendRedirect("routes");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        try {
-            if ("update".equals(action)) {
-                updateRoute(request, response);
-            }
-            if ("add".equals(action)) {
-                addRoute(request, response);
-            }
+        if (action.equals("add")) {
+            // Lấy dữ liệu từ form để thêm tuyến đường
+            String routeName = request.getParameter("route_name");
+            int startLocationId = Integer.parseInt(request.getParameter("start_location_id"));
+            int endLocationId = Integer.parseInt(request.getParameter("end_location_id"));
+            float distance = Float.parseFloat(request.getParameter("distance"));
+            int estimatedDuration = Integer.parseInt(request.getParameter("estimated_duration"));
+            BigDecimal basePrice = new BigDecimal(request.getParameter("base_price"));
+            String routeType = request.getParameter("route_type");
 
-        } catch (SQLException e) {
-            throw new ServletException("Lỗi cập nhật tuyến đường", e);
+            Route route = new Route(0, routeName, new Location(startLocationId), new Location(endLocationId), distance, estimatedDuration, basePrice);
+            route.setRouteType(routeType);
+
+            routeDAO.addRoute(route);
+            response.sendRedirect(request.getContextPath() + "/admin/routes");
+
+        } else if (action.equals("update")) {
+            // Cập nhật thông tin tuyến đường
+            int routeId = Integer.parseInt(request.getParameter("route_id"));
+            String routeName = request.getParameter("route_name");
+            int startLocationId = Integer.parseInt(request.getParameter("start_location_id"));
+            int endLocationId = Integer.parseInt(request.getParameter("end_location_id"));
+            float distance = Float.parseFloat(request.getParameter("distance"));
+            int estimatedDuration = Integer.parseInt(request.getParameter("estimated_duration"));
+            BigDecimal basePrice = new BigDecimal(request.getParameter("base_price"));
+            String routeType = request.getParameter("route_type");
+
+            Route route = new Route(routeId, routeName, new Location(startLocationId), new Location(endLocationId), distance, estimatedDuration, basePrice);
+            route.setRouteType(routeType);
+
+            routeDAO.updateRoute(route);
+            response.sendRedirect(request.getContextPath() + "/admin/routes");
         }
     }
-
-    private void updateRoute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int routeId = parseInteger(request.getParameter("routeId"), 0);
-        String routeName = request.getParameter("routeName");
-        int startLocationId = parseInteger(request.getParameter("startLocation"), 0);
-        int endLocationId = parseInteger(request.getParameter("endLocation"), 0);
-        float distance = parseFloat(request.getParameter("distance"), 0);
-        int estimatedDuration = parseInteger(request.getParameter("estimatedDuration"), 0);
-
-        Location startLocation = new Location(startLocationId, "");
-        Location endLocation = new Location(endLocationId, "");
-
-        Route route = new Route(routeId, routeName, startLocation, endLocation, distance, estimatedDuration, null);
-        routeDAO.updateRoute(route);
-        response.sendRedirect("routes");
-    }
-    private void addRoute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        String routeName = request.getParameter("routeName");
-        int startLocationId = parseInteger(request.getParameter("startLocation"), 0);
-        int endLocationId = parseInteger(request.getParameter("endLocation"), 0);
-        float distance = parseFloat(request.getParameter("distance"), 0);
-        int estimatedDuration = parseInteger(request.getParameter("estimatedDuration"), 0);
-
-        Location startLocation = new Location(startLocationId, "");
-        Location endLocation = new Location(endLocationId, "");
-
-        Route route = new Route(0, routeName, startLocation, endLocation, distance, estimatedDuration, null);
-        routeDAO.addRoute(route);
-
-        response.sendRedirect("routes");
-    }
-
-
-    private int parseInteger(String value, int defaultValue) {
-        try {
-            return (value == null || value.isEmpty()) ? defaultValue : Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
-    }
-
-    private float parseFloat(String value, float defaultValue) {
-        try {
-            return (value == null || value.isEmpty()) ? defaultValue : Float.parseFloat(value);
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
-    }
-
-
 }

@@ -1,0 +1,86 @@
+<%@ page contentType="text/html; charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.BusStop" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<%@ include file="header.jsp" %>
+
+<div id="layoutSidenav">
+  <jsp:include page="sidebar.jsp"/>
+  <div id="layoutSidenav_content">
+    <main class="content-wrapper">
+      <div class="container-fluid px-4">
+        <h2 class="mt-4">Danh sách điểm dừng</h2>
+
+        <form method="get" action="bus_stops">
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <input type="text" name="search" class="form-control" placeholder="Tìm theo tên điểm dừng...">
+            </div>
+            <div class="col-md-3">
+              <select name="route_id" class="form-control">
+                <option value="">Chọn tuyến đường</option>
+                <c:forEach var="route" items="${routes}">
+                  <option value="${route.routeId}">${route.routeName}</option>
+                </c:forEach>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
+            </div>
+          </div>
+        </form>
+
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Tên điểm dừng</th>
+            <th>Tuyến đường</th>
+            <th>Thứ tự</th>
+            <th>Thời gian chờ (phút)</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+          </tr>
+          </thead>
+          <tbody>
+          <c:forEach var="busStop" items="${busStops}">
+            <tr>
+              <td>${busStop.stopId}</td>
+              <td>${busStop.stopName}</td>
+              <td>${busStop.route.routeName}</td>
+              <td>${busStop.stopOrder}</td>
+              <td>${busStop.estimatedWaitingTime != null ? busStop.estimatedWaitingTime : "N/A"}</td>
+              <td>
+                <c:choose>
+                  <c:when test="${busStop.active}">
+                    <span class="badge bg-success">Hoạt động</span>
+                  </c:when>
+                  <c:otherwise>
+                    <span class="badge bg-secondary">Không hoạt động</span>
+                  </c:otherwise>
+                </c:choose>
+              </td>
+              <td>
+                <a href="bus_stops?action=edit&id=${busStop.stopId}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Sửa</a>
+                <a href="bus_stops?action=delete&id=${busStop.stopId}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                  <i class="fas fa-trash"></i> Xóa
+                </a>
+              </td>
+            </tr>
+          </c:forEach>
+          </tbody>
+        </table>
+
+        <a href="bus_stop_form.jsp" class="btn btn-success"><i class="fas fa-plus"></i> Thêm điểm dừng</a>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%@ include file="footer.jsp" %>

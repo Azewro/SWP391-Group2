@@ -4,128 +4,206 @@ import model.Route;
 import model.Location;
 import util.DatabaseConnection;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdminRouteDAO {
-    private Connection conn;
 
-    public AdminRouteDAO() throws SQLException {
-        this.conn = DatabaseConnection.getConnection();
-    }
-
-    // Lấy danh sách tuyến đường (tìm kiếm theo tên hoặc lọc theo địa điểm)
-    public List<Route> getAllRoutes(String search, Integer locationId) throws SQLException {
+    // Lấy danh sách tất cả tuyến đường
+    public List<Route> getAllRoutes() {
         List<Route> routes = new ArrayList<>();
-        String sql = "SELECT r.route_id, r.route_name, r.distance, r.estimated_duration, r.base_price, " +
-                "l1.location_id AS start_location_id, l1.name AS start_location_name, " +
-                "l2.location_id AS end_location_id, l2.name AS end_location_name " +
+        String query = "SELECT r.route_id, r.route_name, " +
+                "r.start_location_id, s.name AS start_location_name, " +
+                "r.end_location_id, e.name AS end_location_name, " +
+                "r.distance, r.estimated_duration, r.base_price " +
                 "FROM Routes r " +
-                "JOIN Locations l1 ON r.start_location_id = l1.location_id " +
-                "JOIN Locations l2 ON r.end_location_id = l2.location_id " +
-                "WHERE (? IS NULL OR r.route_name LIKE ?) " +
-                "AND (? IS NULL OR r.start_location_id = ? OR r.end_location_id = ?)";
+                "JOIN Locations s ON r.start_location_id = s.location_id " +
+                "JOIN Locations e ON r.end_location_id = e.location_id";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, search);
-            stmt.setString(2, "%" + search + "%");
-            if (locationId == null) {
-                stmt.setNull(3, Types.INTEGER);
-                stmt.setNull(4, Types.INTEGER);
-                stmt.setNull(5, Types.INTEGER);
-            } else {
-                stmt.setInt(3, locationId);
-                stmt.setInt(4, locationId);
-                stmt.setInt(5, locationId);
-            }
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
-            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Location startLocation = new Location(rs.getInt("start_location_id"), rs.getString("start_location_name"));
-                Location endLocation = new Location(rs.getInt("end_location_id"), rs.getString("end_location_name"));
                 Route route = new Route(
                         rs.getInt("route_id"),
                         rs.getString("route_name"),
-                        startLocation,
-                        endLocation,
+                        new Location(rs.getInt("start_location_id"), rs.getString("start_location_name")),
+                        new Location(rs.getInt("end_location_id"), rs.getString("end_location_name")),
                         rs.getFloat("distance"),
                         rs.getInt("estimated_duration"),
                         rs.getBigDecimal("base_price")
                 );
                 routes.add(route);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return routes;
     }
 
-    public Route getRouteById(int routeId) throws SQLException {
-        String sql = "SELECT r.route_id, r.route_name, r.distance, r.estimated_duration, r.base_price, " +
-                "l1.location_id AS start_location_id, l1.name AS start_location_name, " +
-                "l2.location_id AS end_location_id, l2.name AS end_location_name " +
-                "FROM Routes r " +
-                "JOIN Locations l1 ON r.start_location_id = l1.location_id " +
-                "JOIN Locations l2 ON r.end_location_id = l2.location_id " +
-                "WHERE r.route_id = ?";
+    // Lấy thông tin tuyến đường theo ID
+    public Route getRouteById(int routeId) {
+        String query = "SELECT * FROM Routes WHERE route_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, routeId);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
-                Location startLocation = new Location(rs.getInt("start_location_id"), rs.getString("start_location_name"));
-                Location endLocation = new Location(rs.getInt("end_location_id"), rs.getString("end_location_name"));
                 return new Route(
                         rs.getInt("route_id"),
                         rs.getString("route_name"),
-                        startLocation,
-                        endLocation,
+                        new Location(rs.getInt("start_location_id")),
+                        new Location(rs.getInt("end_location_id")),
                         rs.getFloat("distance"),
                         rs.getInt("estimated_duration"),
                         rs.getBigDecimal("base_price")
                 );
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
+    // Thêm mới một tuyến đường
+    public boolean addRoute(Route route) {
+        String query = "INSERT INTO Routes (route_name, start_location_id, end_location_id, distance, estimated_duration, base_price, estimated_stops, route_type) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-    // Thêm tuyến đường mới
-    public boolean addRoute(Route route) throws SQLException {
-        String sql = "INSERT INTO Routes (route_name, start_location_id, end_location_id, distance, estimated_duration, base_price) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, route.getRouteName());
             stmt.setInt(2, route.getStartLocation().getLocationId());
             stmt.setInt(3, route.getEndLocation().getLocationId());
             stmt.setFloat(4, route.getDistance());
             stmt.setInt(5, route.getEstimatedDuration());
             stmt.setBigDecimal(6, route.getBasePrice());
-            return stmt.executeUpdate() > 0;
+            stmt.setObject(7, route.getEstimatedStops(), Types.INTEGER);
+            stmt.setString(8, route.getRouteType());
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     // Cập nhật thông tin tuyến đường
-    public boolean updateRoute(Route route) throws SQLException {
-        String sql = "UPDATE Routes SET route_name = ?, start_location_id = ?, end_location_id = ?, " +
-                "distance = ?, estimated_duration = ?, base_price = ? WHERE route_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+    public boolean updateRoute(Route route) {
+        String query = "UPDATE Routes SET route_name = ?, start_location_id = ?, end_location_id = ?, distance = ?, estimated_duration = ?, base_price = ?, estimated_stops = ?, route_type = ? " +
+                "WHERE route_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, route.getRouteName());
             stmt.setInt(2, route.getStartLocation().getLocationId());
             stmt.setInt(3, route.getEndLocation().getLocationId());
             stmt.setFloat(4, route.getDistance());
             stmt.setInt(5, route.getEstimatedDuration());
             stmt.setBigDecimal(6, route.getBasePrice());
-            stmt.setInt(7, route.getRouteId());
-            return stmt.executeUpdate() > 0;
+            stmt.setObject(7, route.getEstimatedStops(), Types.INTEGER);
+            stmt.setString(8, route.getRouteType());
+            stmt.setInt(9, route.getRouteId());
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Xóa tuyến đường theo ID
+    public boolean deleteRoute(int routeId) {
+        String query = "DELETE FROM Routes WHERE route_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, routeId);
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Route> searchRoutes(String search, String locationFilter) {
+        List<Route> routes = new ArrayList<>();
+        String query = "SELECT r.route_id, r.route_name, " +
+                "r.start_location_id, s.name AS start_location_name, " +
+                "r.end_location_id, e.name AS end_location_name, " +
+                "r.distance, r.estimated_duration, r.base_price " +
+                "FROM Routes r " +
+                "JOIN Locations s ON r.start_location_id = s.location_id " +
+                "JOIN Locations e ON r.end_location_id = e.location_id " +
+                "WHERE 1=1 ";
+
+        if (search != null && !search.isEmpty()) {
+            query += "AND r.route_name LIKE ? ";
+        }
+        if (locationFilter != null && !locationFilter.isEmpty()) {
+            query += "AND (r.start_location_id = ? OR r.end_location_id = ?) ";
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            int paramIndex = 1;
+            if (search != null && !search.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + search + "%");
+            }
+            if (locationFilter != null && !locationFilter.isEmpty()) {
+                stmt.setInt(paramIndex++, Integer.parseInt(locationFilter));
+                stmt.setInt(paramIndex++, Integer.parseInt(locationFilter));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                routes.add(new Route(
+                        rs.getInt("route_id"),
+                        rs.getString("route_name"),
+                        new Location(rs.getInt("start_location_id"), rs.getString("start_location_name")),
+                        new Location(rs.getInt("end_location_id"), rs.getString("end_location_name")),
+                        rs.getFloat("distance"),
+                        rs.getInt("estimated_duration"),
+                        rs.getBigDecimal("base_price")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return routes;
+    }
+
+    public static void main(String[] args) {
+        AdminRouteDAO routeDAO = new AdminRouteDAO();
+
+        // Kiểm tra lấy tất cả tuyến đường
+        System.out.println("Danh sách tuyến đường:");
+        for (Route route : routeDAO.getAllRoutes()) {
+            System.out.println(route.getRouteId() + " - " + route.getRouteName());
+        }
+
+        // Kiểm tra lấy tuyến đường theo ID
+        int testRouteId = 1; // Cập nhật ID phù hợp với database
+        Route route = routeDAO.getRouteById(testRouteId);
+        if (route != null) {
+            System.out.println("\nChi tiết tuyến đường:");
+            System.out.println("ID: " + route.getRouteId());
+            System.out.println("Tên: " + route.getRouteName());
+        } else {
+            System.out.println("\nKhông tìm thấy tuyến đường với ID: " + testRouteId);
         }
     }
 
-    // Xóa tuyến đường (xóa cứng)
-    public boolean deleteRoute(int routeId) throws SQLException {
-        String sql = "DELETE FROM Routes WHERE route_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, routeId);
-            return stmt.executeUpdate() > 0;
-        }
-    }
 }
