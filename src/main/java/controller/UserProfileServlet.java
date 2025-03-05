@@ -31,7 +31,7 @@ public class UserProfileServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         request.setAttribute("user", user);
-        request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("profile.jsp").forward(request, response);
     }
 
     @Override
@@ -48,6 +48,8 @@ public class UserProfileServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phoneNumber");
+        String oldPassword = request.getParameter("oldPassword");
+        String newPassword = request.getParameter("newPassword");
 
         boolean hasError = false;
 
@@ -60,12 +62,21 @@ public class UserProfileServlet extends HttpServlet {
             }
         }
 
+        // Xử lý đổi mật khẩu nếu có nhập mật khẩu mới
+        if (oldPassword != null && !oldPassword.isEmpty() && newPassword != null && !newPassword.isEmpty()) {
+            boolean passwordUpdated = userProfileDAO.updatePassword(user.getUserId(), oldPassword, newPassword);
+            if (!passwordUpdated) {
+                request.setAttribute("passwordError", "Mật khẩu cũ không đúng");
+                hasError = true;
+            }
+        }
+
         if (hasError) {
             request.setAttribute("user", user);
             request.setAttribute("fullName", fullName);
             request.setAttribute("email", email);
             request.setAttribute("phoneNumber", phoneNumber);
-            request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("profile.jsp").forward(request, response);
             return;
         }
 
@@ -74,13 +85,13 @@ public class UserProfileServlet extends HttpServlet {
         user.setEmail(email);
         user.setPhone(phoneNumber);
 
-        userProfileDAO.update(user);
+        userProfileDAO.updateProfile(user);
 
         // Cập nhật lại session
         session.setAttribute("user", user);
 
         request.setAttribute("user", user);
         request.setAttribute("successMessage", "Cập nhật hồ sơ thành công");
-        request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("profile.jsp").forward(request, response);
     }
 }
