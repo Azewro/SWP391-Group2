@@ -51,9 +51,7 @@ public class BlogServlet extends HttpServlet {
             } else if ("edit".equals(action)) {
                 showEditForm(request, response);
             } else if ("create".equals(action)) {
-                request.setAttribute("ul", userDAO.getAllUsers("", Boolean.TRUE));
                 request.setAttribute("cls", blogDAO.getCategories("", 0, 1110));
-
                 request.getRequestDispatcher("./createBlog.jsp").forward(request, response);
             } else {
                 listBlogs(request, response);
