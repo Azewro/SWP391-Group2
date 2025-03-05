@@ -39,6 +39,10 @@ public class BusStop {
         this.stopName = stopName;
     }
 
+    public BusStop() {
+        
+    }
+
 
     // Getters and Setters
     public int getStopId() {
