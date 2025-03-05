@@ -31,7 +31,7 @@ public class UserProfileServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         request.setAttribute("user", user);
-        request.getRequestDispatcher("profile.jsp").forward(request, response);
+        request.getRequestDispatcher("userprofile.jsp").forward(request, response);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class UserProfileServlet extends HttpServlet {
             request.setAttribute("fullName", fullName);
             request.setAttribute("email", email);
             request.setAttribute("phoneNumber", phoneNumber);
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
+            request.getRequestDispatcher("userprofile.jsp").forward(request, response);
             return;
         }
 
@@ -92,6 +92,6 @@ public class UserProfileServlet extends HttpServlet {
 
         request.setAttribute("user", user);
         request.setAttribute("successMessage", "Cập nhật hồ sơ thành công");
-        request.getRequestDispatcher("profile.jsp").forward(request, response);
+        request.getRequestDispatcher("userprofile.jsp").forward(request, response);
     }
 }
