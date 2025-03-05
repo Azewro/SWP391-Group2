@@ -47,9 +47,10 @@ public class UserProfileServlet extends HttpServlet {
 
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
-        String phoneNumber = request.getParameter("phoneNumber");
+        String phoneNumber = request.getParameter("phone");
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
 
         boolean hasError = false;
 
@@ -64,18 +65,34 @@ public class UserProfileServlet extends HttpServlet {
 
         // Xử lý đổi mật khẩu nếu có nhập mật khẩu mới
         if (oldPassword != null && !oldPassword.isEmpty() && newPassword != null && !newPassword.isEmpty()) {
-            boolean passwordUpdated = userProfileDAO.updatePassword(user.getUserId(), oldPassword, newPassword);
-            if (!passwordUpdated) {
-                request.setAttribute("passwordError", "Mật khẩu cũ không đúng");
+            // Kiểm tra mật khẩu cũ có đúng không
+            if (!userProfileDAO.checkPassword(user.getUserId(), oldPassword)) {
+                request.setAttribute("passwordError", "Mật khẩu cũ không đúng.");
                 hasError = true;
             }
+            // Kiểm tra confirmPassword có khớp không
+            if (!newPassword.equals(confirmPassword)) {
+                request.setAttribute("passwordError", "Mật khẩu mới và xác nhận không khớp.");
+                hasError = true;
+            } else if (!isValidPassword(newPassword)) {
+                request.setAttribute("passwordError", "Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất 1 chữ số, 1 chữ in hoa và 1 chữ thường.");
+                hasError = true;
+            } else {
+                boolean passwordUpdated = userProfileDAO.updatePassword(user.getUserId(), oldPassword, newPassword);
+                if (!passwordUpdated) {
+                    request.setAttribute("passwordError", "Mật khẩu cũ không đúng.");
+                    hasError = true;
+                }
+            }
+
+
         }
 
         if (hasError) {
             request.setAttribute("user", user);
             request.setAttribute("fullName", fullName);
             request.setAttribute("email", email);
-            request.setAttribute("phoneNumber", phoneNumber);
+            request.setAttribute("phone", phoneNumber);
             request.getRequestDispatcher("userprofile.jsp").forward(request, response);
             return;
         }
@@ -93,5 +110,15 @@ public class UserProfileServlet extends HttpServlet {
         request.setAttribute("user", user);
         request.setAttribute("successMessage", "Cập nhật hồ sơ thành công");
         request.getRequestDispatcher("userprofile.jsp").forward(request, response);
+
     }
+
+    // Hàm kiểm tra điều kiện mật khẩu
+    private boolean isValidPassword(String password) {
+        return password.length() >= 8 &&
+                password.matches(".*\\d.*") &&          // Ít nhất 1 chữ số
+                password.matches(".*[a-z].*") &&        // Ít nhất 1 chữ thường
+                password.matches(".*[A-Z].*");         // Ít nhất 1 chữ in hoa
+    }
+
 }

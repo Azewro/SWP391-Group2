@@ -53,7 +53,25 @@ public class UserProfileDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
+
+    public boolean checkPassword(int userId, String oldPassword) {
+        String sql = "SELECT password_hash FROM users WHERE user_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String storedHash = rs.getString("password_hash");
+                return BCrypt.checkpw(oldPassword, storedHash);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     public boolean updatePassword(int userId, String oldPassword, String newPassword) {
         User user = findById(userId);

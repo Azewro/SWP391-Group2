@@ -30,6 +30,9 @@
       margin: auto;
       display: block;
     }
+    .password-fields {
+      display: none; /* Ẩn phần đổi mật khẩu ban đầu */
+    }
   </style>
 </head>
 <body>
@@ -37,38 +40,121 @@
   <div class="card p-4">
     <div class="text-center">
       <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="profile-img" alt="User Avatar">
-      <h4 class="mt-3">${user.fullName}</h4>
-      <p>Full Stack Developer</p>
     </div>
   </div>
 
   <div class="card mt-4 p-4">
     <h5>Profile Information</h5>
-    <div class="row mt-3">
-      <div class="col-md-6">
-        <label class="form-label">Full Name</label>
-        <input type="text" class="form-control" value="${user.fullName}" readonly>
+    <form id="profileForm" action="profile" method="post">
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="fullName" name="fullName" value="${user.fullName}" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input type="text" class="form-control" id="email" name="email" value="${user.email}" readonly>
+        </div>
       </div>
-      <div class="col-md-6">
-        <label class="form-label">Email</label>
-        <input type="text" class="form-control" value="${user.email}" readonly>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <label class="form-label">Phone</label>
+          <input type="text" class="form-control" id="phone" name="phone" value="${user.phone}" readonly>
+        </div>
       </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-md-6">
-        <label class="form-label">Phone</label>
-        <input type="text" class="form-control" value="${user.phone}" readonly>
+
+      <!-- Trường đổi mật khẩu (ẩn mặc định) -->
+      <div class="password-fields mt-4">
+        <h5>Change Password</h5>
+        <div class="row">
+          <div class="col-md-12">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="currentPassword">
+          </div>
+          <div class="col-md-6 mt-3">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-control" id="newPassword">
+          </div>
+          <div class="col-md-6 mt-3">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="confirmPassword">
+          </div>
+        </div>
       </div>
-      <div class="col-md-6">
-        <label class="form-label">Address</label>
-        <input type="text" class="form-control" value="Bay Area, San Francisco, CA" readonly>
+
+      <div class="text-center mt-3">
+        <button type="button" class="btn btn-primary" id="editBtn">Edit</button>
+        <button type="button" class="btn btn-success d-none" id="saveBtn">Save</button>
+        <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
       </div>
-    </div>
-    <div class="text-center mt-3">
-      <button class="btn btn-primary">Edit</button>
-    </div>
+    </form>
   </div>
 </div>
+
+<script>
+  document.getElementById("editBtn").addEventListener("click", function() {
+    // Bật chế độ chỉnh sửa
+    let inputs = document.querySelectorAll("#profileForm input");
+    inputs.forEach(input => input.removeAttribute("readonly"));
+
+    // Hiển thị phần đổi mật khẩu
+    document.querySelector(".password-fields").style.display = "block";
+
+    // Hiển thị nút Save & Cancel, ẩn nút Edit
+    document.getElementById("saveBtn").classList.remove("d-none");
+    document.getElementById("cancelBtn").classList.remove("d-none");
+    this.classList.add("d-none");
+  });
+
+  document.getElementById("cancelBtn").addEventListener("click", function() {
+    location.reload(); // Tải lại trang để khôi phục dữ liệu cũ
+  });
+
+  document.getElementById("saveBtn").addEventListener("click", function() {
+    // Lấy dữ liệu từ form
+    let form = document.getElementById("profileForm");
+    let currentPassword = document.getElementById("currentPassword").value.trim();
+    let newPassword = document.getElementById("newPassword").value.trim();
+    let confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+    // Kiểm tra nếu người dùng muốn đổi mật khẩu
+    if (newPassword.length > 0 || confirmPassword.length > 0) {
+      if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(newPassword)) {
+        alert("Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất 1 chữ số, 1 chữ in hoa và 1 chữ thường.");
+        event.preventDefault(); // Ngăn form submit
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        alert("Mật khẩu mới và xác nhận mật khẩu không khớp.");
+        event.preventDefault();
+        return;
+      }
+      if (currentPassword.length === 0) {
+        alert("Bạn cần nhập mật khẩu hiện tại để đổi mật khẩu.");
+        event.preventDefault();
+        return;
+      }
+    }
+
+    console.log("Gửi dữ liệu lên server...");
+    form.submit();
+
+
+    alert("Cập nhật thông tin thành công!");
+
+    // Ẩn nút Save & Cancel, hiện lại nút Edit
+    document.getElementById("editBtn").classList.remove("d-none");
+    this.classList.add("d-none");
+    document.getElementById("cancelBtn").classList.add("d-none");
+
+    // Đặt lại input về readonly
+    let inputs = document.querySelectorAll("#profileForm input:not([type=password])");
+    inputs.forEach(input => input.setAttribute("readonly", "true"));
+
+    // Ẩn phần đổi mật khẩu sau khi lưu
+    document.querySelector(".password-fields").style.display = "none";
+  });
+</script>
+
 </body>
 </html>
-
