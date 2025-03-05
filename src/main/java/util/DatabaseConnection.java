@@ -9,7 +9,7 @@ public class DatabaseConnection {
     // URL của cơ sở dữ liệu
     private static final String DB_URL = "jdbc:mysql://localhost:3306/G2BusTicketSystem";
     private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "123456789";
+    private static final String DB_PASSWORD = "";
 
     // Hàm để lấy kết nối
     public static Connection getConnection() throws SQLException {
