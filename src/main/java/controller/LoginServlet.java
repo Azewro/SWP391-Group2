@@ -30,8 +30,7 @@ public class LoginServlet extends HttpServlet {
         }
         User user = userDAO.findByUsernameOrEmail(usernameOrEmail);
 
-//        if (user != null && PasswordUtils.verifyPassword(password, user.getPasswordHash())) {
-        if (user != null && password.endsWith(user.getPasswordHash())) {
+        if (user != null && PasswordUtils.verifyPassword(password, user.getPasswordHash())) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             session.setAttribute("role_id", user.getRoleId()); // Lưu role_id vào session
