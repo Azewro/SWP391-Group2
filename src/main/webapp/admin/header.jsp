@@ -73,7 +73,7 @@
                     <li><a class="dropdown-item" href="#">Cài đặt</a></li>
                     <li><a class="dropdown-item" href="#">Nhật ký hoạt động</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                    <li><a class="dropdown-item" href="logout.jsp">Đăng xuất</a></li>
                 </ul>
             </li>
         </ul>

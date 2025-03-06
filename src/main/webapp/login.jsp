@@ -186,7 +186,7 @@
             <h2>Đăng nhập tài khoản</h2>
             <form action="login" method="post">
                 <div class="input-group">
-                    <input type="text" name="usernameOrEmail" placeholder="Số điện thoại hoặc Email" required>
+                    <input type="text" name="usernameOrEmail" placeholder="Username hoặc Email" required>
                 </div>
                 <div class="input-group">
                     <input type="password" name="password" placeholder="Mật khẩu" required>

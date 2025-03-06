@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @WebServlet("/google-callback")
 public class GoogleCallbackServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final String CLIENT_ID = "your-client-id";
-    private static final String CLIENT_SECRET = "your-client-secret";
-    private static final String REDIRECT_URI = "http://localhost:8080/google-callback";
+    private static final String CLIENT_ID = "627788153739-pqbr1b10t2m0ggsrvfjihc5tacgi2jes.apps.googleusercontent.com";
+    private static final String CLIENT_SECRET = "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";
+    private static final String REDIRECT_URI = "http://localhost:8080/SWP391_Group2_war_exploded/google-callback";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -59,7 +59,7 @@ public class GoogleCallbackServlet extends HttpServlet {
         session.setAttribute("user_fullname", fullName);
 
         if (userExists) {
-            response.sendRedirect("index    .jsp");
+            response.sendRedirect("index.jsp");
         } else {
             saveUserToDatabase(email, fullName);
             response.sendRedirect("register2.jsp");

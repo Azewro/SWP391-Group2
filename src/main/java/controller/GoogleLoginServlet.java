@@ -12,10 +12,10 @@ import java.io.IOException;
 public class GoogleLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    private static final String CLIENT_ID = "your-client-id"; // Thay bằng Client ID từ Google
-    private static final String REDIRECT_URI = "http://localhost:8080/google-callback";
+    private static final String CLIENT_ID = "627788153739-pqbr1b10t2m0ggsrvfjihc5tacgi2jes.apps.googleusercontent.com"; // Thay bằng Client ID từ Google
+    private static final String REDIRECT_URI = "http://localhost:8080/SWP391_Group2_war_exploded/google-callback";
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String googleAuthUrl = "https://accounts.google.com/o/oauth2/auth"
                 + "?client_id=" + CLIENT_ID
                 + "&redirect_uri=" + REDIRECT_URI
