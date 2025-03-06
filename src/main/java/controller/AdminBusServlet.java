@@ -95,11 +95,30 @@ public class AdminBusServlet extends HttpServlet {
 
     // 2. Hiển thị form chỉnh sửa xe buýt
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int busId = Integer.parseInt(request.getParameter("busId"));
-        Bus existingBus = busDAO.getBusById(busId);
-        request.setAttribute("bus", existingBus);
+        String busIdParam = request.getParameter("busId");
+
+        if (busIdParam != null && !busIdParam.isEmpty()) { // Chỉ lấy busId nếu sửa xe
+            int busId;
+            try {
+                busId = Integer.parseInt(busIdParam);
+            } catch (NumberFormatException e) {
+                response.sendRedirect("bus?action=list");
+                return;
+            }
+
+            Bus existingBus = busDAO.getBusById(busId);
+            if (existingBus == null) {
+                response.sendRedirect("bus?action=list");
+                return;
+            }
+
+            request.setAttribute("bus", existingBus);
+        }
+
         request.getRequestDispatcher("/admin/bus-form.jsp").forward(request, response);
     }
+
+
 
     // 3. Thêm xe buýt mới
     private void insertBus(HttpServletRequest request, HttpServletResponse response) throws IOException {

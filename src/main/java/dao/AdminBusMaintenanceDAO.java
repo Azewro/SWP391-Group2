@@ -94,4 +94,28 @@ public class AdminBusMaintenanceDAO {
         }
         return false;
     }
+
+    public BusMaintenanceLog getMaintenanceLogById(int logId) {
+        String query = "SELECT * FROM BusMaintenanceLogs WHERE log_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, logId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new BusMaintenanceLog(
+                        rs.getInt("log_id"),
+                        rs.getInt("bus_id"),
+                        rs.getTimestamp("maintenance_date").toLocalDateTime(),
+                        rs.getString("description"),
+                        rs.getBigDecimal("cost"),
+                        rs.getString("status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

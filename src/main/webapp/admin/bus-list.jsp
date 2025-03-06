@@ -64,7 +64,7 @@
                                     <a href="bus?action=delete&busId=${bus.busId}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
                                         <i class="fas fa-trash"></i> Xóa
                                     </a>
-                                    <a href="bus?action=maintenance&busId=${bus.busId}" class="btn btn-info btn-sm">
+                                    <a href="bus-maintenance?action=list&busId=${bus.busId}" class="btn btn-info btn-sm">
                                         <i class="fas fa-wrench"></i> Lịch sử bảo trì
                                     </a>
                                 </td>

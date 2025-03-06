@@ -12,12 +12,13 @@
             <div class="container mt-4">
                 <h2 class="mb-3">Lịch sử bảo trì xe buýt</h2>
 
+                <%-- Nút quay lại danh sách xe buýt --%>
                 <a href="bus?action=list" class="btn btn-secondary mb-3">
                     <i class="fas fa-arrow-left"></i> Quay lại danh sách xe buýt
                 </a>
 
-                <%-- Nút thêm lịch sử bảo trì --%>
-                <a href="bus?action=addMaintenanceForm&busId=${busId}" class="btn btn-success mb-3">
+                <%-- Nút thêm bảo trì --%>
+                <a href="bus-maintenance?action=edit&busId=${busId}" class="btn btn-success mb-3">
                     <i class="fas fa-plus"></i> Thêm bảo trì
                 </a>
 
@@ -47,10 +48,11 @@
                                         </span>
                                 </td>
                                 <td>
-                                    <a href="bus?action=editMaintenance&logId=${log.logId}" class="btn btn-warning btn-sm">
+                                        <%-- Đường dẫn sửa/xóa bảo trì --%>
+                                    <a href="bus-maintenance?action=edit&logId=${log.logId}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i> Sửa
                                     </a>
-                                    <a href="bus?action=deleteMaintenance&logId=${log.logId}" class="btn btn-danger btn-sm" onclick="return confirm('Xóa bản ghi này?');">
+                                    <a href="bus-maintenance?action=delete&logId=${log.logId}" class="btn btn-danger btn-sm" onclick="return confirm('Xóa bản ghi này?');">
                                         <i class="fas fa-trash"></i> Xóa
                                     </a>
                                 </td>

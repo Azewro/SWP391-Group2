@@ -13,14 +13,18 @@
             <div class="container mt-4">
                 <h2 class="mb-3"><%= (log != null) ? "Chỉnh sửa Bảo Trì" : "Thêm Bảo Trì" %></h2>
 
-                <form action="bus" method="POST">
-                    <input type="hidden" name="action" value="<%= (log != null) ? "updateMaintenance" : "addMaintenance" %>">
+                <form action="admin/bus-maintenance" method="POST">
+                    <input type="hidden" name="action" value="<%= (log != null) ? "update" : "insert" %>">
                     <input type="hidden" name="logId" value="<%= (log != null) ? log.getLogId() : "" %>">
                     <input type="hidden" name="busId" value="${busId}">
 
+
                     <div class="mb-3">
                         <label class="form-label">Ngày bảo trì</label>
-                        <input type="datetime-local" name="maintenanceDate" class="form-control" required value="<%= (log != null) ? log.getMaintenanceDate().toString().replace(' ', 'T') : "" %>">
+                        <% String formattedDate = (log != null && log.getMaintenanceDate() != null)
+                                ? log.getMaintenanceDate().toString().replace(" ", "T").substring(0, 16)
+                                : ""; %>
+                        <input type="datetime-local" name="maintenanceDate" class="form-control" required value="<%= formattedDate %>">
                     </div>
 
                     <div class="mb-3">
@@ -44,9 +48,11 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Lưu
                     </button>
-                    <a href="bus?action=maintenance&busId=${busId}" class="btn btn-secondary">
+                    <a href="bus-maintenance?action=list&busId=<%= (request.getParameter("busId") != null) ? request.getParameter("busId") : "0" %>"
+                       class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
+
                 </form>
             </div>
         </main>
