@@ -43,7 +43,7 @@ public class AdminRouteServlet extends HttpServlet {
             int routeId = Integer.parseInt(request.getParameter("id"));
             Route route = routeDAO.getRouteById(routeId);
             request.setAttribute("route", route);
-            request.getRequestDispatcher("/admin/routes_form.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/route_form.jsp").forward(request, response);
         } else if (action.equals("delete")) {
             // Xóa tuyến đường
             int routeId = Integer.parseInt(request.getParameter("id"));

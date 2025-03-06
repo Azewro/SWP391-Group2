@@ -62,6 +62,9 @@
       <a class="nav-link ${pageName == 'bus_stop_list' ? 'active' : ''}" href="bus_stop_list.jsp">
         <i class="fas fa-bus"></i> Điểm dừng
       </a>
+      <a class="nav-link ${pageName == 'bus-list' ? 'active' : ''}" href="bus-list.jsp">
+        <i class="fas fa-bus"></i> Danh Sách Xe Bus
+      </a>
 
     </nav>
   </div>
