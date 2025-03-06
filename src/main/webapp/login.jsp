@@ -115,12 +115,27 @@
     </style>
     <script>
         function loginWithGoogle() {
-            window.location.href = "https://accounts.google.com/o/oauth2/auth?client_id=your-client-id"
-                + "&redirect_uri=http://localhost:8080/google-login"
+            const clientId = "627788153739-pqbr1b10t2m0ggsrvfjihc5tacgi2jes.apps.googleusercontent.com";
+            const redirectUri = encodeURIComponent("http://localhost:8080/SWP391_Group2_war_exploded/google-callback");
+            const scope = encodeURIComponent("openid email profile");
+
+            // Xây dựng URL đúng format
+            const googleAuthUrl = "https://accounts.google.com/o/oauth2/auth"
+                + "?client_id=" + clientId
+                + "&redirect_uri=" + redirectUri
                 + "&response_type=code"
-                + "&scope=email%20profile";
+                + "&scope=" + scope
+                + "&access_type=offline"
+                + "&prompt=consent";
+
+            console.log("🔗 Google Auth URL:", googleAuthUrl); // Debug URL xem có lỗi không
+            window.location.href = googleAuthUrl;
         }
+
+
+
     </script>
+
 </head>
 <body>
 <header class="header bg-dark text-white">
@@ -180,7 +195,10 @@
             <p>XE TRUNG CHUYỂN<br>ĐÓN - TRẢ TẬN NƠI</p>
         </div>
         <!-- ✅ Nút đăng nhập bằng Google -->
-        <button onclick="loginWithGoogle()">Đăng nhập bằng Google</button>
+        <button onclick="loginWithGoogle()" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+            Đăng nhập bằng Google
+            <i class="fab fa-google"></i>
+        </button>
         <hr>
         <div class="login-form">
             <h2>Đăng nhập tài khoản</h2>

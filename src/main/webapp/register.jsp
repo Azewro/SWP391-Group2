@@ -131,7 +131,7 @@
     <script>
         function loginWithGoogle() {
             window.location.href = "https://accounts.google.com/o/oauth2/auth?client_id=your-client-id"
-                + "&redirect_uri=http://localhost:8080/google-callback"
+                + "&redirect_uri=http://localhost:8080/SWP391_Group2_war_exploded/google-callback"
                 + "&response_type=code"
                 + "&scope=email%20profile";
         }
