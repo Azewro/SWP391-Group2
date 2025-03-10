@@ -132,12 +132,15 @@ public class AdminBusTripDAO {
             trip.setArrivalTime(rs.getTimestamp("arrival_time").toLocalDateTime());
         }
         trip.setStatus(rs.getString("status"));
-        trip.setAvailableSeats(rs.getInt("available_seats"));
         trip.setCurrentPrice(rs.getBigDecimal("current_price"));
         trip.setDelayReason(rs.getString("delay_reason"));
 
+        // Tính số ghế còn lại
+        trip.setAvailableSeats(getAvailableSeats(trip.getTripId(), trip.getBus().getBusId()));
+
         return trip;
     }
+
 
     public List<User> getAllDrivers() {
         List<User> drivers = new ArrayList<>();
@@ -158,6 +161,152 @@ public class AdminBusTripDAO {
         }
         return drivers;
     }
+
+
+    public List<BusTrip> searchBusTrips(String route, String driver, int page, int pageSize) {
+        List<BusTrip> busTrips = new ArrayList<>();
+        String sql = "SELECT * FROM BusTrips WHERE 1=1";
+
+        if (route != null && !route.isEmpty()) {
+            sql += " AND route_id LIKE ?";
+        }
+        if (driver != null && !driver.isEmpty()) {
+            sql += " AND driver_id IN (SELECT user_id FROM Users WHERE full_name LIKE ?)";
+        }
+        sql += " LIMIT ?, ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int index = 1;
+            if (route != null && !route.isEmpty()) {
+                ps.setString(index++, "%" + route + "%");
+            }
+            if (driver != null && !driver.isEmpty()) {
+                ps.setString(index++, "%" + driver + "%");
+            }
+            ps.setInt(index++, (page - 1) * pageSize);
+            ps.setInt(index, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    busTrips.add(extractBusTripFromResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return busTrips;
+    }
+
+    public int countBusTrips(String route, String driver) {
+        String sql = "SELECT COUNT(*) FROM BusTrips WHERE 1=1";
+
+        if (route != null && !route.isEmpty()) {
+            sql += " AND route_id LIKE ?";
+        }
+        if (driver != null && !driver.isEmpty()) {
+            sql += " AND driver_id IN (SELECT user_id FROM Users WHERE full_name LIKE ?)";
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int index = 1;
+            if (route != null && !route.isEmpty()) {
+                ps.setString(index++, "%" + route + "%");
+            }
+            if (driver != null && !driver.isEmpty()) {
+                ps.setString(index++, "%" + driver + "%");
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+    public List<Route> getAllRoutes() {
+        List<Route> routes = new ArrayList<>();
+        String sql = "SELECT route_id, route_name FROM Routes";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Route route = new Route();
+                route.setRouteId(rs.getInt("route_id"));
+                route.setRouteName(rs.getString("route_name"));
+                routes.add(route);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return routes;
+    }
+
+    public List<Bus> getAllBuses() {
+        List<Bus> buses = new ArrayList<>();
+        String sql = "SELECT bus_id, plate_number, bus_type, capacity FROM Bus WHERE is_active = TRUE";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Bus bus = new Bus();
+                bus.setBusId(rs.getInt("bus_id"));
+                bus.setPlateNumber(rs.getString("plate_number"));
+                bus.setBusType(rs.getString("bus_type"));
+                bus.setCapacity(rs.getInt("capacity"));
+                buses.add(bus);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return buses;
+    }
+
+    // Lấy số ghế còn lại của chuyến xe
+    private int getAvailableSeats(int tripId, int busId) {
+        int totalSeats = 0;
+        int bookedSeats = 0;
+
+        String queryTotalSeats = "SELECT capacity FROM Bus WHERE bus_id = ?";
+        String queryBookedSeats = "SELECT COUNT(*) FROM Tickets WHERE trip_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement psTotal = conn.prepareStatement(queryTotalSeats);
+             PreparedStatement psBooked = conn.prepareStatement(queryBookedSeats)) {
+
+            // Lấy tổng số ghế của xe
+            psTotal.setInt(1, busId);
+            ResultSet rsTotal = psTotal.executeQuery();
+            if (rsTotal.next()) {
+                totalSeats = rsTotal.getInt("capacity");
+            }
+
+            // Lấy số ghế đã được đặt
+            psBooked.setInt(1, tripId);
+            ResultSet rsBooked = psBooked.executeQuery();
+            if (rsBooked.next()) {
+                bookedSeats = rsBooked.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalSeats - bookedSeats;
+    }
+
 
 
 }

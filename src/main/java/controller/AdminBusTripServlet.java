@@ -43,12 +43,23 @@ public class AdminBusTripServlet extends HttpServlet {
         }
     }
 
-    // Hiển thị danh sách chuyến xe
     private void listBusTrips(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<BusTrip> busTrips = busTripDAO.getAllBusTrips();
+        String searchRoute = request.getParameter("searchRoute");
+        String searchDriver = request.getParameter("searchDriver");
+        int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+        int pageSize = 5;
+
+        List<BusTrip> busTrips = busTripDAO.searchBusTrips(searchRoute, searchDriver, page, pageSize);
+        int totalTrips = busTripDAO.countBusTrips(searchRoute, searchDriver);
+        int totalPages = (int) Math.ceil((double) totalTrips / pageSize);
+
         request.setAttribute("busTrips", busTrips);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("/admin/admin-bus-trips.jsp").forward(request, response);
     }
+
+
 
     // Hiển thị form chỉnh sửa hoặc thêm chuyến xe
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -60,13 +71,18 @@ public class AdminBusTripServlet extends HttpServlet {
             busTrip = busTripDAO.getBusTripById(tripId);
         }
 
-        // Lấy danh sách tài xế có role_id = 4
+        // Lấy danh sách tài xế, tuyến đường, xe từ DAO
         List<User> drivers = busTripDAO.getAllDrivers();
+        List<Route> routes = busTripDAO.getAllRoutes();
+        List<Bus> buses = busTripDAO.getAllBuses();
 
         request.setAttribute("busTrip", busTrip);
         request.setAttribute("drivers", drivers);
+        request.setAttribute("routes", routes);
+        request.setAttribute("buses", buses);
         request.getRequestDispatcher("/admin/admin-edit-bus-trip.jsp").forward(request, response);
     }
+
 
 
     @Override

@@ -65,6 +65,9 @@
       <a class="nav-link ${pageName == 'bus-list' ? 'active' : ''}" href="bus-list.jsp">
         <i class="fas fa-bus"></i> Danh Sách Xe Bus
       </a>
+      <a class="nav-link ${pageName == 'bus-list' ? 'active' : ''}" href="admin-bus-trips.jsp">
+        <i class="fas fa-bus"></i> Danh Sách Trips
+      </a>
 
     </nav>
   </div>
