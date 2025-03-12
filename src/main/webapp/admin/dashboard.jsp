@@ -1,23 +1,21 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-  <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
-  <link href="css/styles.css" rel="stylesheet"/>
-  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
-<body class="sb-nav-fixed">
+<%@ page import="java.util.List" %>
+<%@ page import="model.User, model.Role" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome (icon đẹp hơn) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <%@ include file="header.jsp" %>
-<%@ include file="sidebar.jsp" %>
 
-<div id="layoutSidenav_content">
-  <main>
-    <div class="container-fluid px-4">
+
+<div id="layoutSidenav">
+  <jsp:include page="sidebar.jsp"/>
+  <div id="layoutSidenav_content">
+    <main class="content-wrapper">
+      <div class="container mt-4">
       <h1 class="mt-4">Dashboard</h1>
       <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active">Trang tổng quan</li>
@@ -37,11 +35,13 @@
     </div>
   </main>
 
-  <%@ include file="footer.jsp" %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/scripts.js"></script>
+    <%@ include file="footer.jsp" %>
 
-</body>
-</html>
+

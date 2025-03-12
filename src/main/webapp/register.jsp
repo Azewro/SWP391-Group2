@@ -131,37 +131,59 @@
     <script>
         function loginWithGoogle() {
             window.location.href = "https://accounts.google.com/o/oauth2/auth?client_id=your-client-id"
-                + "&redirect_uri=http://localhost:8080/google-callback"
+                + "&redirect_uri=http://localhost:8080/SWP391_Group2_war_exploded/google-callback"
                 + "&response_type=code"
                 + "&scope=email%20profile";
         }
     </script>
 </head>
 <body>
-<header class="header">
-    <div class="logo">
-        <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="FUTA Bus Lines">
+<header class="header bg-dark text-white">
+    <!-- Logo trên cùng -->
+    <div class="text-center py-2">
+        <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="G2 Bus Ticket" height="60">
     </div>
-    <nav class="nav-menu">
-        <ul>
-            <li><a href="#">TRANG CHỦ</a></li>
-            <li><a href="#">LỊCH TRÌNH</a></li>
-            <li><a href="#">TRA CỨU VÉ</a></li>
-            <li><a href="#">TIN TỨC</a></li>
-            <li><a href="#">HÓA ĐƠN</a></li>
-            <li><a href="#">LIÊN HỆ</a></li>
-            <li><a href="#">VỀ CHÚNG TÔI</a></li>
-        </ul>
-    </nav>
-    <div class="login-btn">
-        <button class="login-btn" onclick="window.location.href='login.jsp'">
-            Đăng Nhập
-        </button>
-    </div>
-    <div class="login-btn" >
-        <button class="login-btn" onclick="window.location.href='register.jsp'">
-            Đăng Ký
-        </button>
+
+    <!-- Menu & Nút đăng nhập bên dưới -->
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Menu -->
+            <nav class="nav">
+                <a class="nav-link text-white fw-bold" href="index.jsp">TRANG CHỦ</a>
+                <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
+                <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
+                <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
+                <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
+                <a class="nav-link text-white fw-bold" href="#">LIÊN HỆ</a>
+                <a class="nav-link text-white fw-bold" href="#">VỀ CHÚNG TÔI</a>
+            </nav>
+
+            <!-- Nút đăng nhập / đăng ký -->
+            <div>
+                <%
+                    String username = (String) session.getAttribute("username");
+                    if (username != null) {
+                %>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> <%= username %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="profile.jsp"><i class="bi bi-person"></i> Thông tin cá nhân</a></li>
+                        <li><a class="dropdown-item" href="change-password.jsp"><i class="bi bi-key"></i> Đổi mật khẩu</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                    </ul>
+                </div>
+                <%
+                } else {
+                %>
+                <a href="login.jsp" class="btn btn-outline-light me-2">Đăng Nhập</a>
+                <a href="register.jsp" class="btn btn-warning">Đăng Ký</a>
+                <%
+                    }
+                %>
+            </div>
+        </div>
     </div>
 </header>
 

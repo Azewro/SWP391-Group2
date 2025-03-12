@@ -1,29 +1,22 @@
 package model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "OrderDetails")
 public class OrderDetail {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_detail_id")
     private int orderDetailId;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
     private Ticket ticket;
-
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    // Getters and Setters
+    public OrderDetail() {}
+
+    public OrderDetail(int orderDetailId, Order order, Ticket ticket, BigDecimal price) {
+        this.orderDetailId = orderDetailId;
+        this.order = order;
+        this.ticket = ticket;
+        this.price = price;
+    }
+
     public int getOrderDetailId() {
         return orderDetailId;
     }
