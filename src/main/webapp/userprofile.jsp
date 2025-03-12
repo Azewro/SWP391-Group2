@@ -10,6 +10,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
+<!-- Bootstrap Bundle (bao gồm Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Bootstrap Icons (nếu bạn dùng icon như `bi bi-person`) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -101,29 +107,14 @@
         </div>
       </div>
 
-      <!-- Trường đổi mật khẩu (ẩn mặc định) -->
-      <div class="password-fields mt-4">
-        <h5>Change Password</h5>
-        <div class="row">
-          <div class="col-md-12">
-            <label class="form-label">Current Password</label>
-            <input type="password" class="form-control" id="currentPassword">
-          </div>
-          <div class="col-md-6 mt-3">
-            <label class="form-label">New Password</label>
-            <input type="password" class="form-control" id="newPassword">
-          </div>
-          <div class="col-md-6 mt-3">
-            <label class="form-label">Confirm New Password</label>
-            <input type="password" class="form-control" id="confirmPassword">
-          </div>
-        </div>
-      </div>
-
       <div class="text-center mt-3">
         <button type="button" class="btn btn-primary" id="editBtn">Edit</button>
         <button type="button" class="btn btn-success d-none" id="saveBtn">Save</button>
         <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
+      </div>
+      <div class="text-center mt-3">
+        <a href="modifyBooking" class="btn btn-warning">Modify Booking</a>
+        <a href="viewBookingHistory" class="btn btn-info">View Booking History</a>
       </div>
     </form>
   </div>
@@ -134,9 +125,6 @@
     // Bật chế độ chỉnh sửa
     let inputs = document.querySelectorAll("#profileForm input");
     inputs.forEach(input => input.removeAttribute("readonly"));
-
-    // Hiển thị phần đổi mật khẩu
-    document.querySelector(".password-fields").style.display = "block";
 
     // Hiển thị nút Save & Cancel, ẩn nút Edit
     document.getElementById("saveBtn").classList.remove("d-none");
@@ -151,28 +139,6 @@
   document.getElementById("saveBtn").addEventListener("click", function() {
     // Lấy dữ liệu từ form
     let form = document.getElementById("profileForm");
-    let currentPassword = document.getElementById("currentPassword").value.trim();
-    let newPassword = document.getElementById("newPassword").value.trim();
-    let confirmPassword = document.getElementById("confirmPassword").value.trim();
-
-    // Kiểm tra nếu người dùng muốn đổi mật khẩu
-    if (newPassword.length > 0 || confirmPassword.length > 0) {
-      if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(newPassword)) {
-        alert("Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất 1 chữ số, 1 chữ in hoa và 1 chữ thường.");
-        event.preventDefault(); // Ngăn form submit
-        return;
-      }
-      if (newPassword !== confirmPassword) {
-        alert("Mật khẩu mới và xác nhận mật khẩu không khớp.");
-        event.preventDefault();
-        return;
-      }
-      if (currentPassword.length === 0) {
-        alert("Bạn cần nhập mật khẩu hiện tại để đổi mật khẩu.");
-        event.preventDefault();
-        return;
-      }
-    }
 
     console.log("Gửi dữ liệu lên server...");
     form.submit();
@@ -189,8 +155,6 @@
     let inputs = document.querySelectorAll("#profileForm input:not([type=password])");
     inputs.forEach(input => input.setAttribute("readonly", "true"));
 
-    // Ẩn phần đổi mật khẩu sau khi lưu
-    document.querySelector(".password-fields").style.display = "none";
   });
 </script>
 

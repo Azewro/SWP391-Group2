@@ -1,164 +1,60 @@
 package dao;
 
-import model.Booking;
-import model.User;
-import org.hibernate.dialect.Database;
+import model.Ticket;
 import util.DatabaseConnection;
 
 import java.sql.*;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDAO {
-    public Booking findById(Long id) {
-        String sql = "SELECT * FROM bookings WHERE booking_id = ?";
+
+    public boolean modifyBooking(Ticket ticket) {
+        String sql = "UPDATE Tickets SET trip_id = ?, seat_id = ?, price = ?, status = ? WHERE ticket_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return mapBooking(rs);
-            }
+            stmt.setInt(1, ticket.getTrip().getTripId());
+            stmt.setInt(2, ticket.getSeat().getSeatId());
+            stmt.setBigDecimal(3, ticket.getPrice());
+            stmt.setString(4, ticket.getStatus());
+            stmt.setInt(5, ticket.getTicketId());
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return null;
     }
 
-    public List<Booking> findByUser(User user) {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings WHERE user_id = ? ORDER BY booking_date DESC";
-
+    public boolean cancelBooking(int ticketId) {
+        String sql = "UPDATE Tickets SET status = 'Cancelled' WHERE ticket_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, user.getUserId());
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                bookings.add(mapBooking(rs));
-            }
+            stmt.setInt(1, ticketId);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        return bookings;
-    }
-
-    public List<Booking> findAll() {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings ORDER BY booking_date DESC";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                bookings.add(mapBooking(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return bookings;
-    }
-
-    public void save(Booking booking) {
-        String sql = "INSERT INTO bookings (user_id, booking_date, status) VALUES (?, ?, ?)";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            stmt.setInt(1, booking.getUser().getUserId());
-            stmt.setTimestamp(2, new Timestamp(booking.getBookingDate().getTime()));
-            stmt.setString(3, booking.getStatus());
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return false;
         }
     }
 
-    public void update(Booking booking) {
-        String sql = "UPDATE bookings SET user_id = ?, booking_date = ?, status = ? WHERE booking_id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, booking.getUser().getUserId());
-            stmt.setTimestamp(2, new Timestamp(booking.getBookingDate().getTime()));
-            stmt.setString(3, booking.getStatus());
-            stmt.setLong(4, booking.getId());
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void delete(Long bookingId) {
-        String sql = "DELETE FROM bookings WHERE booking_id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setLong(1, bookingId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void cancelBooking(Long bookingId) {
-        String sql = "UPDATE bookings SET status = 'CANCELLED' WHERE booking_id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setLong(1, bookingId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Booking mapBooking(ResultSet rs) throws SQLException {
-        Booking booking = new Booking();
-        booking.setId(rs.getLong("booking_id"));
-
-        User user = new User();
-        user.setUserId(rs.getInt("user_id"));
-        booking.setUser(user);
-
-        booking.setBookingDate(rs.getTimestamp("booking_date"));
-        booking.setStatus(rs.getString("status"));
-
-        return booking;
-    }
-
-    public List<Booking> findByUserId(int userId) {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings WHERE user_id = ? ORDER BY booking_date DESC";
-
+    public List<Ticket> viewBookingHistory(int userId) {
+        List<Ticket> tickets = new ArrayList<>();
+        String sql = "SELECT * FROM Tickets WHERE user_id = ? ORDER BY purchase_date DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
-                Booking booking = new Booking();
-                booking.setId(rs.getLong("id"));
-                booking.setBookingTitle(rs.getString("booking_title"));
-                booking.setBookingDate(rs.getTimestamp("booking_date"));
-                booking.setCreatedAt(rs.getTimestamp("created_at"));
-                booking.setStatus(rs.getString("status"));
-
-                bookings.add(booking);
+                Ticket ticket = new Ticket();
+                ticket.setTicketId(rs.getInt("ticket_id"));
+                ticket.setPurchaseDate(rs.getTimestamp("purchase_date").toLocalDateTime());
+                ticket.setPrice(rs.getBigDecimal("price"));
+                ticket.setStatus(rs.getString("status"));
+                tickets.add(ticket);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return bookings;
+        return tickets;
     }
 }

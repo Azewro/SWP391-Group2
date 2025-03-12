@@ -1,53 +1,27 @@
 package controller;
 
 import dao.BookingDAO;
-import model.Booking;
-import model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 
-@WebServlet("/cancel-booking")
+@WebServlet("/cancelBooking")
 public class CancelBookingServlet extends HttpServlet {
-
-    private BookingDAO bookingDAO;
-
-    @Override
-    public void init() {
-        bookingDAO = new BookingDAO();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
+        try {
+            int ticketId = Integer.parseInt(request.getParameter("ticketId"));
+            BookingDAO bookingDAO = new BookingDAO();
+            boolean success = bookingDAO.cancelBooking(ticketId);
+            response.sendRedirect("viewBookingHistory?cancel=" + success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("viewBookingHistory?cancel=false");
         }
-
-        User user = (User) session.getAttribute("user");
-        String bookingIdStr = request.getParameter("bookingId");
-
-        if (bookingIdStr != null && !bookingIdStr.trim().isEmpty()) {
-            try {
-                long bookingId = Long.parseLong(bookingIdStr);
-                Booking booking = bookingDAO.findById(bookingId);
-
-                // Kiểm tra quyền hủy booking (userId kiểu int)
-                if (booking != null && booking.getUser().getUserId() == user.getUserId()) {
-                    bookingDAO.cancelBooking(bookingId);
-                }
-            } catch (NumberFormatException ignored) {
-                // Xử lý lỗi nếu bookingId không hợp lệ
-            }
-        }
-
-        response.sendRedirect(request.getContextPath() + "/bookings");
     }
 }

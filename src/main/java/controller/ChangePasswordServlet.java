@@ -44,7 +44,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
 
-        String currentPassword = request.getParameter("currentPassword");
+        String currentPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
