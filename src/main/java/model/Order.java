@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 public class Order {
     private int orderId;
-    private User user;
-    private LocalDateTime orderDate;
+    private User user;  // Đảm bảo có User
+    private LocalDateTime orderDate; // Đảm bảo có orderDate
     private BigDecimal totalAmount;
     private String status;
 
@@ -20,43 +20,19 @@ public class Order {
         this.status = status;
     }
 
-    public int getOrderId() {
-        return orderId;
-    }
+    // Getters & Setters
+    public int getOrderId() { return orderId; }
+    public void setOrderId(int orderId) { this.orderId = orderId; }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public User getUser() {
-        return user;
-    }
+    public LocalDateTime getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

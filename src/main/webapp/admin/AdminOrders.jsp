@@ -45,7 +45,7 @@
                                         </span>
                                 </td>
                                 <td>
-                                    <a href="admin/order-details?orderId=${order.orderId}" class="btn btn-primary btn-sm">
+                                    <a href="order-details?orderId=${order.orderId}" class="btn btn-primary btn-sm">
                                         <i class="fa fa-eye"></i> Chi tiết
                                     </a>
                                     <button class="btn btn-danger btn-sm" onclick="cancelOrder(${order.orderId})">

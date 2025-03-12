@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.OrderDetail, model.Ticket" %>
+<%@ page import="model.Order, model.OrderDetail, model.Ticket" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- Bootstrap 5 & FontAwesome -->
@@ -15,7 +15,12 @@
     <main class="content-wrapper">
       <div class="container mt-4">
         <h2 class="mb-4">Chi tiết đơn hàng</h2>
-        <a href="admin/orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
+        <a href="orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
+
+        <!-- Thông báo lỗi -->
+        <c:if test="${not empty errorMessage}">
+          <div class="alert alert-danger">${errorMessage}</div>
+        </c:if>
 
         <!-- Thông tin đơn hàng -->
         <div class="card mb-4">
@@ -23,14 +28,24 @@
             <h5>Thông tin đơn hàng</h5>
           </div>
           <div class="card-body">
-            <p><strong>ID Đơn hàng:</strong> ${param.orderId}</p>
-            <p><strong>Tổng tiền:</strong> ${totalAmount} VNĐ</p>
+            <p><strong>ID Đơn hàng:</strong> ${order.orderId}</p>
+            <p><strong>Tổng tiền:</strong>
+              <c:choose>
+                <c:when test="${not empty order.totalAmount}">
+                  ${order.totalAmount} VNĐ
+                </c:when>
+                <c:otherwise>
+                  Không có dữ liệu
+                </c:otherwise>
+              </c:choose>
+            </p>
+
             <p><strong>Trạng thái:</strong>
               <span class="badge
-                                ${status == 'Pending' ? 'bg-warning' :
-                                  status == 'Completed' ? 'bg-success' :
+                                ${order.status == 'Pending' ? 'bg-warning' :
+                                  order.status == 'Completed' ? 'bg-success' :
                                   'bg-danger'}">
-                ${status}
+                ${order.status != null ? order.status : 'Không có dữ liệu'}
               </span>
             </p>
           </div>
@@ -52,16 +67,16 @@
             <c:forEach var="detail" items="${orderDetails}">
               <tr>
                 <td>${detail.ticket.ticketId}</td>
-                <td>${detail.ticket.trip.tripId}</td>
-                <td>${detail.ticket.seat.seatNumber}</td>
+                <td>${detail.ticket.trip != null ? detail.ticket.trip.tripId : 'Không có dữ liệu'}</td>
+                <td>${detail.ticket.seat != null ? detail.ticket.seat.seatNumber : 'Không có dữ liệu'}</td>
                 <td>${detail.price} VNĐ</td>
                 <td>
-                                        <span class="badge
-                                            ${detail.ticket.status == 'Booked' ? 'bg-info' :
-                                              detail.ticket.status == 'Used' ? 'bg-success' :
-                                              'bg-danger'}">
-                                            ${detail.ticket.status}
-                                        </span>
+                  <span class="badge
+                      ${detail.ticket.status == 'Booked' ? 'bg-info' :
+                        detail.ticket.status == 'Used' ? 'bg-success' :
+                        'bg-danger'}">
+                      ${detail.ticket.status != null ? detail.ticket.status : 'Không có dữ liệu'}
+                  </span>
                 </td>
               </tr>
             </c:forEach>
