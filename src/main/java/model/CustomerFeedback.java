@@ -1,80 +1,41 @@
 package model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-@Entity
-@Table(name = "CustomerFeedback")
 public class CustomerFeedback {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feedback_id")
     private int feedbackId;
-
-    @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
-    private Ticket ticket;
-
-    @Column(name = "rating", nullable = false)
+    private int ticketId;
     private int rating;
-
-    @Column(name = "comment")
     private String comment;
-
-    @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
-
-    @Column(name = "status", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'Pending'")
+    private Timestamp createdAt;
     private String status;
 
-    // Getters and Setters
-    public int getFeedbackId() {
-        return feedbackId;
-    }
-
-    public void setFeedbackId(int feedbackId) {
+    // Constructor đúng với số lượng tham số từ DAO
+    public CustomerFeedback(int feedbackId, int ticketId, int rating, String comment, Timestamp createdAt, String status) {
         this.feedbackId = feedbackId;
-    }
-
-    public Ticket getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(Ticket ticket) {
-        this.ticket = ticket;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
+        this.ticketId = ticketId;
         this.rating = rating;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
     }
-}
 
+    // Getters và Setters
+    public int getFeedbackId() { return feedbackId; }
+    public void setFeedbackId(int feedbackId) { this.feedbackId = feedbackId; }
+
+    public int getTicketId() { return ticketId; }
+    public void setTicketId(int ticketId) { this.ticketId = ticketId; }
+
+    public int getRating() { return rating; }
+    public void setRating(int rating) { this.rating = rating; }
+
+    public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+}
