@@ -179,6 +179,7 @@
       <nav class="nav">
         <a class="nav-link text-white fw-bold" href="index.jsp">TRANG CHỦ</a>
         <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
+        <a class="nav-link text-white fw-bold" href="bookings">ĐẶT VÉ</a>
         <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
         <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
         <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>

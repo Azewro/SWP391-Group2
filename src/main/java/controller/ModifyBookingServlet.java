@@ -49,7 +49,7 @@ public class ModifyBookingServlet extends HttpServlet {
             request.setAttribute("booking", booking);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             request.setAttribute("bookingDateFormatted", sdf.format(booking.getBookingDate()));
-            request.getRequestDispatcher("/WEB-INF/views/modify-booking.jsp").forward(request, response);
+            request.getRequestDispatcher("modify-booking.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/bookings");
         }
@@ -109,7 +109,7 @@ public class ModifyBookingServlet extends HttpServlet {
                 request.setAttribute("booking", booking);
                 request.setAttribute("bookingTitle", bookingTitle);
                 request.setAttribute("bookingDateFormatted", bookingDateStr);
-                request.getRequestDispatcher("/WEB-INF/views/modify-booking.jsp").forward(request, response);
+                request.getRequestDispatcher("modify-booking.jsp").forward(request, response);
                 return;
             }
 
