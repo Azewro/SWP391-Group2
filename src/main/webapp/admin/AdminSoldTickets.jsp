@@ -15,7 +15,7 @@
     <main class="content-wrapper">
       <div class="container mt-4">
         <h2 class="mb-4">Danh sách vé đã bán</h2>
-        <a href="admin/orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
+        <a href="orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
 
         <!-- Bảng danh sách vé -->
         <div class="table-responsive">
@@ -111,7 +111,7 @@
 
   function updateTicketStatus(ticketId, newStatus) {
     if (confirm("Bạn có chắc muốn thay đổi trạng thái vé này?")) {
-      window.location.href = `admin/tickets?ticketId=${ticketId}&status=${newStatus}`;
+      window.location.href = `tickets?ticketId=${ticketId}&status=${newStatus}`;
     }
   }
 

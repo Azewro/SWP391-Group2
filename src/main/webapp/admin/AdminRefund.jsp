@@ -15,7 +15,7 @@
     <main class="content-wrapper">
       <div class="container mt-4">
         <h2 class="mb-4">Quản lý hoàn tiền</h2>
-        <a href="admin/orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
+        <a href="orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
 
         <!-- Bảng danh sách hoàn tiền -->
         <div class="table-responsive">
@@ -111,7 +111,7 @@
 
   function updateRefundStatus(paymentId, newStatus) {
     if (confirm("Bạn có chắc muốn thay đổi trạng thái hoàn tiền này?")) {
-      window.location.href = `admin/refunds?paymentId=${paymentId}&refundStatus=${newStatus}`;
+      window.location.href = `refunds?paymentId=${paymentId}&refundStatus=${newStatus}`;
     }
   }
 
