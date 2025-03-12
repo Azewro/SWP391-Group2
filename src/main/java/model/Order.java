@@ -1,32 +1,25 @@
 package model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Orders")
 public class Order {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
     private int orderId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(name = "order_date", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime orderDate;
-
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
-
-    @Column(name = "status", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'Pending'")
     private String status;
 
-    // Getters and Setters
+    public Order() {}
+
+    public Order(int orderId, User user, LocalDateTime orderDate, BigDecimal totalAmount, String status) {
+        this.orderId = orderId;
+        this.user = user;
+        this.orderDate = orderDate;
+        this.totalAmount = totalAmount;
+        this.status = status;
+    }
+
     public int getOrderId() {
         return orderId;
     }
@@ -67,4 +60,3 @@ public class Order {
         this.status = status;
     }
 }
-

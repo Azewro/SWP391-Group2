@@ -1,44 +1,33 @@
 package model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Payments")
 public class Payment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id")
     private int paymentId;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-
-    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
-
-    @Column(name = "payment_method", nullable = false, length = 50)
     private String paymentMethod;
-
-    @Column(name = "payment_time", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime paymentTime;
-
-    @Column(name = "transaction_reference", nullable = false, unique = true, length = 100)
     private String transactionReference;
-
-    @Column(name = "status", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'Processing'")
     private String status;
-
-    @Column(name = "refund_status", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'No Refund'")
     private String refundStatus;
-
-    @Column(name = "refund_reason")
     private String refundReason;
 
-    // Getters and Setters
+    public Payment() {}
+
+    public Payment(int paymentId, Order order, BigDecimal amount, String paymentMethod, LocalDateTime paymentTime, String transactionReference, String status, String refundStatus, String refundReason) {
+        this.paymentId = paymentId;
+        this.order = order;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.paymentTime = paymentTime;
+        this.transactionReference = transactionReference;
+        this.status = status;
+        this.refundStatus = refundStatus;
+        this.refundReason = refundReason;
+    }
+
     public int getPaymentId() {
         return paymentId;
     }
@@ -111,4 +100,3 @@ public class Payment {
         this.refundReason = refundReason;
     }
 }
-
