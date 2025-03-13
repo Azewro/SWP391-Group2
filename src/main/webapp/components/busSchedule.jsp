@@ -200,7 +200,6 @@
         <thead>
         <tr>
             <th>Tuyến xe</th>
-            <th>Loại xe</th>
             <th>Quãng đường</th>
             <th>Thời gian hành trình</th>
             <th>Giá vé</th>
@@ -211,7 +210,6 @@
         <c:forEach var="route" items="${busSchedules}">
             <tr class="route-row">
                 <td>${route.startLocation.name} ⇄ ${route.endLocation.name}</td>
-                <td>${route.routeType != null ? route.routeType : "---"}</td>
                 <td>${route.distance} km</td>
                 <td>
                     <c:choose>

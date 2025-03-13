@@ -43,6 +43,9 @@ public class Location {
         this.name = name;
     }
 
+    public Location() {
+    }
+
 
     // Getters and Setters
     public int getLocationId() {
