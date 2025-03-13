@@ -25,19 +25,25 @@ public class AdminFeedbackServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action == null) {
-            action = "list";
-        }
-
-        switch (action) {
-            case "search":
-                searchFeedback(request, response);
-                break;
-            default:
-                listFeedback(request, response);
-                break;
+        if (action == null || action.equals("list")) {
+            listFeedback(request, response);
+        } else {
+            listFeedbackByStatus(request, response, action);
         }
     }
+
+    // Hiển thị danh sách phản hồi theo trạng thái
+    private void listFeedbackByStatus(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
+        List<CustomerFeedback> feedbackList = feedbackDAO.getFeedbackByStatus(
+                status.equals("pending") ? "Pending" :
+                        status.equals("approved") ? "Approved" :
+                                status.equals("rejected") ? "Rejected" : ""
+        );
+        request.setAttribute("feedbackList", feedbackList);
+        request.setAttribute("pageName", "feedback_" + status);
+        request.getRequestDispatcher("/admin/feedback_list.jsp").forward(request, response);
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

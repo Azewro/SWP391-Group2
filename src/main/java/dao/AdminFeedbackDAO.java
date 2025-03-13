@@ -82,4 +82,25 @@ public class AdminFeedbackDAO {
                 rs.getString("status")
         );
     }
+
+    // Lấy phản hồi theo trạng thái (Pending, Approved, Rejected)
+    public List<CustomerFeedback> getFeedbackByStatus(String status) {
+        List<CustomerFeedback> feedbackList = new ArrayList<>();
+        String query = "SELECT * FROM CustomerFeedback WHERE status = ? ORDER BY created_at DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, status);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    feedbackList.add(mapResultSetToFeedback(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return feedbackList;
+    }
+
 }

@@ -20,7 +20,7 @@
     color: white;
     padding: 12px 15px;
     font-size: 16px;
-    text-decoration: none; /* Giữ liên kết click được */
+    text-decoration: none;
     display: flex;
     align-items: center;
     transition: 0.3s;
@@ -98,6 +98,27 @@
         </a>
         <a class="nav-link ${pageName == 'refund_list' ? 'active' : ''}" href="refunds">
           <i class="fas fa-money-bill"></i> Hoàn tiền
+        </a>
+      </div>
+
+      <hr class="text-white">
+
+      <!-- Quản lý phản hồi khách hàng -->
+      <a class="nav-link" href="#" onclick="toggleMenu('feedbackMenu')">
+        <i class="fas fa-comments"></i> Quản lý Phản hồi <i class="fas fa-chevron-down ms-auto"></i>
+      </a>
+      <div id="feedbackMenu" class="submenu ${pageName.startsWith('feedback') ? 'submenu-active' : ''}">
+        <a class="nav-link ${pageName == 'feedback_list' ? 'active' : ''}" href="feedback">
+          <i class="fas fa-list"></i> Danh sách phản hồi
+        </a>
+        <a class="nav-link ${pageName == 'feedback_pending' ? 'active' : ''}" href="feedback?action=pending">
+          <i class="fas fa-hourglass-half"></i> Phản hồi chờ duyệt
+        </a>
+        <a class="nav-link ${pageName == 'feedback_approved' ? 'active' : ''}" href="feedback?action=approve">
+          <i class="fas fa-check-circle"></i> Phản hồi đã duyệt
+        </a>
+        <a class="nav-link ${pageName == 'feedback_rejected' ? 'active' : ''}" href="feedback?action=rejecte">
+          <i class="fas fa-times-circle"></i> Phản hồi bị từ chối
         </a>
       </div>
 

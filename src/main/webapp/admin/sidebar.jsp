@@ -122,6 +122,7 @@
         </a>
       </div>
 
+
       <hr class="text-white">
 
       <a class="nav-link" href="logout.jsp">
