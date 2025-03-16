@@ -88,30 +88,24 @@ public class UserDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, usernameOrEmail);
             stmt.setString(2, usernameOrEmail);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    // In giá trị mật khẩu hash để debug
-                    String hashedPassword = rs.getString("password_hash");
-                    System.out.println("Password from DB: " + hashedPassword);
+            ResultSet rs = stmt.executeQuery();
 
-                    return new User(
-                            rs.getInt("user_id"),
-                            rs.getString("username"),
-                            rs.getString("full_name"),
-                            rs.getString("email"),
-                            rs.getString("phone"),
-                            rs.getInt("role_id"),
-                            rs.getBoolean("is_active"),
-                            hashedPassword // ⚠️ Bổ sung cột password_hash vào đối tượng User
-                    );
-                } else {
-                    System.out.println("No user found with username or email: " + usernameOrEmail);
-                }
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("full_name"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getInt("role_id"),
+                        rs.getBoolean("is_active"),
+                        rs.getString("status_reason"),
+                        rs.getString("password_hash")
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

@@ -58,6 +58,17 @@ public class User {
         setRoleId(roleId);
         this.isActive = isActive;
     }
+    public User(int userId, String username, String fullName, String email, String phone, int roleId, boolean isActive, String statusReason, String passwordHash) {
+        this.userId = userId;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        setRoleId(roleId);
+        this.isActive = isActive;
+        this.statusReason = statusReason;
+        this.passwordHash = passwordHash;
+    }
 
     public User(int userId, String username, String fullName, String email, String phone, int roleId, boolean isActive, String passwordHash) {
         this.userId = userId;
