@@ -319,7 +319,7 @@
     .ant-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: space-evenly;
         flex-wrap: wrap;
     }
 
@@ -384,6 +384,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        
     </head>
     <body>
         <jsp:include page="/components/header.jsp"/>
@@ -410,55 +411,62 @@
                     </div>
                 </div>
             </form>
+            <!-- Tiêu đề của danh sách tuyến -->
+            <div class="row bg-light p-3 rounded">
+                <div class="col-md-4 fw-bold">Tuyến xe</div>
+                <div class="col-md-2 fw-bold">Loại xe</div>
+                <div class="col-md-2 fw-bold">Quãng đường</div>
+                <div class="col-md-2 fw-bold">Thời gian hành trình</div>
+                <div class="col-md-2 fw-bold">Giá vé</div>
+            </div>
 
-            <div class="schedule-list">
+            <!-- Danh sách các tuyến -->
+            <div class="container mt-3">
                 <c:forEach var="route" items="${routes}">
-                    <div class="schedule-card flex w-full flex-col gap-[6px] text-left">
-                        <div class="ant-row items-center">
-                            <div class="ant-col ant-col-6">
-                                <div class="flex w-full items-center gap-2">
-                                    <span class="font-medium text-orange">${route.startLocation.name}</span>
-                                    <img src="./images/icons/ic_double_arrow.svg" alt="arrow">
-                                    <span>${route.endLocation.name}</span>
-                                </div>
-                            </div>
-                            <div class="ant-col ant-col-2">Xe khách</div> 
-                            <div class="ant-col ant-col-3">${route.distance} km</div>
-                            <div class="ant-col ant-col-4">---</div>
-                            <div class="ant-col ant-col-2">${route.basePrice} VNĐ</div>
-                            <div class="ant-col flex justify-end" style="flex: 1 1 auto;">
-                                <button type="button" class="ant-btn ant-btn-round ant-btn-default button-default mr-2">
-                                    <span>Tìm tuyến xe</span>
-                                </button>
-                            </div>
+                    <div class="row bg-white shadow-sm p-3 mb-3 rounded align-items-center">
+                        <div class="col-md-4 d-flex align-items-center">
+                            <span class="fw-semibold text-primary">${route.startLocation.name}</span>
+                            <img src="https://futabus.vn/images/icons/ic_double_arrow.svg" alt="arrow" class="mx-2" width="20">
+                            <span class="fw-semibold text-dark">${route.endLocation.name}</span>
+                        </div>
+                        <div class="col-md-2">Xe khách</div>
+                        <div class="col-md-2">${route.distance} km</div>
+                        <div class="col-md-2">${route.estimatedDuration}</div>
+                        <div class="col-md-2 fw-bold text-danger">${route.basePrice} VNĐ</div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                Tìm tuyến xe
+                            </button>
                         </div>
                     </div>
                 </c:forEach>
             </div>
 
-
         </div>
 
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="support-info">
-                    <h3>TRUNG TÂM TỔNG ĐÀI & CSKH</h3>
-                    <p class="hotline">1900 6067</p>
-                    <p>CÔNG TY CỔ PHẦN XE KHÁCH G2 Bus - G2 BUS LINES</p>
-                    <p>Địa chỉ: Hòa Lạc, Hà Nội, Việt Nam.</p>
-                    <p>Email: <a href="mailto:GPT@fpt.edu.vn">GPT@fpt.edu.vn</a></p>
-                    <p>Điện thoại: 0979605489</p>
-                </div>
-                <div class="footer-links">
-                    <ul>
-                        <li><a href="#">Về chúng tôi</a></li>
-                        <li><a href="#">Lịch trình</a></li>
-                        <li><a href="#">Tuyển dụng</a></li>
-                        <li><a href="#">Tin tức & Sự kiện</a></li>
-                        <li><a href="#">Mạng lưới văn phòng</a></li>
-                    </ul>
-                </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="support-info">
+                <h3>TRUNG TÂM TỔNG ĐÀI & CSKH</h3>
+                <p class="hotline">1900 6067</p>
+                <p>CÔNG TY CỔ PHẦN XE KHÁCH G2 Bus - G2 BUS LINES</p>
+                <p>Địa chỉ: Hòa Lạc, Hà Nội, Việt Nam.</p>
+                <p>Email: <a href="mailto:GPT@fpt.edu.vn">GPT@fpt.edu.vn</a></p>
+                <p>Điện thoại: 0979605489</p>
             </div>
-        </footer>
-    </body>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Lịch trình</a></li>
+                    <li><a href="#">Tuyển dụng</a></li>
+                    <li><a href="#">Tin tức & Sự kiện</a></li>
+                    <li><a href="#">Mạng lưới văn phòng</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>

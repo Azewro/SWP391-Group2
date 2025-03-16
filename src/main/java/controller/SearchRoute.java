@@ -75,6 +75,7 @@ public class SearchRoute extends HttpServlet {
 
 // Set dữ liệu trước khi forward
         request.setAttribute("routes", routes);
+        request.setAttribute("locations", routeDAO.getAllLocations());
         request.getRequestDispatcher("/components/SearchRoute.jsp").forward(request, response);
 
     }

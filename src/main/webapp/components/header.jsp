@@ -167,6 +167,7 @@
         font-size: 16px;
     }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <header class="header bg-dark text-white">
     <!-- Logo trên cùng -->
     <div class="text-center py-2">
@@ -184,7 +185,7 @@
                 <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
                 <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
                 <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
-                <a class="nav-link text-white fw-bold" href="#">VỀ CHÚNG TÔI</a>
+                <a class="nav-link text-white fw-bold" href="SearchRoute">TUYẾN ĐƯỜNG</a>
             </nav>
 
             <!-- Nút đăng nhập / đăng ký -->
