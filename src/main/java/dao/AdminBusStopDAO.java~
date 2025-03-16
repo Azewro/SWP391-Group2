@@ -37,7 +37,7 @@ public class AdminBusStopDAO {
 
                 Route route = new Route(routeId, routeName);
                 BusStop busStop = new BusStop(stopId, stopName, route, stopOrder, estimatedWaitingTime, isActive, "");
-
+    
                 // Kiểm tra xem BusStop có hợp lệ không
                 if (stopId == 0 || stopName == null) {
                     System.out.println("⚠ Lỗi tạo BusStop: " + busStop);

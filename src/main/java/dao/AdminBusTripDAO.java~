@@ -128,13 +128,7 @@ public class AdminBusTripDAO {
 
         User driver = new User();
         driver.setUserId(rs.getInt("driver_id"));
-
-        // Kiểm tra xem cột "full_name" có tồn tại trong kết quả không
-        try {
-            driver.setFullName(rs.getString("full_name"));
-        } catch (SQLException e) {
-            driver.setFullName("Không có dữ liệu"); // Gán giá trị mặc định nếu không tìm thấy cột
-        }
+        driver.setFullName(rs.getString("full_name")); // Gán tên tài xế
         trip.setDriver(driver);
 
         trip.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
@@ -145,11 +139,11 @@ public class AdminBusTripDAO {
         trip.setCurrentPrice(rs.getBigDecimal("current_price"));
         trip.setDelayReason(rs.getString("delay_reason"));
 
+        // Tính số ghế còn lại
         trip.setAvailableSeats(getAvailableSeats(trip.getTripId(), trip.getBus().getBusId()));
 
         return trip;
     }
-
 
 
 

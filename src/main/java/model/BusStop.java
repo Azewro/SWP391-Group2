@@ -17,6 +17,8 @@ public class BusStop {
         this.stopName = stopName;
     }
 
+
+
     public BusStop(int stopId, Location location, String stopName, Route route, int stopOrder, Integer estimatedWaitingTime, boolean isActive, String description) {
         this.stopId = stopId;
         this.location = location;
@@ -27,9 +29,17 @@ public class BusStop {
         this.isActive = isActive;
         this.description = description;
     }
-
-    public BusStop(int stopId, String stopName, Route route, int stopOrder, int estimatedWaitingTime, boolean isActive, String s) {
+    public BusStop(int stopId, String stopName, Route route, int stopOrder, Integer estimatedWaitingTime, boolean isActive, String description) {
+        this.stopId = stopId;
+        this.stopName = stopName;
+        this.route = route;
+        this.stopOrder = stopOrder;
+        this.estimatedWaitingTime = estimatedWaitingTime;
+        this.isActive = isActive;
+        this.description = description;
     }
+
+
 
     public int getStopId() { return stopId; }
     public void setStopId(int stopId) { this.stopId = stopId; }
@@ -59,6 +69,19 @@ public class BusStop {
 
     public int getLocationId() {
         return (location != null) ? location.getLocationId() : 0; // Tránh lỗi NullPointerException
+    }
+
+    @Override
+    public String toString() {
+        return "BusStop{" +
+                "stopId=" + stopId +
+                ", stopName='" + stopName + '\'' +
+                ", route=" + (route != null ? route.getRouteName() : "null") +
+                ", stopOrder=" + stopOrder +
+                ", estimatedWaitingTime=" + estimatedWaitingTime +
+                ", isActive=" + isActive +
+                ", description='" + description + '\'' +
+                '}';
     }
 
 }
