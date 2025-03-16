@@ -74,15 +74,29 @@ public class UserServlet extends HttpServlet {
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         int userId = Integer.parseInt(request.getParameter("id"));
-        userDAO.deleteUser(userId);
+        String statusReason = request.getParameter("statusReason");
+
+        if (statusReason == null || statusReason.trim().isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập lý do vô hiệu hóa tài khoản.");
+            try {
+                listUsers(request, response);
+            } catch (ServletException e) {
+                throw new RuntimeException(e);
+            }
+            return;
+        }
+
+        userDAO.disableUser(userId, statusReason);
         response.sendRedirect("users"); // Quay lại danh sách người dùng
     }
+
 
     private void restoreUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         int userId = Integer.parseInt(request.getParameter("id"));
         userDAO.restoreUser(userId);
         response.sendRedirect("users"); // Quay lại danh sách người dùng
     }
+
 
 
     @Override
