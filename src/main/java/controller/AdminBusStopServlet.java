@@ -24,6 +24,7 @@ public class AdminBusStopServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
+
         if (action == null) {
             String search = request.getParameter("search");
             String routeFilter = request.getParameter("route_id");
@@ -45,7 +46,8 @@ public class AdminBusStopServlet extends HttpServlet {
             // Lấy thông tin điểm dừng để chỉnh sửa
             int stopId = Integer.parseInt(request.getParameter("id"));
             BusStop busStop = busStopDAO.getBusStopById(stopId);
-            List<Route> routes = routeDAO.getAllRoutes(); // Lấy danh sách tuyến đường để chọn
+            List<Route> routes = routeDAO.getAllRoutes(); // Lấy danh sách tuyến đường
+
             request.setAttribute("busStop", busStop);
             request.setAttribute("routes", routes);
             request.getRequestDispatcher("/admin/bus_stop_form.jsp").forward(request, response);
@@ -93,5 +95,7 @@ public class AdminBusStopServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/admin/bus_stops");
         }
     }
+
+
 }
 

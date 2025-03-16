@@ -13,27 +13,60 @@ public class AdminBusStopDAO {
     // Lấy danh sách tất cả điểm dừng
     public List<BusStop> getAllBusStops() {
         List<BusStop> busStops = new ArrayList<>();
-        String query = "SELECT stop_id, stop_name FROM BusStops";
+        String query = "SELECT b.stop_id, COALESCE(b.stop_name, 'Không có tên') AS stop_name, " +
+                "COALESCE(b.route_id, -1) AS route_id, " +
+                "COALESCE(r.route_name, 'Chưa có tuyến') AS route_name, " +
+                "COALESCE(b.stop_order, 0) AS stop_order, " +
+                "COALESCE(b.estimated_waiting_time, 0) AS estimated_waiting_time, " +
+                "b.is_active " +
+                "FROM BusStops b " +
+                "LEFT JOIN Routes r ON b.route_id = r.route_id";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                busStops.add(new BusStop(
-                        rs.getInt("stop_id"),
-                        rs.getString("stop_name")
-                ));
+                int stopId = rs.getInt("stop_id");
+                String stopName = rs.getString("stop_name");
+                int routeId = rs.getInt("route_id");
+                String routeName = rs.getString("route_name");
+                int stopOrder = rs.getInt("stop_order");
+                int estimatedWaitingTime = rs.getInt("estimated_waiting_time");
+                boolean isActive = rs.getBoolean("is_active");
+
+                Route route = new Route(routeId, routeName);
+                BusStop busStop = new BusStop(stopId, stopName, route, stopOrder, estimatedWaitingTime, isActive, "");
+
+                // Kiểm tra xem BusStop có hợp lệ không
+                if (stopId == 0 || stopName == null) {
+                    System.out.println("⚠ Lỗi tạo BusStop: " + busStop);
+                } else {
+                    busStops.add(busStop);
+                }
             }
+
+            // Kiểm tra số lượng phần tử trước khi trả về
+            System.out.println("🚀 Tổng số điểm dừng hợp lệ: " + busStops.size());
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return busStops;
     }
 
+
+
+
     // Lấy thông tin điểm dừng theo ID
     public BusStop getBusStopById(int stopId) {
-        String query = "SELECT * FROM BusStops WHERE stop_id = ?";
+        String query = "SELECT b.stop_id, b.stop_name, b.route_id, " +
+                "COALESCE(r.route_name, 'Chưa có tuyến') AS route_name, " +
+                "b.stop_order, b.estimated_waiting_time, b.is_active " +
+                "FROM BusStops b " +
+                "LEFT JOIN Routes r ON b.route_id = r.route_id " +
+                "WHERE b.stop_id = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -43,7 +76,12 @@ public class AdminBusStopDAO {
             if (rs.next()) {
                 return new BusStop(
                         rs.getInt("stop_id"),
-                        rs.getString("stop_name")
+                        rs.getString("stop_name"),
+                        new Route(rs.getInt("route_id"), rs.getString("route_name")),
+                        rs.getInt("stop_order"),
+                        rs.getObject("estimated_waiting_time") != null ? rs.getInt("estimated_waiting_time") : null,
+                        rs.getBoolean("is_active"),
+                        ""
                 );
             }
         } catch (SQLException e) {
@@ -51,6 +89,7 @@ public class AdminBusStopDAO {
         }
         return null;
     }
+
 
     // Thêm mới một điểm dừng
     public boolean addBusStop(BusStop busStop) {
@@ -117,28 +156,28 @@ public class AdminBusStopDAO {
 
     public List<BusStop> searchBusStops(String search, String routeFilter) {
         List<BusStop> busStops = new ArrayList<>();
-        String query = "SELECT b.stop_id, b.stop_name, b.route_id, r.route_name, " +
+        StringBuilder query = new StringBuilder("SELECT b.stop_id, b.stop_name, b.route_id, " +
+                "COALESCE(r.route_name, 'Chưa có tuyến') AS route_name, " +
                 "b.stop_order, b.estimated_waiting_time, b.is_active " +
                 "FROM BusStops b " +
-                "JOIN Routes r ON b.route_id = r.route_id " +
-                "WHERE 1=1 ";
+                "LEFT JOIN Routes r ON b.route_id = r.route_id WHERE 1=1 ");
+
+        List<Object> parameters = new ArrayList<>();
 
         if (search != null && !search.isEmpty()) {
-            query += "AND b.stop_name LIKE ? ";
+            query.append("AND b.stop_name LIKE ? ");
+            parameters.add("%" + search + "%");
         }
         if (routeFilter != null && !routeFilter.isEmpty()) {
-            query += "AND b.route_id = ? ";
+            query.append("AND b.route_id = ? ");
+            parameters.add(Integer.parseInt(routeFilter));
         }
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(query.toString())) {
 
-            int paramIndex = 1;
-            if (search != null && !search.isEmpty()) {
-                stmt.setString(paramIndex++, "%" + search + "%");
-            }
-            if (routeFilter != null && !routeFilter.isEmpty()) {
-                stmt.setInt(paramIndex++, Integer.parseInt(routeFilter));
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
             }
 
             ResultSet rs = stmt.executeQuery();
@@ -148,7 +187,7 @@ public class AdminBusStopDAO {
                         rs.getString("stop_name"),
                         new Route(rs.getInt("route_id"), rs.getString("route_name")),
                         rs.getInt("stop_order"),
-                        rs.getInt("estimated_waiting_time"),
+                        rs.getObject("estimated_waiting_time") != null ? rs.getInt("estimated_waiting_time") : null,
                         rs.getBoolean("is_active"),
                         ""
                 ));
@@ -160,27 +199,32 @@ public class AdminBusStopDAO {
     }
 
 
+    public static void main(String[] args) {
+        AdminBusStopDAO dao = new AdminBusStopDAO();
+        List<BusStop> stops = dao.getAllBusStops();
 
-        public static void main(String[] args) {
-            AdminBusStopDAO busStopDAO = new AdminBusStopDAO();
+        System.out.println("🚀 Tổng số điểm dừng trong danh sách: " + stops.size());
 
-            // Kiểm tra lấy tất cả điểm dừng
-            System.out.println("Danh sách điểm dừng:");
-            for (BusStop busStop : busStopDAO.getAllBusStops()) {
-                System.out.println(busStop.getStopId() + " - " + busStop.getStopName());
-            }
+        int countValid = 0;
+        int countInvalid = 0;
 
-            // Kiểm tra lấy điểm dừng theo ID
-            int testStopId = 1; // Cập nhật ID phù hợp với database
-            BusStop busStop = busStopDAO.getBusStopById(testStopId);
-            if (busStop != null) {
-                System.out.println("\nChi tiết điểm dừng:");
-                System.out.println("ID: " + busStop.getStopId());
-                System.out.println("Tên: " + busStop.getStopName());
+        for (BusStop stop : stops) {
+            if (stop.getStopId() == 0 || stop.getStopName() == null) {
+                System.out.println("⚠ Cảnh báo: Có dữ liệu sai -> " + stop);
+                countInvalid++;
             } else {
-                System.out.println("\nKhông tìm thấy điểm dừng với ID: " + testStopId);
+                System.out.println("✅ Dữ liệu hợp lệ -> " + stop);
+                countValid++;
             }
         }
+
+        System.out.println("📌 Tổng số điểm dừng hợp lệ: " + countValid);
+        System.out.println("📌 Tổng số điểm dừng lỗi: " + countInvalid);
+    }
+
+
+
+
 
 
 }

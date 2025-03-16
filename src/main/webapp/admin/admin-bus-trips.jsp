@@ -39,7 +39,17 @@
                             <td>${busTrip.tripId}</td>
                             <td>${busTrip.route.routeId}</td>
                             <td>${busTrip.bus.busId}</td>
-                            <td>${busTrip.driver.fullName}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty busTrip.driver and not empty busTrip.driver.fullName}">
+                                        ${busTrip.driver.fullName}
+                                    </c:when>
+                                    <c:otherwise>
+                                        Không có tài xế
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+
                             <td>${busTrip.departureTime}</td>
                             <td>${busTrip.arrivalTime}</td>
                             <td>${busTrip.status}</td>

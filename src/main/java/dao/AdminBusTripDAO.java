@@ -15,7 +15,8 @@ public class AdminBusTripDAO {
     // Lấy danh sách tất cả chuyến xe
     public List<BusTrip> getAllBusTrips() {
         List<BusTrip> busTrips = new ArrayList<>();
-        String sql = "SELECT * FROM BusTrips";
+        String sql = "SELECT bt.*, u.full_name FROM BusTrips bt " +
+                "JOIN Users u ON bt.driver_id = u.user_id";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -23,6 +24,7 @@ public class AdminBusTripDAO {
 
             while (rs.next()) {
                 BusTrip trip = extractBusTripFromResultSet(rs);
+                trip.getDriver().setFullName(rs.getString("full_name")); // Gán tên tài xế
                 busTrips.add(trip);
             }
         } catch (SQLException e) {
@@ -30,6 +32,7 @@ public class AdminBusTripDAO {
         }
         return busTrips;
     }
+
 
     // Lấy thông tin một chuyến xe theo ID
     public BusTrip getBusTripById(int tripId) {
@@ -125,6 +128,13 @@ public class AdminBusTripDAO {
 
         User driver = new User();
         driver.setUserId(rs.getInt("driver_id"));
+
+        // Kiểm tra xem cột "full_name" có tồn tại trong kết quả không
+        try {
+            driver.setFullName(rs.getString("full_name"));
+        } catch (SQLException e) {
+            driver.setFullName("Không có dữ liệu"); // Gán giá trị mặc định nếu không tìm thấy cột
+        }
         trip.setDriver(driver);
 
         trip.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
@@ -135,11 +145,12 @@ public class AdminBusTripDAO {
         trip.setCurrentPrice(rs.getBigDecimal("current_price"));
         trip.setDelayReason(rs.getString("delay_reason"));
 
-        // Tính số ghế còn lại
         trip.setAvailableSeats(getAvailableSeats(trip.getTripId(), trip.getBus().getBusId()));
 
         return trip;
     }
+
+
 
 
     public List<User> getAllDrivers() {
@@ -165,13 +176,14 @@ public class AdminBusTripDAO {
 
     public List<BusTrip> searchBusTrips(String route, String driver, int page, int pageSize) {
         List<BusTrip> busTrips = new ArrayList<>();
-        String sql = "SELECT * FROM BusTrips WHERE 1=1";
+        String sql = "SELECT bt.*, u.full_name FROM BusTrips bt " +
+                "JOIN Users u ON bt.driver_id = u.user_id WHERE 1=1";
 
         if (route != null && !route.isEmpty()) {
-            sql += " AND route_id LIKE ?";
+            sql += " AND bt.route_id LIKE ?";
         }
         if (driver != null && !driver.isEmpty()) {
-            sql += " AND driver_id IN (SELECT user_id FROM Users WHERE full_name LIKE ?)";
+            sql += " AND u.full_name LIKE ?";
         }
         sql += " LIMIT ?, ?";
 
@@ -190,7 +202,9 @@ public class AdminBusTripDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    busTrips.add(extractBusTripFromResultSet(rs));
+                    BusTrip trip = extractBusTripFromResultSet(rs);
+                    trip.getDriver().setFullName(rs.getString("full_name")); // Gán tên tài xế
+                    busTrips.add(trip);
                 }
             }
         } catch (SQLException e) {
@@ -198,6 +212,7 @@ public class AdminBusTripDAO {
         }
         return busTrips;
     }
+
 
     public int countBusTrips(String route, String driver) {
         String sql = "SELECT COUNT(*) FROM BusTrips WHERE 1=1";
@@ -307,6 +322,38 @@ public class AdminBusTripDAO {
         return totalSeats - bookedSeats;
     }
 
+    public static void main(String[] args) {
+        AdminBusTripDAO dao = new AdminBusTripDAO();
 
+        System.out.println("Đang lấy danh sách chuyến xe...");
+        List<BusTrip> busTrips = dao.getAllBusTrips();
+
+        if (busTrips.isEmpty()) {
+            System.out.println("Không có chuyến xe nào!");
+        } else {
+            System.out.println("Danh sách chuyến xe:");
+            for (BusTrip trip : busTrips) {
+                System.out.println("ID: " + trip.getTripId());
+                System.out.println("Tuyến đường ID: " + trip.getRoute().getRouteId());
+                System.out.println("Xe ID: " + trip.getBus().getBusId());
+
+                // Kiểm tra driver có null không
+                User driver = trip.getDriver();
+                if (driver != null) {
+                    System.out.println("Tài xế ID: " + driver.getUserId());
+                    System.out.println("Tên tài xế: " + driver.getFullName());
+                } else {
+                    System.out.println("Không tìm thấy tài xế!");
+                }
+
+                System.out.println("Thời gian khởi hành: " + trip.getDepartureTime());
+                System.out.println("Thời gian đến: " + trip.getArrivalTime());
+                System.out.println("Trạng thái: " + trip.getStatus());
+                System.out.println("Số ghế còn: " + trip.getAvailableSeats());
+                System.out.println("Giá vé: " + trip.getCurrentPrice());
+                System.out.println("-----------------------------");
+            }
+        }
+    }
 
 }

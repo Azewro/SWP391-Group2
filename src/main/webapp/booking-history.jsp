@@ -1,16 +1,11 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: LONG
-  Date: 3/12/2025
-  Time: 9:46 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.Ticket" %>
+<%@ page import="model.Order" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 
 <%
-    List<Ticket> tickets = (List<Ticket>) request.getAttribute("tickets");
+    List<Order> orders = (List<Order>) request.getAttribute("bookingHistory");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 %>
 
 <!DOCTYPE html>
@@ -18,15 +13,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking History</title>
+    <title>Lịch sử đặt vé</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
         }
         .container {
-            margin-top: 50px;
-            max-width: 800px;
+            margin-top: 30px;
+            max-width: 900px;
         }
         .card {
             border-radius: 10px;
@@ -35,87 +30,41 @@
     </style>
 </head>
 <body>
-<header class="header bg-dark text-white">
-    <!-- Logo trên cùng -->
-    <div class="text-center py-2">
-        <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="G2 Bus Ticket" height="60">
-    </div>
 
-    <!-- Menu & Nút đăng nhập bên dưới -->
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-            <!-- Menu -->
-            <nav class="nav">
-                <a class="nav-link text-white fw-bold" href="index.jsp">TRANG CHỦ</a>
-                <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
-                <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
-                <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
-                <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
-                <a class="nav-link text-white fw-bold" href="#">LIÊN HỆ</a>
-                <a class="nav-link text-white fw-bold" href="#">VỀ CHÚNG TÔI</a>
-            </nav>
-
-            <!-- Nút đăng nhập / đăng ký -->
-            <div>
-                <div class="dropdown">
-                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="userprofile.jsp"><i class="bi bi-person"></i> Thông tin cá nhân</a></li>
-                        <li><a class="dropdown-item" href="change-password.jsp"><i class="bi bi-key"></i> Đổi mật khẩu</a></li>
-                        <li><a class="dropdown-item text-danger" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Header -->
+<header class="bg-dark text-white text-center py-3">
+    <h2>🚍 Lịch sử đặt vé</h2>
 </header>
 
+<!-- Nội dung chính -->
 <div class="container">
-    <h3 class="text-center">Booking History</h3>
-    <div class="card">
-        <table class="table table-striped">
-            <thead>
+    <div class="card shadow-sm">
+        <table class="table table-hover">
+            <thead class="table-dark">
             <tr>
-                <th>Ticket ID</th>
-                <th>Trip ID</th>
-                <th>Seat ID</th>
-                <th>Price</th>
-                <th>Status</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
                 <th>Action</th>
             </tr>
             </thead>
             <tbody>
-            <% if (tickets != null && !tickets.isEmpty()) {
-                for (Ticket ticket : tickets) { %>
+            <% if (orders != null && !orders.isEmpty()) {
+                for (Order order : orders) { %>
             <tr>
-                <td><%= ticket.getTicketId() %></td>
-                <td><%= ticket.getTrip().getTripId() %></td>
-                <td><%= ticket.getSeat().getSeatId() %></td>
-                <td><%= ticket.getPrice() %></td>
-                <td><%= ticket.getStatus() %></td>
-                <td>
-                    <% if (!"Cancelled".equals(ticket.getStatus())) { %>
-                    <form action="cancelBooking" method="post" style="display:inline;">
-                        <input type="hidden" name="ticketId" value="<%= ticket.getTicketId() %>">
-                        <button type="submit" class="btn btn-danger btn-sm">Cancel Booking</button>
-                    </form>
-                    <% } else { %>
-                    <span class="text-muted">Cancelled</span>
-                    <% } %>
-                </td>
+                <td><%= order.getOrderDate().format(formatter) %></td>
+                <td><%= order.getTotalAmount() %> VNĐ</td>
+                <td><%= order.getStatus() %></td>
+                <td><a href="modify-booking.jsp?orderId=<%= order.getOrderId() %>" class="btn btn-primary btn-sm">Xem chi tiết</a></td>
             </tr>
             <% }
             } else { %>
             <tr>
-                <td colspan="6" class="text-center">No bookings found</td>
+                <td colspan="3" class="text-center text-muted">Không có đơn hàng nào.</td>
             </tr>
             <% } %>
             </tbody>
         </table>
-        <div class="text-center">
-            <a href="userprofile.jsp" class="btn btn-secondary">Back to User Profile</a>
-        </div>
     </div>
 </div>
 

@@ -114,7 +114,7 @@
       </div>
       <div class="text-center mt-3">
         <a href="modifyBooking" class="btn btn-warning">Modify Booking</a>
-        <a href="viewBookingHistory" class="btn btn-info">View Booking History</a>
+        <a href="booking-history" class="btn btn-info">View Booking History</a>
       </div>
     </form>
   </div>

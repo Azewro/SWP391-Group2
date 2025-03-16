@@ -22,14 +22,28 @@ public class AdminTicketServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int ticketId = Integer.parseInt(request.getParameter("ticketId"));
-        String status = request.getParameter("status");
+        try {
+            String ticketIdStr = request.getParameter("ticketId");
+            String status = request.getParameter("status");
 
-        if (ticketDAO.updateTicketStatus(ticketId, status)) {
-            response.sendRedirect("tickets");
-        } else {
-            request.setAttribute("errorMessage", "Cập nhật trạng thái vé thất bại!");
+            if (ticketIdStr == null || ticketIdStr.isEmpty() || status == null || status.isEmpty()) {
+                request.setAttribute("errorMessage", "Thiếu thông tin vé hoặc trạng thái.");
+                doGet(request, response);
+                return;
+            }
+
+            int ticketId = Integer.parseInt(ticketIdStr);
+
+            if (ticketDAO.updateTicketStatus(ticketId, status)) {
+                response.sendRedirect("tickets");
+            } else {
+                request.setAttribute("errorMessage", "Cập nhật trạng thái vé thất bại!");
+                doGet(request, response);
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Lỗi: ID vé không hợp lệ.");
             doGet(request, response);
         }
     }
+
 }
