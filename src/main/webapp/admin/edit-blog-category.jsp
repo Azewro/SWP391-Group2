@@ -13,12 +13,38 @@
 
 <div id="layoutSidenav">
     <jsp:include page="sidebar.jsp"/>
-    <div id="layoutSidenav_content">
+        <div id="layoutSidenav_content"  style=" width: 83%;">
         <main class="content-wrapper">
             <div class="container mt-4">
 
                 
-                
+                <div class="card shadow">
+                        <div class="card-header bg-warning text-white text-center">
+                            <h2>Edit Blog Category</h2>
+                        </div>
+                        <div class="card-body">
+                            <form action="blog-category" method="post">
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="id" value="${category.id}">
+
+                                <div class="mb-3">
+                                    <label class="form-label">Category Name:</label>
+                                    <input type="text" class="form-control" name="name" value="${category.name}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Description:</label>
+                                    <textarea class="form-control" name="description" required>${category.description}</textarea>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <a href="./blog-category" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+				
                 
             </div>
 
