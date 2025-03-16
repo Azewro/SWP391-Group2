@@ -217,4 +217,34 @@ public class AdminRouteDAO {
         }
         return locations;
     }
+
+    public Route getRoute(int id) {
+        String query = "SELECT r.route_id, r.route_name, "
+                + "r.start_location_id, s.name AS start_location_name, "
+                + "r.end_location_id, e.name AS end_location_name, "
+                + "r.distance, r.estimated_duration, r.base_price "
+                + "FROM Routes r "
+                + "JOIN Locations s ON r.start_location_id = s.location_id "
+                + "JOIN Locations e ON r.end_location_id = e.location_id where r.route_id = " + id;
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Route route = new Route(
+                        rs.getInt("route_id"),
+                        rs.getString("route_name"),
+                        new Location(rs.getInt("start_location_id"), rs.getString("start_location_name")),
+                        new Location(rs.getInt("end_location_id"), rs.getString("end_location_name")),
+                        rs.getFloat("distance"),
+                        rs.getInt("estimated_duration"),
+                        rs.getBigDecimal("base_price")
+                );
+                return route;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
