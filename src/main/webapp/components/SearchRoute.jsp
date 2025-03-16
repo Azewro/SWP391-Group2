@@ -434,9 +434,9 @@
                         <div class="col-md-2">${route.estimatedDuration}</div>
                         <div class="col-md-2 fw-bold text-danger">${route.basePrice} VNĐ</div>
                         <div class="col-md-2 text-end">
-                            <button type="button" class="btn btn-primary btn-sm">
+                            <a type="button" class="btn btn-primary btn-sm" href="./ListTrip?RouteId=${route.routeId}">
                                 Tìm tuyến xe
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </c:forEach>
