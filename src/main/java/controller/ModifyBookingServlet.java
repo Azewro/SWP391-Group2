@@ -1,124 +1,82 @@
 package controller;
 
+import dao.BookingDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Booking;
-import model.User;
-import dao.BookingDAO;
+import model.Ticket;
+
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.math.BigDecimal;
 
 @WebServlet("/modify-booking")
 public class ModifyBookingServlet extends HttpServlet {
-    private BookingDAO bookingDAO;
+    private BookingDAO bookingDAO = new BookingDAO();
 
     @Override
-    public void init() {
-        bookingDAO = new BookingDAO();
-    }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        // Lấy tham số từ request
+        String orderDetailIdStr = request.getParameter("orderDetailId");
+        String newSeatIdStr = request.getParameter("newSeatId");
+        String newTripIdStr = request.getParameter("newTripId");
+        String newPriceStr = request.getParameter("newPrice");
+
+        int orderDetailId;
+        Integer newSeatId = null;
+        Integer newTripId = null;
+        BigDecimal newPrice = null;
+
+        try {
+            orderDetailId = Integer.parseInt(orderDetailIdStr);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid orderDetailId");
             return;
         }
-
-        User user = (User) session.getAttribute("user");
-        String bookingIdStr = request.getParameter("id");
-        if (bookingIdStr == null || bookingIdStr.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/bookings");
-            return;
+        if (newSeatIdStr != null && !newSeatIdStr.trim().isEmpty()) {
+            try {
+                newSeatId = Integer.parseInt(newSeatIdStr);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid newSeatId");
+                return;
+            }
+        }
+        if (newTripIdStr != null && !newTripIdStr.trim().isEmpty()) {
+            try {
+                newTripId = Integer.parseInt(newTripIdStr);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid newTripId");
+                return;
+            }
+        }
+        if (newPriceStr != null && !newPriceStr.trim().isEmpty()) {
+            try {
+                newPrice = new BigDecimal(newPriceStr);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid newPrice");
+                return;
+            }
         }
 
         try {
-            long bookingId = Long.parseLong(bookingIdStr);
-            Booking booking = bookingDAO.findById(bookingId);
-            if (booking == null || booking.getUser().getUserId() != user.getUserId()) {
-                response.sendRedirect(request.getContextPath() + "/bookings");
-                return;
-            }
+            // Gọi hàm DAO để sửa đổi booking
+            Ticket updatedTicket = bookingDAO.modifyBooking(orderDetailId, newSeatId, newTripId, newPrice);
 
-            request.setAttribute("booking", booking);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            request.setAttribute("bookingDateFormatted", sdf.format(booking.getBookingDate()));
-            request.getRequestDispatcher("/WEB-INF/views/modify-booking.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/bookings");
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        User user = (User) session.getAttribute("user");
-        String bookingIdStr = request.getParameter("bookingId");
-        if (bookingIdStr == null || bookingIdStr.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/bookings");
-            return;
-        }
-
-        try {
-            long bookingId = Long.parseLong(bookingIdStr);
-            Booking booking = bookingDAO.findById(bookingId);
-            if (booking == null || booking.getUser().getUserId() != user.getUserId()) {
-                response.sendRedirect(request.getContextPath() + "/bookings");
-                return;
-            }
-
-            String bookingTitle = request.getParameter("bookingTitle");
-            String bookingDateStr = request.getParameter("bookingDate");
-            boolean hasError = false;
-
-            if (bookingTitle == null || bookingTitle.trim().isEmpty()) {
-                request.setAttribute("titleError", "Booking title is required");
-                hasError = true;
-            }
-
-            Date bookingDate = null;
-            if (bookingDateStr == null || bookingDateStr.trim().isEmpty()) {
-                request.setAttribute("dateError", "Booking date is required");
-                hasError = true;
-            } else {
-                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                    bookingDate = sdf.parse(bookingDateStr);
-                    if (bookingDate.before(new Date())) {
-                        request.setAttribute("dateError", "Booking date must be in the future");
-                        hasError = true;
-                    }
-                } catch (ParseException e) {
-                    request.setAttribute("dateError", "Invalid date format");
-                    hasError = true;
-                }
-            }
-
-            if (hasError) {
-                request.setAttribute("booking", booking);
-                request.setAttribute("bookingTitle", bookingTitle);
-                request.setAttribute("bookingDateFormatted", bookingDateStr);
-                request.getRequestDispatcher("/WEB-INF/views/modify-booking.jsp").forward(request, response);
-                return;
-            }
-
-            booking.setBookingTitle(bookingTitle);
-            booking.setBookingDate(bookingDate);
-            bookingDAO.update(booking);
-            response.sendRedirect(request.getContextPath() + "/bookings?updated=true");
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/bookings");
+            // Trả về kết quả dưới dạng JSON chỉ với thông tin cơ bản của Ticket
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            String jsonResponse = String.format("{\"ticketId\": %d, \"price\": \"%s\", \"status\": \"%s\"}",
+                    updatedTicket.getTicketId(),
+                    updatedTicket.getPrice().toString(),
+                    updatedTicket.getStatus());
+            response.getWriter().write(jsonResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error modifying booking: " + e.getMessage());
         }
     }
 }

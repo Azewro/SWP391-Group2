@@ -30,7 +30,7 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/WEB-INF/views/change-password.jsp").forward(request, response);
+        request.getRequestDispatcher("change-password.jsp").forward(request, response);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
 
-        String currentPassword = request.getParameter("currentPassword");
+        String currentPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
@@ -57,7 +57,7 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         if (hasError) {
-            request.getRequestDispatcher("/WEB-INF/views/change-password.jsp").forward(request, response);
+            request.getRequestDispatcher("change-password.jsp").forward(request, response);
             return;
         }
 
@@ -70,7 +70,7 @@ public class ChangePasswordServlet extends HttpServlet {
             request.setAttribute("currentError", "Current password is incorrect");
         }
 
-        request.getRequestDispatcher("/WEB-INF/views/change-password.jsp").forward(request, response);
+        request.getRequestDispatcher("change-password.jsp").forward(request, response);
     }
 }
 
