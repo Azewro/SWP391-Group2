@@ -14,17 +14,15 @@ public class AdminRouteDAO {
     // Lấy danh sách tất cả tuyến đường
     public List<Route> getAllRoutes() {
         List<Route> routes = new ArrayList<>();
-        String query = "SELECT r.route_id, r.route_name, " +
-                "r.start_location_id, s.name AS start_location_name, " +
-                "r.end_location_id, e.name AS end_location_name, " +
-                "r.distance, r.estimated_duration, r.base_price " +
-                "FROM Routes r " +
-                "JOIN Locations s ON r.start_location_id = s.location_id " +
-                "JOIN Locations e ON r.end_location_id = e.location_id";
+        String query = "SELECT r.route_id, r.route_name, "
+                + "r.start_location_id, s.name AS start_location_name, "
+                + "r.end_location_id, e.name AS end_location_name, "
+                + "r.distance, r.estimated_duration, r.base_price "
+                + "FROM Routes r "
+                + "JOIN Locations s ON r.start_location_id = s.location_id "
+                + "JOIN Locations e ON r.end_location_id = e.location_id";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Route route = new Route(
@@ -47,8 +45,7 @@ public class AdminRouteDAO {
     // Lấy thông tin tuyến đường theo ID
     public Route getRouteById(int routeId) {
         String query = "SELECT * FROM Routes WHERE route_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, routeId);
             ResultSet rs = stmt.executeQuery();
@@ -72,10 +69,9 @@ public class AdminRouteDAO {
 
     // Thêm mới một tuyến đường
     public boolean addRoute(Route route) {
-        String query = "INSERT INTO Routes (route_name, start_location_id, end_location_id, distance, estimated_duration, base_price, estimated_stops, route_type) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        String query = "INSERT INTO Routes (route_name, start_location_id, end_location_id, distance, estimated_duration, base_price, estimated_stops, route_type) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, route.getRouteName());
             stmt.setInt(2, route.getStartLocation().getLocationId());
@@ -97,10 +93,9 @@ public class AdminRouteDAO {
 
     // Cập nhật thông tin tuyến đường
     public boolean updateRoute(Route route) {
-        String query = "UPDATE Routes SET route_name = ?, start_location_id = ?, end_location_id = ?, distance = ?, estimated_duration = ?, base_price = ?, estimated_stops = ?, route_type = ? " +
-                "WHERE route_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        String query = "UPDATE Routes SET route_name = ?, start_location_id = ?, end_location_id = ?, distance = ?, estimated_duration = ?, base_price = ?, estimated_stops = ?, route_type = ? "
+                + "WHERE route_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, route.getRouteName());
             stmt.setInt(2, route.getStartLocation().getLocationId());
@@ -124,8 +119,7 @@ public class AdminRouteDAO {
     // Xóa tuyến đường theo ID
     public boolean deleteRoute(int routeId) {
         String query = "DELETE FROM Routes WHERE route_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, routeId);
             int affectedRows = stmt.executeUpdate();
@@ -139,14 +133,14 @@ public class AdminRouteDAO {
 
     public List<Route> searchRoutes(String search, String locationFilter) {
         List<Route> routes = new ArrayList<>();
-        String query = "SELECT r.route_id, r.route_name, " +
-                "r.start_location_id, s.name AS start_location_name, " +
-                "r.end_location_id, e.name AS end_location_name, " +
-                "r.distance, r.estimated_duration, r.base_price " +
-                "FROM Routes r " +
-                "JOIN Locations s ON r.start_location_id = s.location_id " +
-                "JOIN Locations e ON r.end_location_id = e.location_id " +
-                "WHERE 1=1 ";
+        String query = "SELECT r.route_id, r.route_name, "
+                + "r.start_location_id, s.name AS start_location_name, "
+                + "r.end_location_id, e.name AS end_location_name, "
+                + "r.distance, r.estimated_duration, r.base_price "
+                + "FROM Routes r "
+                + "JOIN Locations s ON r.start_location_id = s.location_id "
+                + "JOIN Locations e ON r.end_location_id = e.location_id "
+                + "WHERE 1=1 ";
 
         if (search != null && !search.isEmpty()) {
             query += "AND r.route_name LIKE ? ";
@@ -155,8 +149,7 @@ public class AdminRouteDAO {
             query += "AND (r.start_location_id = ? OR r.end_location_id = ?) ";
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             int paramIndex = 1;
             if (search != null && !search.isEmpty()) {
@@ -206,4 +199,22 @@ public class AdminRouteDAO {
         }
     }
 
+    public List<Location> getAllLocations() {
+        List<Location> locations = new ArrayList<>();
+        String query = "SELECT location_id, name FROM Locations";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Location location = new Location(
+                        rs.getInt("location_id"),
+                        rs.getString("name")
+                );
+                locations.add(location);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return locations;
+    }
 }
