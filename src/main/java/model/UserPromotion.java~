@@ -3,42 +3,39 @@ package model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class TicketPromotion {
-    private int promoId;
-    private int ticketId;  // Thay vì đối tượng Ticket, dùng ID để đơn giản hóa JDBC
+public class UserPromotion {
+    private int userPromoId;
+    private int userId;  // Thay vì đối tượng User, dùng ID để đơn giản hóa JDBC
     private BigDecimal discountPercentage;
     private String promoCode;
     private Timestamp expirationDate;
 
-    public TicketPromotion() {
+    public UserPromotion() {
     }
 
-    public TicketPromotion(int promoId, int ticketId, BigDecimal discountPercentage, String promoCode, Timestamp expirationDate) {
-        this.promoId = promoId;
-        this.ticketId = ticketId;
+    public UserPromotion(int userPromoId, int userId, BigDecimal discountPercentage, String promoCode, Timestamp expirationDate) {
+        this.userPromoId = userPromoId;
+        this.userId = userId;
         this.discountPercentage = discountPercentage;
         this.promoCode = promoCode;
         this.expirationDate = expirationDate;
     }
 
-    public TicketPromotion(int promoId, int ticketId, double discountPercentage, String promoCode, Timestamp expirationDate) {
-    }
-
     // Getters and Setters
-    public int getPromoId() {
-        return promoId;
+    public int getUserPromoId() {
+        return userPromoId;
     }
 
-    public void setPromoId(int promoId) {
-        this.promoId = promoId;
+    public void setUserPromoId(int userPromoId) {
+        this.userPromoId = userPromoId;
     }
 
-    public int getTicketId() {
-        return ticketId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setTicketId(int ticketId) {
-        this.ticketId = ticketId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public BigDecimal getDiscountPercentage() {
