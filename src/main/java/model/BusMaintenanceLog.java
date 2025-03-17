@@ -1,33 +1,28 @@
 package model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "BusMaintenanceLogs")
 public class BusMaintenanceLog {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "log_id")
     private int logId;
-
-    @ManyToOne
-    @JoinColumn(name = "bus_id", nullable = false)
-    private Bus bus;
-
-    @Column(name = "maintenance_date", nullable = false)
+    private int busId;
     private LocalDateTime maintenanceDate;
-
-    @Column(name = "description")
     private String description;
-
-    @Column(name = "cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal cost;
-
-    @Column(name = "status", length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'Completed'")
     private String status;
+
+    // Constructors
+    public BusMaintenanceLog() {
+    }
+
+    public BusMaintenanceLog(int logId, int busId, LocalDateTime maintenanceDate, String description, BigDecimal cost, String status) {
+        this.logId = logId;
+        this.busId = busId;
+        this.maintenanceDate = maintenanceDate;
+        this.description = description;
+        this.cost = cost;
+        this.status = status;
+    }
 
     // Getters and Setters
     public int getLogId() {
@@ -38,12 +33,12 @@ public class BusMaintenanceLog {
         this.logId = logId;
     }
 
-    public Bus getBus() {
-        return bus;
+    public int getBusId() {
+        return busId;
     }
 
-    public void setBus(Bus bus) {
-        this.bus = bus;
+    public void setBusId(int busId) {
+        this.busId = busId;
     }
 
     public LocalDateTime getMaintenanceDate() {
@@ -78,4 +73,3 @@ public class BusMaintenanceLog {
         this.status = status;
     }
 }
-

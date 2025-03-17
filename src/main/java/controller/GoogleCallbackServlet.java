@@ -1,119 +1,157 @@
 package controller;
 
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
+import dao.UserDAO;
+import model.User;
+import util.DatabaseConnection;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.*;
-import java.util.stream.Collectors;
+import java.security.GeneralSecurityException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
 
 @WebServlet("/google-callback")
 public class GoogleCallbackServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final String CLIENT_ID = "your-client-id";
-    private static final String CLIENT_SECRET = "your-client-secret";
-    private static final String REDIRECT_URI = "http://localhost:8080/google-callback";
-    private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
+
+    private static final String CLIENT_ID = "627788153739-pqbr1b10t2m0ggsrvfjihc5tacgi2jes.apps.googleusercontent.com";
+    private static final String CLIENT_SECRET = "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";
+    private static final String REDIRECT_URI = "http://localhost:8080/SWP391_Group2_war_exploded/google-callback";
+
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String code = request.getParameter("code");
 
-        if (code == null) {
-            response.sendRedirect("login.jsp?error=google_login_failed");
+        // Nếu không có code, chuyển hướng đến trang login Google
+        if (code == null || code.isEmpty()) {
+            String googleAuthUrl = "https://accounts.google.com/o/oauth2/auth"
+                    + "?client_id=" + CLIENT_ID
+                    + "&redirect_uri=" + REDIRECT_URI
+                    + "&response_type=code"
+                    + "&scope=openid%20email%20profile"
+                    + "&access_type=offline"
+                    + "&prompt=consent";
+            System.out.println(googleAuthUrl);
+            System.out.println("❌ Không nhận được code từ Google!");
+            response.sendRedirect("login.jsp?error=google_auth_failed");
             return;
         }
 
-        // Lấy access_token từ Google
-        String tokenRequestBody = "code=" + code
-                + "&client_id=" + CLIENT_ID
-                + "&client_secret=" + CLIENT_SECRET
-                + "&redirect_uri=" + REDIRECT_URI
-                + "&grant_type=authorization_code";
+        try {
+            // Lấy access token từ Google
+            TokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
+                    GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY,
+                    "https://oauth2.googleapis.com/token", CLIENT_ID, CLIENT_SECRET, code, REDIRECT_URI)
+                    .execute();
 
-        String accessTokenJson = sendPostRequest(TOKEN_URL, tokenRequestBody);
-        JSONObject jsonObject = new JSONObject(accessTokenJson);
-        String accessToken = jsonObject.getString("access_token");
+            String idTokenString = tokenResponse.get("id_token").toString();
 
-        // Lấy thông tin user từ Google
-        String userInfoJson = sendGetRequest("https://www.googleapis.com/oauth2/v2/userinfo", accessToken);
-        JSONObject userInfo = new JSONObject(userInfoJson);
+            // Xác minh ID Token
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY)
+                    .setAudience(Collections.singletonList(CLIENT_ID))
+                    .build();
 
-        String email = userInfo.getString("email");
-        String fullName = userInfo.getString("name");
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if (idToken == null) {
+                response.sendRedirect("login.jsp?error=invalid_token");
+                return;
+            }
 
-        // Kiểm tra xem user đã tồn tại trong database chưa
-        boolean userExists = checkUserExists(email);
+            GoogleIdToken.Payload payload = idToken.getPayload();
 
-        HttpSession session = request.getSession();
-        session.setAttribute("user_email", email);
-        session.setAttribute("user_fullname", fullName);
+            // Lấy thông tin người dùng từ Google
+            String email = payload.getEmail();
+            String fullName = (String) payload.get("name");
+            String pictureUrl = (String) payload.get("picture");
 
-        if (userExists) {
-            response.sendRedirect("index    .jsp");
-        } else {
-            saveUserToDatabase(email, fullName);
-            response.sendRedirect("register2.jsp");
+// Kiểm tra người dùng trong database
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.findByUsernameOrEmail(email);
+
+            HttpSession session = request.getSession();
+            if (user != null) {
+                // Nếu user đã tồn tại, đồng bộ session với LoginServlet
+                session.setAttribute("user", user);
+                session.setAttribute("role_id", user.getRoleId());
+
+                if (user.getRoleId() == 1) {
+                    response.sendRedirect("admin/dashboard.jsp");
+                } else {
+                    response.sendRedirect("index.jsp");
+                }
+            } else {
+                // Nếu user chưa có, lưu vào database và chuyển hướng đến đăng ký
+                saveUserToDatabase(email, fullName, pictureUrl);
+                response.sendRedirect("register2.jsp");
+            }
+
+        } catch (GeneralSecurityException | SQLException e) {
+            throw new ServletException("Lỗi khi xác minh Google ID Token", e);
         }
     }
 
     private boolean checkUserExists(String email) {
-        String sql = "SELECT COUNT(*) FROM Users WHERE email = ?";
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/G2BusTicketSystem", "root", "");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT COUNT(*) FROM Users WHERE email = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private void saveUserToDatabase(String email, String fullName) {
-        String sql = "INSERT INTO Users (email, full_name, auth_type) VALUES (?, ?, 'google')";
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/G2BusTicketSystem", "root", "");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+    private void saveUserToDatabase(String email, String fullName, String pictureUrl) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO Users (email, full_name, auth_type) VALUES (?, ?, 'google')";
+            PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             stmt.setString(1, email);
             stmt.setString(2, fullName);
             stmt.executeUpdate();
 
-        } catch (SQLException e) {
+            // Lấy user_id mới tạo
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            int userId = -1;
+            if (generatedKeys.next()) {
+                userId = generatedKeys.getInt(1);
+            }
+
+            // Lưu vào UserOAuth
+            if (userId > 0) {
+                String oauthSql = "INSERT INTO UserOAuth (user_id, provider, provider_user_id, email, full_name, profile_picture) " +
+                        "VALUES (?, 'google', ?, ?, ?, ?) ON DUPLICATE KEY UPDATE full_name=?, profile_picture=?";
+                PreparedStatement stmtOAuth = conn.prepareStatement(oauthSql);
+                stmtOAuth.setInt(1, userId);
+                stmtOAuth.setString(2, email);
+                stmtOAuth.setString(3, email);
+                stmtOAuth.setString(4, fullName);
+                stmtOAuth.setString(5, pictureUrl);
+                stmtOAuth.setString(6, fullName);
+                stmtOAuth.setString(7, pictureUrl);
+                stmtOAuth.executeUpdate();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String sendPostRequest(String url, String body) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setDoOutput(true);
-        try (OutputStream os = conn.getOutputStream()) {
-            os.write(body.getBytes());
-            os.flush();
-        }
-        return new BufferedReader(new InputStreamReader(conn.getInputStream())).lines()
-                .collect(Collectors.joining("\n"));
-    }
-
-    private String sendGetRequest(String url, String accessToken) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-        return new BufferedReader(new InputStreamReader(conn.getInputStream())).lines()
-                .collect(Collectors.joining("\n"));
     }
 }

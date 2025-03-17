@@ -157,37 +157,14 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <header class="header">
-            <div class="logo">
-                <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="FUTA Bus Lines">
-            </div>
-            <nav class="nav-menu">
-                <ul>
-                    <li><a href="home">TRANG CHỦ</a></li>
-                    <li><a href="bus-schedule">LỊCH TRÌNH</a></li>
-                    <li><a href="#">TRA CỨU VÉ</a></li>
-                    <li><a href="#">TIN TỨC</a></li>
-                    <li><a href="#">HÓA ĐƠN</a></li>
-                    <li><a href="#">LIÊN HỆ</a></li>
-                    <li><a href="#">VỀ CHÚNG TÔI</a></li>
-                </ul>
-            </nav>
-            <div class="login-btn">
-                <button class="login-btn" onclick="window.location.href = 'login.jsp'">
-                    Đăng Nhập
-                </button>
-            </div>
-            <div class="login-btn" >
-                <button class="login-btn" onclick="window.location.href = 'register.jsp'">
-                    Đăng Ký
-                </button>
-            </div>
-        </header>
+        <jsp:include page="/components/header.jsp"/>
+
 
         <div class="container">
             <h1 class="text-center my-4">Lịch trình xe buýt</h1>
 
             <!-- Search Form -->
+
             <form action="find-routes" method="get" class="search-bar">
                 <input type="text" name="startLocation" placeholder="Nhập điểm đi" value="${param.startLocation}" />
                 <span>⇄</span>
@@ -195,12 +172,14 @@
                 <button type="submit">Tìm kiếm</button>
             </form>
 
-
             <!-- Bus Schedule Table -->
             <table class="table">
                 <thead>
                     <tr>
                         <th>Tuyến xe</th>
+
+                        <th>Loại xe</th>
+
                         <th>Quãng đường</th>
                         <th>Thời gian hành trình</th>
                         <th>Giá vé</th>
@@ -211,6 +190,9 @@
                     <c:forEach var="route" items="${busSchedules}">
                         <tr class="route-row">
                             <td>${route.startLocation.name} ⇄ ${route.endLocation.name}</td>
+
+                            <td>${route.routeType != null ? route.routeType : "---"}</td>
+
                             <td>${route.distance} km</td>
                             <td>
                                 <c:choose>

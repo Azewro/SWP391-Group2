@@ -131,39 +131,15 @@
     <script>
         function loginWithGoogle() {
             window.location.href = "https://accounts.google.com/o/oauth2/auth?client_id=your-client-id"
-                + "&redirect_uri=http://localhost:8080/google-callback"
+                + "&redirect_uri=http://localhost:8080/SWP391_Group2_war_exploded/google-callback"
                 + "&response_type=code"
                 + "&scope=email%20profile";
         }
     </script>
 </head>
 <body>
-<header class="header">
-    <div class="logo">
-        <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="FUTA Bus Lines">
-    </div>
-    <nav class="nav-menu">
-        <ul>
-            <li><a href="#">TRANG CHỦ</a></li>
-            <li><a href="#">LỊCH TRÌNH</a></li>
-            <li><a href="#">TRA CỨU VÉ</a></li>
-            <li><a href="#">TIN TỨC</a></li>
-            <li><a href="#">HÓA ĐƠN</a></li>
-            <li><a href="#">LIÊN HỆ</a></li>
-            <li><a href="#">VỀ CHÚNG TÔI</a></li>
-        </ul>
-    </nav>
-    <div class="login-btn">
-        <button class="login-btn" onclick="window.location.href='login.jsp'">
-            Đăng Nhập
-        </button>
-    </div>
-    <div class="login-btn" >
-        <button class="login-btn" onclick="window.location.href='register.jsp'">
-            Đăng Ký
-        </button>
-    </div>
-</header>
+    <jsp:include page="/components/header.jsp"/>
+
 
 <section class="login-section">
     <div class="login-container">

@@ -115,40 +115,31 @@
     </style>
     <script>
         function loginWithGoogle() {
-            window.location.href = "https://accounts.google.com/o/oauth2/auth?client_id=your-client-id"
-                + "&redirect_uri=http://localhost:8080/google-login"
+            const clientId = "627788153739-pqbr1b10t2m0ggsrvfjihc5tacgi2jes.apps.googleusercontent.com";
+            const redirectUri = encodeURIComponent("http://localhost:8080/SWP391_Group2_war_exploded/google-callback");
+            const scope = encodeURIComponent("openid email profile");
+
+            // Xây dựng URL đúng format
+            const googleAuthUrl = "https://accounts.google.com/o/oauth2/auth"
+                + "?client_id=" + clientId
+                + "&redirect_uri=" + redirectUri
                 + "&response_type=code"
-                + "&scope=email%20profile";
+                + "&scope=" + scope
+                + "&access_type=offline"
+                + "&prompt=consent";
+
+            console.log("🔗 Google Auth URL:", googleAuthUrl); // Debug URL xem có lỗi không
+            window.location.href = googleAuthUrl;
         }
+
+
+
     </script>
+
 </head>
 <body>
-<header class="header">
-    <div class="logo">
-        <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="FUTA Bus Lines">
-    </div>
-    <nav class="nav-menu">
-        <ul>
-            <li><a href="#">TRANG CHỦ</a></li>
-            <li><a href="#">LỊCH TRÌNH</a></li>
-            <li><a href="#">TRA CỨU VÉ</a></li>
-            <li><a href="#">TIN TỨC</a></li>
-            <li><a href="#">HÓA ĐƠN</a></li>
-            <li><a href="#">LIÊN HỆ</a></li>
-            <li><a href="#">VỀ CHÚNG TÔI</a></li>
-        </ul>
-    </nav>
-    <div class="login-btn">
-        <button class="login-btn" onclick="window.location.href='login.jsp'">
-            Đăng Nhập
-        </button>
-    </div>
-    <div class="login-btn" >
-        <button class="login-btn" onclick="window.location.href='register.jsp'">
-            Đăng Ký
-        </button>
-    </div>
-</header>
+    <jsp:include page="/components/header.jsp"/>
+
 
 <section class="login-section">
     <div class="login-container">
@@ -158,13 +149,16 @@
             <p>XE TRUNG CHUYỂN<br>ĐÓN - TRẢ TẬN NƠI</p>
         </div>
         <!-- ✅ Nút đăng nhập bằng Google -->
-        <button onclick="loginWithGoogle()">Đăng nhập bằng Google</button>
+        <button onclick="loginWithGoogle()" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+            Đăng nhập bằng Google
+            <i class="fab fa-google"></i>
+        </button>
         <hr>
         <div class="login-form">
             <h2>Đăng nhập tài khoản</h2>
             <form action="login" method="post">
                 <div class="input-group">
-                    <input type="text" name="usernameOrEmail" placeholder="Số điện thoại hoặc Email" required>
+                    <input type="text" name="usernameOrEmail" placeholder="Username hoặc Email" required>
                 </div>
                 <div class="input-group">
                     <input type="password" name="password" placeholder="Mật khẩu" required>

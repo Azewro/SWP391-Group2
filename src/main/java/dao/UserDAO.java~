@@ -88,24 +88,27 @@ public class UserDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, usernameOrEmail);
             stmt.setString(2, usernameOrEmail);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new User(
-                            rs.getInt("user_id"),
-                            rs.getString("username"),
-                            rs.getString("full_name"),
-                            rs.getString("email"),
-                            rs.getString("phone"),
-                            rs.getInt("role_id"),
-                            rs.getBoolean("is_active")
-                    );
-                }
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("full_name"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getInt("role_id"),
+                        rs.getBoolean("is_active"),
+                        rs.getString("status_reason"),
+                        rs.getString("password_hash")
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+
     public boolean updatePassword(String email, String newPasswordHash) {
         String sql = "UPDATE Users SET password_hash = ? WHERE email = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -179,6 +182,7 @@ public class UserDAO {
             stmt.setString(1, search);
             stmt.setString(2, "%" + search + "%");
             stmt.setString(3, "%" + search + "%");
+
             if (isActive == null) {
                 stmt.setNull(4, Types.BOOLEAN);
                 stmt.setNull(5, Types.BOOLEAN);
@@ -205,6 +209,7 @@ public class UserDAO {
         return users;
     }
 
+
     public boolean updateUser(User user) throws SQLException {
         String sql = "UPDATE Users SET full_name = ?, email = ?, phone = ?, is_active = ?, role_id = ? WHERE user_id = ?";
 
@@ -229,13 +234,69 @@ public class UserDAO {
     }
 
     public boolean restoreUser(int userId) throws SQLException {
-        String sql = "UPDATE Users SET is_active = true WHERE user_id = ?";
-
+        String sql = "UPDATE Users SET is_active = true, status_reason = NULL WHERE user_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             return stmt.executeUpdate() > 0;
         }
     }
 
+
+
+    public boolean disableUser(int userId, String statusReason) throws SQLException {
+        // Kiểm tra xem user có tồn tại không trước khi cập nhật
+        User user = getUserById(userId);
+        if (user == null) {
+            System.out.println("❌ Không tìm thấy người dùng có ID: " + userId);
+            return false;
+        }
+
+        String sql = "UPDATE Users SET is_active = false, status_reason = ? WHERE user_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, statusReason);
+            stmt.setInt(2, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Vô hiệu hóa tài khoản ID " + userId + " thành công. Lý do: " + statusReason);
+            } else {
+                System.out.println("❌ Không thể vô hiệu hóa tài khoản ID " + userId);
+            }
+            return rowsUpdated > 0;
+        }
+    }
+
+
+    public void testUserDAO() {
+        try {
+            System.out.println("===== TESTING UserDAO =====");
+
+            // 1. Lấy danh sách tất cả người dùng
+            System.out.println("Lấy danh sách người dùng:");
+            List<User> users = getAllUsers(null, null);
+            for (User user : users) {
+                System.out.println(user);
+            }
+
+
+            // Test vô hiệu hóa tài khoản
+            int userIdToDisable = 2;  // Thay đổi ID người dùng cần vô hiệu hóa
+            boolean disableSuccess = disableUser(userIdToDisable, "Vi phạm chính sách");
+            System.out.println(disableSuccess ? "✅ Test vô hiệu hóa thành công!" : "❌ Test vô hiệu hóa thất bại!");
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void main(String[] args) {
+        try {
+            UserDAO userDAO = new UserDAO();
+            userDAO.testUserDAO();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

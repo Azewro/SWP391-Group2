@@ -1,49 +1,19 @@
 package model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "BusTrips")
 public class BusTrip {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "trip_id")
     private int tripId;
-
-    @ManyToOne
-    @JoinColumn(name = "route_id", nullable = false)
     private Route route;
-
-    @ManyToOne
-    @JoinColumn(name = "bus_id", nullable = false)
     private Bus bus;
-
-    @ManyToOne
-    @JoinColumn(name = "driver_id", nullable = false)
     private User driver;
-
-    @Column(name = "departure_time", nullable = false)
     private LocalDateTime departureTime;
-
-    @Column(name = "arrival_time")
     private LocalDateTime arrivalTime;
-
-    @Column(name = "actual_arrival")
     private LocalDateTime actualArrival;
-
-    @Column(name = "status", nullable = false, length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'Scheduled'")
     private String status;
-
-    @Column(name = "available_seats", nullable = false)
     private int availableSeats;
-
-    @Column(name = "current_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal currentPrice;
-
-    @Column(name = "delay_reason")
     private String delayReason;
 
     // Getters and Setters
@@ -135,4 +105,3 @@ public class BusTrip {
         this.delayReason = delayReason;
     }
 }
-

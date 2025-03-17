@@ -1,31 +1,27 @@
 package model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Bus")
 public class Bus {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bus_id")
     private int busId;
-
-    @Column(name = "plate_number", nullable = false, unique = true, length = 20)
     private String plateNumber;
-
-    @Column(name = "capacity", nullable = false)
     private int capacity;
-
-    @Column(name = "bus_type", length = 50)
     private String busType;
-
-    @Column(name = "is_active", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean isActive;
-
-    @Column(name = "last_maintenance")
     private LocalDateTime lastMaintenance;
+
+    // Constructors
+    public Bus() {
+    }
+
+    public Bus(int busId, String plateNumber, int capacity, String busType, boolean isActive, LocalDateTime lastMaintenance) {
+        this.busId = busId;
+        this.plateNumber = plateNumber;
+        this.capacity = capacity;
+        this.busType = busType;
+        this.isActive = isActive;
+        this.lastMaintenance = lastMaintenance;
+    }
 
     // Getters and Setters
     public int getBusId() {
@@ -76,4 +72,3 @@ public class Bus {
         this.lastMaintenance = lastMaintenance;
     }
 }
-
