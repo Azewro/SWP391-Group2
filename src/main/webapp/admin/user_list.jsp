@@ -110,7 +110,9 @@
                                         <h5 class="modal-title" id="banReasonModalLabel">Nhập lý do vô hiệu hóa</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form id="banReasonForm" method="POST" action="users?action=delete">
+                                    <form id="banReasonForm" method="POST" action="users">
+                                        <input type="hidden" name="action" value="delete"> <!-- 🔥 Đảm bảo gửi action -->
+
                                         <div class="modal-body">
                                             <input type="hidden" id="banUserId" name="id">
                                             <label for="statusReason">Lý do:</label>
@@ -127,11 +129,13 @@
 
                         <script>
                             function confirmBan(userId) {
-                                document.getElementById('banUserId').value = userId;
+                                console.log("Đang vô hiệu hóa user ID: " + userId); // 🔥 Debug log
+                                document.getElementById('banUserId').value = userId; // ✅ Đặt ID vào input ẩn
                                 var modal = new bootstrap.Modal(document.getElementById('banReasonModal'));
                                 modal.show();
                             }
                         </script>
+
 
                         </tbody>
                     </table>

@@ -101,6 +101,40 @@
                                 </td>
                             </tr>
                         </c:forEach>
+
+                        <!-- Modal nhập lý do vô hiệu hóa -->
+                        <div class="modal fade" id="banReasonModal" tabindex="-1" aria-labelledby="banReasonModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="banReasonModalLabel">Nhập lý do vô hiệu hóa</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="banReasonForm" method="POST" action="users?action=delete">
+                                        <div class="modal-body">
+                                            <input type="hidden" id="banUserId" name="id">
+                                            <label for="statusReason">Lý do:</label>
+                                            <textarea class="form-control" id="statusReason" name="statusReason" required></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-danger">Xác nhận</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function confirmBan(userId) {
+                                console.log("Đang vô hiệu hóa user ID: " + userId); // 🔥 Debug log
+                                document.getElementById('banUserId').value = userId; // ✅ Đặt ID vào input ẩn
+                                var modal = new bootstrap.Modal(document.getElementById('banReasonModal'));
+                                modal.show();
+                            }
+                        </script>
+
+
                         </tbody>
                     </table>
                 </div>
