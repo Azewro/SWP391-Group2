@@ -82,16 +82,10 @@
             <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="admin-bus-trips.jsp">
                 <i class="fas fa-route"></i> Danh sách Trips
             </a>
-            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="blog">
-                <i class="fas fa-list"></i> Danh sách bài viết
-            </a>
-            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="blog-category">
-                <i class="fas fa-list"></i> Danh sách danh mục bài viết
-            </a>
 
             <hr class="text-white">
 
-            <!-- Quản lý đơn hàng -->
+            <!-- Quản lý Đơn hàng -->
             <a class="nav-link" href="#" onclick="toggleMenu('orderMenu')">
                 <i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng <i class="fas fa-chevron-down ms-auto"></i>
             </a>
@@ -104,6 +98,21 @@
                 </a>
                 <a class="nav-link ${pageName == 'refund_list' ? 'active' : ''}" href="refunds">
                     <i class="fas fa-money-bill"></i> Hoàn tiền
+                </a>
+            </div>
+
+            <hr class="text-white">
+
+            <!-- Quản lý Khuyến mãi -->
+            <a class="nav-link" href="#" onclick="toggleMenu('promotionMenu')">
+                <i class="fas fa-tags"></i> Quản lý Khuyến mãi <i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div id="promotionMenu" class="submenu ${pageName.startsWith('promotion') ? 'submenu-active' : ''}">
+                <a class="nav-link ${pageName == 'promotion_list' ? 'active' : ''}" href="promotions">
+                    <i class="fas fa-list"></i> Danh sách khuyến mãi
+                </a>
+                <a class="nav-link ${pageName == 'promotion_cronjob' ? 'active' : ''}" href="cronjob">
+                    <i class="fas fa-cog"></i> Quản lý Cron Job
                 </a>
             </div>
 
@@ -127,7 +136,6 @@
                     <i class="fas fa-times-circle"></i> Phản hồi bị từ chối
                 </a>
             </div>
-
 
             <hr class="text-white">
 

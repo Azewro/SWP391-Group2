@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Promotion {
@@ -20,6 +21,9 @@ public class Promotion {
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.isActive = isActive;
+    }
+
+    public Promotion(int promoId, String promoCode, BigDecimal discountAmount, BigDecimal discountPercentage, Timestamp validFrom, Timestamp validTo, boolean isActive) {
     }
 
     // Getters và Setters
