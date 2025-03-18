@@ -6,7 +6,8 @@ public class Location {
     private int locationId;
     private String name;
 
-    public Location() {}
+    public Location() {
+    }
 
     public Location(int locationId) {
         this.locationId = locationId;
@@ -17,9 +18,20 @@ public class Location {
         this.name = name;
     }
 
-    public int getLocationId() { return locationId; }
-    public void setLocationId(int locationId) { this.locationId = locationId; }
+    // Getters and Setters
+    public int getLocationId() {
+        return locationId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

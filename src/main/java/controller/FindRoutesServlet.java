@@ -5,7 +5,7 @@
 
 package controller;
 
-import dao.BusScheduleDAO;
+import dao.FindRoutesDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -21,8 +21,8 @@ import model.Route;
  *
  * @author ktleg
  */
-@WebServlet(name="BusScheduleServlet", urlPatterns={"/bus-schedule"})
-public class BusScheduleServlet extends HttpServlet {
+@WebServlet(name="FindRoutesServlet", urlPatterns={"/find-routes"})
+public class FindRoutesServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -39,10 +39,10 @@ public class BusScheduleServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet BusScheduleServlet</title>");  
+            out.println("<title>Servlet FindRoutesServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet BusScheduleServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet FindRoutesServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,19 +57,24 @@ public class BusScheduleServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    BusScheduleDAO dao = new BusScheduleDAO();
-    try {
-        List<Route> busSchedules = dao.getBusSchedules();
-        request.setAttribute("busSchedules", busSchedules);
-        request.getRequestDispatcher("components/busSchedule.jsp").forward(request, response);
-    } catch (SQLException e) {
-        e.printStackTrace();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi tải dữ liệu lịch trình xe buýt.");
-    }
-}
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        String startLocation = request.getParameter("startLocation");
+        String endLocation = request.getParameter("endLocation");
 
+        FindRoutesDAO findRoutesDAO = new FindRoutesDAO();
+        try {
+            List<Route> routes = findRoutesDAO.findRoutes(
+                    startLocation != null ? startLocation.trim() : "",
+                    endLocation != null ? endLocation.trim() : ""
+            );
+            request.setAttribute("busSchedules", routes);
+            request.getRequestDispatcher("/components/busSchedule.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi tìm tuyến xe.");
+        }
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.

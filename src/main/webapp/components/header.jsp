@@ -179,7 +179,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <!-- Menu -->
             <nav class="nav">
-                <a class="nav-link text-white fw-bold" href="index.jsp">TRANG CHỦ</a>
+                <a class="nav-link text-white fw-bold" href="home">TRANG CHỦ</a>
                 <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
                 <a class="nav-link text-white fw-bold" href="SearchBus">TÌM BUS</a>
                 <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>

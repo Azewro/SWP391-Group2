@@ -157,17 +157,18 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <jsp:include page="/components/header.jsp"/>
+        <jsp:include page="header.jsp"/>
 
 
         <div class="container">
             <h1 class="text-center my-4">Lịch trình xe buýt</h1>
 
             <!-- Search Form -->
-            <form action="bus-schedule" method="get" class="search-bar">
-                <input type="text" name="startLocation" placeholder="Nhập điểm đi" value="${startLocation}" />
+
+            <form action="find-routes" method="get" class="search-bar">
+                <input type="text" name="startLocation" placeholder="Nhập điểm đi" value="${param.startLocation}" />
                 <span>⇄</span>
-                <input type="text" name="endLocation" placeholder="Nhập điểm đến" value="${endLocation}" />
+                <input type="text" name="endLocation" placeholder="Nhập điểm đến" value="${param.endLocation}" />
                 <button type="submit">Tìm kiếm</button>
             </form>
 
@@ -176,7 +177,9 @@
                 <thead>
                     <tr>
                         <th>Tuyến xe</th>
+
                         <th>Loại xe</th>
+
                         <th>Quãng đường</th>
                         <th>Thời gian hành trình</th>
                         <th>Giá vé</th>
@@ -187,7 +190,9 @@
                     <c:forEach var="route" items="${busSchedules}">
                         <tr class="route-row">
                             <td>${route.startLocation.name} ⇄ ${route.endLocation.name}</td>
+
                             <td>${route.routeType != null ? route.routeType : "---"}</td>
+
                             <td>${route.distance} km</td>
                             <td>
                                 <c:choose>
