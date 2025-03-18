@@ -32,6 +32,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/components/header.jsp" />
 <div class="container">
     <h2 class="mb-4">Thông tin đặt vé</h2>
     <div class="card mb-4">

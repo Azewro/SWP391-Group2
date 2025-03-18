@@ -30,6 +30,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/components/header.jsp" />
 
 <!-- Header -->
 <header class="bg-dark text-white text-center py-3">

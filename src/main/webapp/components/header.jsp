@@ -1,9 +1,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 <style>
     .user-section {
@@ -52,8 +54,6 @@
         color: white;
     }
 
-
-
     body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -100,50 +100,6 @@
         font-weight: bold;
     }
 
-    .login-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-        background: linear-gradient(180deg, #ff6200, #ff7e29);
-        padding: 50px;
-    }
-
-    .login-container {
-        background: white;
-        padding: 50px;
-        border-radius: 15px;
-        display: flex;
-        gap: 50px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        max-width: 850px;
-    }
-
-    .login-form form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .input-group input {
-        border: 1px solid #ccc;
-        padding: 12px;
-        font-size: 16px;
-        width: 100%;
-        border-radius: 5px;
-    }
-
-    .login-form button {
-        background: #ff6200;
-        color: white;
-        padding: 14px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 18px;
-        font-weight: bold;
-    }
-
     .footer {
         background: #f8f8f8;
         padding: 30px;
@@ -167,7 +123,12 @@
         font-size: 16px;
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Bootstrap JS Bundle (bao gồm Popper.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+        integrity="sha512-kdE0UPv1zjhGIXlv2rGTecrRmW2UejfoIL2ZGMSM4zYHp1XbPOEF8C8Q4PobIqyy9KX7T/3d29+Yd2ZBB8YOpg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <header class="header bg-dark text-white">
     <!-- Logo trên cùng -->
     <div class="text-center py-2">
@@ -190,27 +151,25 @@
 
             <!-- Nút đăng nhập / đăng ký -->
             <div>
-
-                <c:if test="${sessionScope.user!= null}">
+                <c:if test="${sessionScope.user != null}">
                     <div class="dropdown">
-                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i> ${sessionScope.user.getUsername()}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                             <li><a class="dropdown-item" href="userprofile.jsp"><i class="bi bi-person"></i> Thông tin cá nhân</a></li>
-                            <li><a class="dropdown-item" href="CustomerOrder"><i class="bi bi-person"></i> Đơn hàng của tôi</a></li>
+                            <li><a class="dropdown-item" href="CustomerOrder"><i class="bi bi-ticket"></i> Đơn hàng của tôi</a></li>
                             <li><a class="dropdown-item" href="change-password.jsp"><i class="bi bi-key"></i> Đổi mật khẩu</a></li>
                             <li><a class="dropdown-item text-danger" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
                         </ul>
                     </div>
                 </c:if>
 
-                <c:if test="${sessionScope.user== null}">
-
+                <c:if test="${sessionScope.user == null}">
                     <a href="login.jsp" class="btn btn-outline-light me-2">Đăng Nhập</a>
                     <a href="register.jsp" class="btn btn-warning">Đăng Ký</a>
                 </c:if>
-
             </div>
         </div>
     </div>
