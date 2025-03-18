@@ -21,6 +21,11 @@ public class PopularRoutesServlet extends HttpServlet {
         PopularRoutesDAO popularRoutesDAO = new PopularRoutesDAO();
         try {
             List<Route> popularRoutes = popularRoutesDAO.getPopularRoutes();
+            if (popularRoutes.isEmpty()) {
+        System.out.println("⚠ Không có tuyến xe phổ biến nào để hiển thị.");
+    } else {
+        System.out.println("✅ Số tuyến xe phổ biến: " + popularRoutes.size());
+    }
             request.setAttribute("popularRoutes", popularRoutes);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } catch (SQLException e) {
