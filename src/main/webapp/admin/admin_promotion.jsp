@@ -16,15 +16,6 @@
             <div class="container mt-4">
                 <h2 class="mb-4">Quản lý Khuyến mãi</h2>
 
-                <!-- Nút quản lý Cron Job -->
-                <div class="mb-3">
-                    <form action="${pageContext.request.contextPath}/admin/cronjob" method="post">
-                        <button type="submit" name="action" value="start" class="btn btn-success">Bật Cron Job</button>
-                        <button type="submit" name="action" value="stop" class="btn btn-danger">Dừng Cron Job</button>
-                        <button type="button" class="btn btn-info" onclick="checkCronJobStatus()">Kiểm tra trạng thái</button>
-                    </form>
-                </div>
-
                 <!-- Bảng danh sách khuyến mãi -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">Danh sách khuyến mãi</div>
@@ -58,10 +49,7 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <form action="${pageContext.request.contextPath}/admin/promotions" method="post" class="d-inline">
-                                            <input type="hidden" name="promotion_id" value="${promo.promotionId}">
-                                            <button type="submit" class="btn btn-warning btn-sm">Chỉnh sửa</button>
-                                        </form>
+                                        <button class="btn btn-warning btn-sm" onclick="editPromotion(${promo.promotionId}, '${promo.promoCode}', ${promo.discountAmount}, ${promo.discountPercentage}, '${promo.validFrom}', '${promo.validTo}', ${promo.active})">Chỉnh sửa</button>
                                         <button class="btn btn-danger btn-sm" onclick="deletePromotion(${promo.promotionId})">Xóa</button>
                                     </td>
                                 </tr>
@@ -71,56 +59,62 @@
                     </div>
                 </div>
 
-                <!-- 🔹 Form Thêm Khuyến Mãi -->
+                <!-- 🔹 Form Thêm/Chỉnh sửa Khuyến Mãi -->
                 <div class="card mt-4">
-                    <div class="card-header bg-success text-white">Thêm khuyến mãi mới</div>
+                    <div class="card-header bg-success text-white">Thêm/Chỉnh sửa Khuyến mãi</div>
                     <div class="card-body">
-                        <form action="${pageContext.request.contextPath}/admin/promotions" method="post">
+                        <form id="promotionForm" action="${pageContext.request.contextPath}/admin/promotions" method="post">
+                            <input type="hidden" name="promotion_id" id="promotion_id">
+
                             <div class="mb-3">
                                 <label class="form-label">Mã khuyến mãi</label>
-                                <input type="text" name="promo_code" class="form-control" required>
+                                <input type="text" name="promo_code" id="promo_code" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Giảm giá (VNĐ)</label>
-                                <input type="number" name="discount_amount" class="form-control" required>
+                                <input type="number" name="discount_amount" id="discount_amount" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Giảm giá (%)</label>
-                                <input type="number" name="discount_percentage" class="form-control" required>
+                                <input type="number" name="discount_percentage" id="discount_percentage" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Ngày bắt đầu</label>
-                                <input type="datetime-local" name="valid_from" class="form-control" required>
+                                <input type="datetime-local" name="valid_from" id="valid_from" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Ngày kết thúc</label>
-                                <input type="datetime-local" name="valid_to" class="form-control" required>
+                                <input type="datetime-local" name="valid_to" id="valid_to" class="form-control">
                             </div>
+
                             <div class="mb-3">
                                 <label class="form-label">Trạng thái</label>
-                                <select name="is_active" class="form-control">
+                                <select name="is_active" id="is_active" class="form-control">
                                     <option value="true">Hoạt động</option>
                                     <option value="false">Vô hiệu</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Thêm khuyến mãi</button>
+
+                            <!-- Nút submit -->
+                            <button type="submit" class="btn btn-primary">Lưu Khuyến mãi</button>
                         </form>
+
                     </div>
                 </div>
-
-
             </div>
         </main>
     </div>
 </div>
 
 <script>
-    function checkCronJobStatus() {
-        fetch('${pageContext.request.contextPath}/admin/cronjob')
-            .then(response => response.json())
-            .then(data => {
-                alert(data.running ? "Cron Job đang chạy!" : "Cron Job đã dừng.");
-            });
+    function editPromotion(id, code, amount, percentage, validFrom, validTo, isActive) {
+        document.getElementById('promotion_id').value = id;
+        document.getElementById('promo_code').value = code;
+        document.getElementById('discount_amount').value = amount;
+        document.getElementById('discount_percentage').value = percentage;
+        document.getElementById('valid_from').value = validFrom.replace(" ", "T");
+        document.getElementById('valid_to').value = validTo.replace(" ", "T");
+        document.getElementById('is_active').value = isActive ? "true" : "false";
     }
 
     function deletePromotion(promotionId) {
