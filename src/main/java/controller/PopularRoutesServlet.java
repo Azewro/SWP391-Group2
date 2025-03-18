@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,8 @@ public class PopularRoutesServlet extends HttpServlet {
     } else {
         System.out.println("✅ Số tuyến xe phổ biến: " + popularRoutes.size());
     }
-            request.setAttribute("popularRoutes", popularRoutes);
+            HttpSession session = request.getSession();
+            session.setAttribute("popularRoutes", popularRoutes);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } catch (SQLException e) {
             e.printStackTrace();
