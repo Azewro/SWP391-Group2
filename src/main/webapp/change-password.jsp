@@ -32,33 +32,7 @@
 <body>
 
 <!-- Header -->
-<header class="header bg-dark text-white">
-    <div class="text-center py-2">
-        <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="G2 Bus Ticket" height="60">
-    </div>
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-            <nav class="nav">
-                <a class="nav-link text-white fw-bold" href="index.jsp">TRANG CHỦ</a>
-                <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
-                <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
-                <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
-                <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
-                <a class="nav-link text-white fw-bold" href="#">LIÊN HỆ</a>
-                <a class="nav-link text-white fw-bold" href="#">VỀ CHÚNG TÔI</a>
-            </nav>
-            <div class="dropdown">
-                <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="userprofile.jsp">Thông tin cá nhân</a></li>
-                    <li><a class="dropdown-item" href="change-password.jsp">Đổi mật khẩu</a></li>
-                    <li><a class="dropdown-item text-danger" href="logout.jsp">Đăng xuất</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</header>
+<jsp:include page="/components/header.jsp" />
 
 <!-- Change Password Form -->
 <div class="container password-container">

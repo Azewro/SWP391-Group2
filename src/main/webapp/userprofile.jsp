@@ -45,41 +45,7 @@
   </style>
 </head>
 <body>
-<header class="header bg-dark text-white">
-  <!-- Logo trên cùng -->
-  <div class="text-center py-2">
-    <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="G2 Bus Ticket" height="60">
-  </div>
-
-  <!-- Menu & Nút đăng nhập bên dưới -->
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center">
-      <!-- Menu -->
-      <nav class="nav">
-        <a class="nav-link text-white fw-bold" href="index.jsp">TRANG CHỦ</a>
-        <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
-        <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
-        <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
-        <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
-        <a class="nav-link text-white fw-bold" href="#">LIÊN HỆ</a>
-        <a class="nav-link text-white fw-bold" href="#">VỀ CHÚNG TÔI</a>
-      </nav>
-
-      <!-- Nút đăng nhập / đăng ký -->
-      <div>
-        <div class="dropdown">
-          <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-            <li><a class="dropdown-item" href="userprofile.jsp"><i class="bi bi-person"></i> Thông tin cá nhân</a></li>
-            <li><a class="dropdown-item" href="change-password.jsp"><i class="bi bi-key"></i> Đổi mật khẩu</a></li>
-            <li><a class="dropdown-item text-danger" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
+<jsp:include page="/components/header.jsp" />
 <div class="container profile-container">
   <div class="card p-4">
     <div class="text-center">
@@ -113,7 +79,6 @@
         <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
       </div>
       <div class="text-center mt-3">
-        <a href="modifyBooking" class="btn btn-warning">Modify Booking</a>
         <a href="booking-history" class="btn btn-info">View Booking History</a>
       </div>
     </form>
