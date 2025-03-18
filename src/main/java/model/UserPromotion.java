@@ -1,30 +1,28 @@
 package model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-@Entity
-@Table(name = "UserPromotions")
 public class UserPromotion {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_promo_id")
     private int userPromoId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(name = "discount_percentage", precision = 5, scale = 2)
+    private int userId;  // Thay vì đối tượng User, dùng ID để đơn giản hóa JDBC
     private BigDecimal discountPercentage;
-
-    @Column(name = "promo_code", unique = true, length = 50)
     private String promoCode;
+    private Timestamp expirationDate;
 
-    @Column(name = "expiration_date")
-    private LocalDateTime expirationDate;
+    public UserPromotion() {
+    }
+
+    public UserPromotion(int userPromoId, int userId, BigDecimal discountPercentage, String promoCode, Timestamp expirationDate) {
+        this.userPromoId = userPromoId;
+        this.userId = userId;
+        this.discountPercentage = discountPercentage;
+        this.promoCode = promoCode;
+        this.expirationDate = expirationDate;
+    }
+
+    public UserPromotion(int userPromoId, int userId, double discountPercentage, String promoCode, Timestamp expirationDate) {
+    }
 
     // Getters and Setters
     public int getUserPromoId() {
@@ -35,12 +33,12 @@ public class UserPromotion {
         this.userPromoId = userPromoId;
     }
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public BigDecimal getDiscountPercentage() {
@@ -59,12 +57,11 @@ public class UserPromotion {
         this.promoCode = promoCode;
     }
 
-    public LocalDateTime getExpirationDate() {
+    public Timestamp getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(LocalDateTime expirationDate) {
+    public void setExpirationDate(Timestamp expirationDate) {
         this.expirationDate = expirationDate;
     }
 }
-

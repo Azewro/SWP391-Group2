@@ -1,0 +1,41 @@
+package controller;
+
+import scheduler.CronJobManager;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.SQLException;
+
+@WebServlet("/admin/cronjob")
+public class AdminCronJobController extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("start".equals(action)) {
+            try {
+                CronJobManager.startCronJob();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else if ("stop".equals(action)) {
+            CronJobManager.stopCronJob();
+        }
+
+        response.sendRedirect(request.getContextPath() + "/admin/promotions");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        boolean isRunning = CronJobManager.isCronJobRunning();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"running\": " + isRunning + "}");
+    }
+}

@@ -1,0 +1,127 @@
+package dao;
+
+import model.UserPromotion;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminUserPromotionDAO {
+    private Connection conn;
+
+    public AdminUserPromotionDAO(Connection conn) {
+        this.conn = conn;
+    }
+
+    // 1️⃣ Lấy tất cả mã giảm giá cá nhân hóa
+    public List<UserPromotion> getAllUserPromotions() {
+        List<UserPromotion> promotions = new ArrayList<>();
+        String query = "SELECT * FROM UserPromotions ORDER BY expiration_date DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                promotions.add(new UserPromotion(
+                        rs.getInt("user_promo_id"),
+                        rs.getInt("user_id"),
+                        rs.getDouble("discount_percentage"),
+                        rs.getString("promo_code"),
+                        rs.getTimestamp("expiration_date")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return promotions;
+    }
+
+    // 2️⃣ Cấp mã giảm giá cho khách hàng
+    public boolean addUserPromotion(UserPromotion promo) {
+        String query = "INSERT INTO UserPromotions (user_id, discount_percentage, promo_code, expiration_date) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, promo.getUserId());
+            stmt.setDouble(1, promo.getDiscountPercentage().doubleValue());
+            stmt.setString(3, promo.getPromoCode());
+            stmt.setTimestamp(4, promo.getExpirationDate());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 3️⃣ Cập nhật mã giảm giá cá nhân
+    public boolean updateUserPromotion(UserPromotion promo) {
+        String query = "UPDATE UserPromotions SET discount_percentage = ?, promo_code = ?, expiration_date = ? WHERE user_promo_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setDouble(1, promo.getDiscountPercentage().doubleValue());
+            stmt.setString(2, promo.getPromoCode());
+            stmt.setTimestamp(3, promo.getExpirationDate());
+            stmt.setInt(4, promo.getUserPromoId());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 4️⃣ Xóa mã giảm giá của khách hàng
+    public boolean deleteUserPromotion(int promoId) {
+        String query = "DELETE FROM UserPromotions WHERE user_promo_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, promoId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 5️⃣ Lấy danh sách mã giảm giá theo user_id
+    public List<UserPromotion> getUserPromotionsByUserId(int userId) {
+        List<UserPromotion> promotions = new ArrayList<>();
+        String query = "SELECT * FROM UserPromotions WHERE user_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                promotions.add(new UserPromotion(
+                        rs.getInt("user_promo_id"),
+                        rs.getInt("user_id"),
+                        rs.getDouble("discount_percentage"),
+                        rs.getString("promo_code"),
+                        rs.getTimestamp("expiration_date")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return promotions;
+    }
+
+    // Lấy danh sách user_id của khách hàng đã mua từ `minTickets` vé trở lên
+    public List<Integer> getVipUsers(int minTickets) {
+        List<Integer> vipUsers = new ArrayList<>();
+        String query = "SELECT user_id FROM Tickets GROUP BY user_id HAVING COUNT(ticket_id) >= ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, minTickets);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                vipUsers.add(rs.getInt("user_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vipUsers;
+    }
+
+
+}

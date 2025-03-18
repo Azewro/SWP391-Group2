@@ -41,7 +41,7 @@ public class TicketPromotion {
         this.ticketId = ticketId;
     }
 
-    public BigDecimal getDiscountPercentage() {
+    public double getDiscountPercentage() {
         return discountPercentage;
     }
 
