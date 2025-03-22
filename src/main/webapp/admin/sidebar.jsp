@@ -64,7 +64,7 @@
     </div>
     <div class="offcanvas-body">
         <nav class="nav flex-column">
-            <a class="nav-link ${pageName == 'dashboard' ? 'active' : ''}" href="dashboard.jsp">
+            <a class="nav-link ${pageName == 'dashboard' ? 'active' : ''}" href="dashboard">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
             <a class="nav-link ${pageName == 'user_list' ? 'active' : ''}" href="users">

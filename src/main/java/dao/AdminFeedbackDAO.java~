@@ -2,10 +2,7 @@ package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import model.CustomerFeedback;
 import util.DatabaseConnection;
 
@@ -138,26 +135,5 @@ public class AdminFeedbackDAO {
 
         return list;
     }
-
-    public Map<Integer, Integer> countFeedbackByRating() {
-        Map<Integer, Integer> map = new HashMap<>();
-        String sql = "SELECT rating, COUNT(*) AS count FROM CustomerFeedback GROUP BY rating";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                int rating = rs.getInt("rating");
-                int count = rs.getInt("count");
-                map.put(rating, count);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return map;
-    }
-
 
 }

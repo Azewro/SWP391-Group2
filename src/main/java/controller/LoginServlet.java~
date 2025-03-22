@@ -22,29 +22,37 @@ public class LoginServlet extends HttpServlet {
         String usernameOrEmail = request.getParameter("usernameOrEmail");
         String password = request.getParameter("password");
 
-        UserDAO userDAO = null;
+        UserDAO userDAO;
         try {
             userDAO = new UserDAO();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         User user = userDAO.findByUsernameOrEmail(usernameOrEmail);
 
-      //        if (user != null && PasswordUtils.verifyPassword(password, user.getPasswordHash())) {
-        if (user != null && password.endsWith(user.getPasswordHash())) {    
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            session.setAttribute("role_id", user.getRoleId()); // Lưu role_id vào session
-
-            // Kiểm tra nếu là admin, chuyển hướng đến admin dashboard
-            if (user.getRoleId() == 1) {
-                response.sendRedirect("admin/dashboard.jsp");
-            } else {
-                response.sendRedirect("index.jsp"); // Người dùng bình thường về trang chính
-            }
-        } else {
+        if (user == null || !PasswordUtils.verifyPassword(password, user.getPasswordHash())) {
             request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        // Kiểm tra nếu tài khoản bị khóa
+        if (!user.isActive()) {
+            request.setAttribute("error", "Tài khoản của bạn đã bị khóa. Lý do: " + user.getStatusReason());
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
+        session.setAttribute("role_id", user.getRoleId()); // Lưu role_id vào session
+
+        // Kiểm tra nếu là admin, chuyển hướng đến admin dashboard
+        if (user.getRoleId() == 1) {
+            response.sendRedirect("admin/dashboard.jsp");
+        } else {
+            response.sendRedirect("index.jsp"); // Người dùng bình thường về trang chính
         }
     }
 }

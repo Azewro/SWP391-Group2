@@ -79,7 +79,7 @@
             <a class="nav-link ${pageName == 'bus_list' ? 'active' : ''}" href="bus">
                 <i class="fas fa-bus"></i> Danh sách xe bus
             </a>
-            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="admin-bus-trips.jsp">
+            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="bus-trips">
                 <i class="fas fa-route"></i> Danh sách Trips
             </a>
 

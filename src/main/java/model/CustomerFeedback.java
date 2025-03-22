@@ -9,6 +9,7 @@ public class CustomerFeedback {
     private String comment;
     private Timestamp createdAt;
     private String status;
+    private String userName;
 
     // Constructor đúng với số lượng tham số từ DAO
     public CustomerFeedback(int feedbackId, int ticketId, int rating, String comment, Timestamp createdAt, String status) {
@@ -18,6 +19,17 @@ public class CustomerFeedback {
         this.comment = comment;
         this.createdAt = createdAt;
         this.status = status;
+    }
+
+    public CustomerFeedback() {
+
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     // Getters và Setters
