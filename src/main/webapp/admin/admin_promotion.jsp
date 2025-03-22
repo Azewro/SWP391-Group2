@@ -16,6 +16,19 @@
             <div class="container mt-4">
                 <h2 class="mb-4">Quản lý Khuyến mãi</h2>
 
+                <!-- 🔹 Quản lý CronJob -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark"><i class="fas fa-clock"></i> Quản lý CronJob</div>
+                    <div class="card-body">
+                        <form action="${pageContext.request.contextPath}/admin/cronjob" method="post">
+                            <button type="submit" name="action" value="start" class="btn btn-success">Bật Cron Job</button>
+                            <button type="submit" name="action" value="stop" class="btn btn-danger">Dừng Cron Job</button>
+                            <button type="button" class="btn btn-info" onclick="checkCronJobStatus()">Kiểm tra trạng thái</button>
+                        </form>
+                        <p id="cronjob-status" class="mt-2"></p>
+                    </div>
+                </div>
+
                 <!-- Bảng danh sách khuyến mãi -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">Danh sách khuyến mãi</div>
@@ -115,6 +128,26 @@
         document.getElementById('valid_from').value = validFrom.replace(" ", "T");
         document.getElementById('valid_to').value = validTo.replace(" ", "T");
         document.getElementById('is_active').value = isActive ? "true" : "false";
+    }
+
+    function deletePromotion(promotionId) {
+        if (confirm("Bạn có chắc chắn muốn xóa khuyến mãi này không?")) {
+            fetch('${pageContext.request.contextPath}/admin/promotions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ promotion_id: promotionId, _method: "DELETE" })
+            }).then(() => window.location.reload());
+        }
+    }
+</script>
+<!-- 🔹 Script kiểm tra trạng thái Cron Job -->
+<script>
+    function checkCronJobStatus() {
+        fetch('${pageContext.request.contextPath}/admin/cronjob')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("cronjob-status").innerText = data.running ? "✅ Cron Job đang chạy!" : "❌ Cron Job đã dừng.";
+            });
     }
 
     function deletePromotion(promotionId) {
