@@ -48,7 +48,7 @@ public class AdminReportServlet extends HttpServlet {
             request.setAttribute("toDate", to.toString());
 
             // Điều hướng sang trang thống kê
-            RequestDispatcher rd = request.getRequestDispatcher("/admin-report.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/admin/admin-report.jsp");
             rd.forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Database error in AdminReportServlet", e);
