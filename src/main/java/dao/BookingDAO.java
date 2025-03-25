@@ -278,11 +278,11 @@ public class BookingDAO {
             while (rs.next()) {
                 Order order = new Order();
                 // Chuyển từ Timestamp -> LocalDateTime
-                Timestamp timestamp = rs.getTimestamp("orderDate");
+                Timestamp timestamp = rs.getTimestamp("order_date");
                 if (timestamp != null) {
                     order.setOrderDate(timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
                 }
-                order.setTotalAmount(rs.getBigDecimal("totalAmount"));
+                order.setTotalAmount(rs.getBigDecimal("total_amount"));
                 order.setStatus(rs.getString("status"));
                 orders.add(order);
             }

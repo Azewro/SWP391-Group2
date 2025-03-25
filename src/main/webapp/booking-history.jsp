@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Order" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
 
 <%
-    List<Order> orders = (List<Order>) request.getAttribute("bookingHistory");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 %>
 
@@ -27,10 +27,15 @@
             border-radius: 10px;
             padding: 20px;
         }
+        .no-order {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 
 <!-- Header -->
 <header class="bg-dark text-white text-center py-3">
@@ -50,20 +55,32 @@
             </tr>
             </thead>
             <tbody>
-            <% if (orders != null && !orders.isEmpty()) {
-                for (Order order : orders) { %>
-            <tr>
-                <td><%= order.getOrderDate().format(formatter) %></td>
-                <td><%= order.getTotalAmount() %> VNĐ</td>
-                <td><%= order.getStatus() %></td>
-                <td><a href="modify-booking.jsp?orderId=<%= order.getOrderId() %>" class="btn btn-primary btn-sm">Xem chi tiết</a></td>
-            </tr>
-            <% }
-            } else { %>
-            <tr>
-                <td colspan="3" class="text-center text-muted">Không có đơn hàng nào.</td>
-            </tr>
-            <% } %>
+            <c:choose>
+                <c:when test="${not empty orderList}">
+                    <c:forEach var="order" items="${orderList}">
+                        <tr>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${order.orderDate != null}">
+                                        <%= formatter.format(((Order) pageContext.getAttribute("order")).getOrderDate()) %>
+                                    </c:when>
+                                    <c:otherwise>Chưa xác định</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>${order.totalAmount} VNĐ</td>
+                            <td>${order.status}</td>
+                            <td>
+                                <a href="modify-booking?orderId=${order.orderId}" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <tr>
+                        <td colspan="4" class="no-order">Bạn chưa có đơn hàng nào.</td>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
             </tbody>
         </table>
     </div>
