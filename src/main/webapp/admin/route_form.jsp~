@@ -49,11 +49,9 @@
                 <label class="form-label">Điểm Kết Thúc</label>
                 <select name="end_location_id" class="form-select" required>
                   <c:forEach var="location" items="${requestScope.locations}">
-                    <option value="${location.locationId}"
-                            <c:if test="${route != null && location.locationId == route.startLocation.locationId}">selected</c:if>>
+                    <option value="${location.locationId}" ${route.endLocation.locationId == location.locationId ? 'selected' : ''}>
                         ${location.name}
                     </option>
-
                   </c:forEach>
                 </select>
               </div>

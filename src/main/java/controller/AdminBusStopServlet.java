@@ -48,15 +48,27 @@ public class AdminBusStopServlet extends HttpServlet {
             BusStop busStop = busStopDAO.getBusStopById(stopId);
             List<Route> routes = routeDAO.getAllRoutes(); // Lấy danh sách tuyến đường
 
+
             request.setAttribute("busStop", busStop);
             request.setAttribute("routes", routes);
+            List<Location> locations = busStopDAO.getAllLocations();
+            request.setAttribute("locations", locations);
+
             request.getRequestDispatcher("/admin/bus_stop_form.jsp").forward(request, response);
         } else if (action.equals("delete")) {
             // Xóa điểm dừng
             int stopId = Integer.parseInt(request.getParameter("id"));
             busStopDAO.deleteBusStop(stopId);
             response.sendRedirect(request.getContextPath() + "/admin/bus_stops");
+        }else if (action.equals("add-form")) {
+            List<Route> routes = routeDAO.getAllRoutes();
+            request.setAttribute("routes", routes);
+            List<Location> locations = busStopDAO.getAllLocations();
+            request.setAttribute("locations", locations);
+
+            request.getRequestDispatcher("/admin/bus_stop_form.jsp").forward(request, response);
         }
+
     }
 
     @Override
@@ -72,6 +84,10 @@ public class AdminBusStopServlet extends HttpServlet {
             Integer estimatedWaitingTime = request.getParameter("estimated_waiting_time").isEmpty() ? null : Integer.parseInt(request.getParameter("estimated_waiting_time"));
             boolean isActive = request.getParameter("is_active") != null;
             String description = request.getParameter("description");
+
+            List<Location> locations = busStopDAO.getAllLocations();
+            request.setAttribute("locations", locations);
+
 
             BusStop busStop = new BusStop(0, new Location(locationId), stopName, new Route(routeId), stopOrder, estimatedWaitingTime, isActive, description);
             busStopDAO.addBusStop(busStop);

@@ -135,13 +135,15 @@ public class AdminBusTripServlet extends HttpServlet {
             trip.setCurrentPrice(currentPrice);
 
 // Set số ghế còn lại = capacity của bus
-            Bus bus = busTripDAO.getBusById(busId);
+            Bus bus = busTripDAO.getAllBuses().stream()
+                    .filter(b -> b.getBusId() == busId)
+                    .findFirst()
+                    .orElse(null);
             if (bus == null) {
-                System.out.println("❌ Bus không tồn tại trong DB!");
+                System.out.println("❌ Bus không tồn tại trong danh sách!");
                 return null;
             }
             trip.setAvailableSeats(bus.getCapacity());
-
 
             return trip;
 

@@ -37,37 +37,24 @@ public class AdminPromotionDAO {
     }
 
     // 2️⃣ Thêm mới một chương trình khuyến mãi
-    public void addPromotion(Promotion promotion) {
-        String query = "INSERT INTO promotions (promo_code, discount_amount, discount_percentage, valid_from, valid_to, is_active) VALUES (?, ?, ?, ?, ?, ?)";
+    public boolean addPromotion(Promotion promo) {
+        String query = "INSERT INTO Promotions (promo_code, discount_amount, discount_percentage, valid_from, valid_to, is_active) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, promo.getPromoCode());
+            stmt.setBigDecimal(2, promo.getDiscountAmount()); // Thay vì setDouble
+            stmt.setBigDecimal(3, promo.getDiscountPercentage());
 
-            stmt.setString(1, promotion.getPromoCode());
+            stmt.setTimestamp(4, promo.getValidFrom());
+            stmt.setTimestamp(5, promo.getValidTo());
+            stmt.setBoolean(6, promo.isActive());
 
-            // 🔥 Kiểm tra giá trị NULL trước khi set
-            if (promotion.getDiscountAmount() == null) {
-                stmt.setNull(2, java.sql.Types.DECIMAL);
-            } else {
-                stmt.setBigDecimal(2, promotion.getDiscountAmount());
-            }
-
-            if (promotion.getDiscountPercentage() == null) {
-                stmt.setNull(3, java.sql.Types.DECIMAL);
-            } else {
-                stmt.setBigDecimal(3, promotion.getDiscountPercentage());
-            }
-
-            stmt.setTimestamp(4, promotion.getValidFrom());
-            stmt.setTimestamp(5, promotion.getValidTo());
-            stmt.setBoolean(6, promotion.isActive());
-
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
-
 
     // 3️⃣ Cập nhật thông tin chương trình khuyến mãi
     public boolean updatePromotion(Promotion promo) {
@@ -75,8 +62,9 @@ public class AdminPromotionDAO {
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, promo.getPromoCode());
-            stmt.setDouble(2, promo.getDiscountAmount());
-            stmt.setDouble(3, promo.getDiscountPercentage());
+            stmt.setBigDecimal(2, promo.getDiscountAmount()); // Thay vì setDouble
+            stmt.setBigDecimal(3, promo.getDiscountPercentage());
+
             stmt.setTimestamp(4, promo.getValidFrom());
             stmt.setTimestamp(5, promo.getValidTo());
             stmt.setBoolean(6, promo.isActive());

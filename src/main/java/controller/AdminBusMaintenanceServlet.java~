@@ -157,8 +157,7 @@ public class AdminBusMaintenanceServlet extends HttpServlet {
         BusMaintenanceLog log = new BusMaintenanceLog(logId, 0, maintenanceDate, description, cost, status);
         maintenanceDAO.updateMaintenanceLog(log);
 
-        response.sendRedirect(request.getContextPath() + "/admin/bus?action=list");
-
+        response.sendRedirect("bus-maintenance?action=list");
     }
 
     // 5. Xóa bảo trì
@@ -166,7 +165,6 @@ public class AdminBusMaintenanceServlet extends HttpServlet {
         int logId = Integer.parseInt(request.getParameter("logId"));
         maintenanceDAO.deleteMaintenanceLog(logId);
 
-        response.sendRedirect(request.getContextPath() + "/admin/bus?action=list");
-
+        response.sendRedirect("bus-maintenance?action=list");
     }
 }

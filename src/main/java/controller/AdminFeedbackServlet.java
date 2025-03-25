@@ -27,10 +27,13 @@ public class AdminFeedbackServlet extends HttpServlet {
 
         if (action == null || action.equals("list")) {
             listFeedback(request, response);
+        } else if (action.equals("search")) {
+            searchFeedback(request, response); // ✅ Thêm dòng này để xử lý tìm kiếm
         } else {
             listFeedbackByStatus(request, response, action);
         }
     }
+
 
     // Hiển thị danh sách phản hồi theo trạng thái
     private void listFeedbackByStatus(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
@@ -75,11 +78,20 @@ public class AdminFeedbackServlet extends HttpServlet {
 
     // Tìm kiếm phản hồi theo điểm đánh giá
     private void searchFeedback(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int rating = Integer.parseInt(request.getParameter("rating"));
-        List<CustomerFeedback> feedbackList = feedbackDAO.searchFeedbackByRating(rating);
+        String ratingParam = request.getParameter("rating");
+
+        List<CustomerFeedback> feedbackList;
+        if ("all".equals(ratingParam)) {
+            feedbackList = feedbackDAO.getAllFeedbacks();
+        } else {
+            int rating = Integer.parseInt(ratingParam);
+            feedbackList = feedbackDAO.searchFeedbackByRating(rating);
+        }
+
         request.setAttribute("feedbackList", feedbackList);
         request.getRequestDispatcher("/admin/feedback_list.jsp").forward(request, response);
     }
+
 
     // Duyệt hoặc từ chối phản hồi
     private void updateFeedbackStatus(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {

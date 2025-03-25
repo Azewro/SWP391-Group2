@@ -396,4 +396,25 @@ public class AdminBusTripDAO {
         return seatList;
     }
 
+    public Bus getBusById(int busId) {
+        String sql = "SELECT * FROM Bus WHERE bus_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, busId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Bus bus = new Bus();
+                    bus.setBusId(rs.getInt("bus_id"));
+                    bus.setPlateNumber(rs.getString("plate_number"));
+                    bus.setBusType(rs.getString("bus_type"));
+                    bus.setCapacity(rs.getInt("capacity"));
+                    return bus;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

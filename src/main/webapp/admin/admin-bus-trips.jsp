@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <jsp:include page="header.jsp" />
 <div id="layoutSidenav">
@@ -10,54 +9,54 @@
             <div class="container mt-4">
                 <h2>Quản lý chuyến xe</h2>
 
-                <!-- Form tìm kiếm -->
-                <form action="bus-trips" method="get" class="mb-3 d-flex">
-                    <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm tài xế, tuyến đường..." value="${param.search}">
-                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                <!-- Tìm kiếm -->
+                <form action="bus-trips" method="get" class="mb-3 row g-2">
+                    <div class="col-md-4">
+                        <input type="text" name="searchRoute" class="form-control" placeholder="ID tuyến đường"
+                               value="${searchRoute}">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="searchDriver" class="form-control" placeholder="Tên tài xế"
+                               value="${searchDriver}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    </div>
                 </form>
 
                 <a href="bus-trips?action=edit" class="btn btn-success mb-3">Thêm chuyến xe</a>
 
-                <table border="1" class="table table-striped">
+                <table class="table table-bordered table-striped">
                     <thead class="table-dark">
                     <tr>
                         <th>ID</th>
-                        <th>Tuyến đường</th>
+                        <th>Tuyến</th>
                         <th>Xe</th>
                         <th>Tài xế</th>
-                        <th>Thời gian khởi hành</th>
-                        <th>Thời gian đến</th>
+                        <th>Khởi hành</th>
+                        <th>Đến</th>
                         <th>Trạng thái</th>
                         <th>Số ghế còn</th>
-                        <th>Giá vé</th>
+                        <th>Giá</th>
                         <th>Hành động</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="busTrip" items="${busTrips}">
+                    <c:forEach var="trip" items="${busTrips}">
                         <tr>
-                            <td>${busTrip.tripId}</td>
-                            <td>${busTrip.route.routeId}</td>
-                            <td>${busTrip.bus.busId}</td>
+                            <td>${trip.tripId}</td>
+                            <td>${trip.route.routeId}</td>
+                            <td>${trip.bus.busId}</td>
+                            <td>${trip.driver.fullName}</td>
+                            <td>${trip.departureTime}</td>
+                            <td>${trip.arrivalTime}</td>
+                            <td>${trip.status}</td>
+                            <td>${trip.availableSeats}</td>
+                            <td>${trip.currentPrice}</td>
                             <td>
-                                <c:choose>
-                                    <c:when test="${not empty busTrip.driver and not empty busTrip.driver.fullName}">
-                                        ${busTrip.driver.fullName}
-                                    </c:when>
-                                    <c:otherwise>
-                                        Không có tài xế
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-
-                            <td>${busTrip.departureTime}</td>
-                            <td>${busTrip.arrivalTime}</td>
-                            <td>${busTrip.status}</td>
-                            <td>${busTrip.availableSeats}</td>
-                            <td>${busTrip.currentPrice}</td>
-                            <td>
-                                <a href="bus-trips?action=edit&tripId=${busTrip.tripId}" class="btn btn-warning">Sửa</a>
-                                <a href="bus-trips?action=delete&tripId=${busTrip.tripId}" class="btn btn-danger" onclick="return confirm('Xóa chuyến xe này?')">Xóa</a>
+                                <a href="bus-trips?action=edit&tripId=${trip.tripId}" class="btn btn-warning btn-sm">Sửa</a>
+                                <a href="bus-trips?action=delete&tripId=${trip.tripId}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn chắc chắn muốn xóa chuyến xe này?')">Xóa</a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -69,7 +68,8 @@
                     <ul class="pagination">
                         <c:forEach var="i" begin="1" end="${totalPages}">
                             <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                <a class="page-link" href="bus-trips?page=${i}&search=${param.search}">${i}</a>
+                                <a class="page-link"
+                                   href="bus-trips?page=${i}&searchRoute=${searchRoute}&searchDriver=${searchDriver}">${i}</a>
                             </li>
                         </c:forEach>
                     </ul>

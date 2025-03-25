@@ -91,6 +91,9 @@ public class User {
         this.fullName = fullName;
     }
 
+    public User(int driverId) {
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

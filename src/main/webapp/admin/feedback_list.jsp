@@ -22,12 +22,14 @@
                     <input type="hidden" name="action" value="search">
                     <label class="me-2" for="rating">Tìm theo điểm đánh giá:</label>
                     <select class="form-select w-auto" name="rating" id="rating">
+                        <option value="all">Tất cả</option>
                         <option value="1">1 Sao</option>
                         <option value="2">2 Sao</option>
                         <option value="3">3 Sao</option>
                         <option value="4">4 Sao</option>
                         <option value="5">5 Sao</option>
                     </select>
+
                     <button type="submit" class="btn btn-primary ms-2">Tìm kiếm</button>
                 </form>
 

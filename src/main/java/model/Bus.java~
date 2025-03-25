@@ -23,9 +23,6 @@ public class Bus {
         this.lastMaintenance = lastMaintenance;
     }
 
-    public Bus(int busId) {
-    }
-
     // Getters and Setters
     public int getBusId() {
         return busId;
