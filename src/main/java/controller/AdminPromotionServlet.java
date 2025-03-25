@@ -40,43 +40,42 @@ public class AdminPromotionServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("DEBUG: Nhận request POST");
+        String methodOverride = request.getParameter("_method");
 
-        // Kiểm tra tất cả các tham số gửi từ request
-        request.getParameterMap().forEach((key, value) ->
-                System.out.println("Param: " + key + " = " + (value.length > 0 ? value[0] : "null"))
-        );
-
-        String promoCode = request.getParameter("promo_code");
-        String discountAmountStr = request.getParameter("discount_amount");
-        String discountPercentageStr = request.getParameter("discount_percentage");
-
-        System.out.println("DEBUG: promo_code = " + promoCode);
-        System.out.println("DEBUG: discount_amount = " + discountAmountStr);
-        System.out.println("DEBUG: discount_percentage = " + discountPercentageStr);
-
-        if (promoCode == null || promoCode.trim().isEmpty()) {
-            System.out.println("ERROR: promo_code bị null!");
-            response.sendRedirect(request.getContextPath() + "/admin/promotions?error=emptyPromoCode");
+        if ("DELETE".equalsIgnoreCase(methodOverride)) {
+            doDelete(request, response);
             return;
         }
 
-        BigDecimal discountAmount = (discountAmountStr == null || discountAmountStr.trim().isEmpty())
-                ? null : new BigDecimal(discountAmountStr);
+        String promoIdStr = request.getParameter("promotion_id");
+        boolean isUpdate = promoIdStr != null && !promoIdStr.trim().isEmpty();
 
-        BigDecimal discountPercentage = (discountPercentageStr == null || discountPercentageStr.trim().isEmpty())
-                ? null : new BigDecimal(discountPercentageStr);
-
+        String promoCode = request.getParameter("promo_code");
+        BigDecimal discountAmount = parseBigDecimal(request.getParameter("discount_amount"));
+        BigDecimal discountPercentage = parseBigDecimal(request.getParameter("discount_percentage"));
         Timestamp validFrom = parseTimestamp(request.getParameter("valid_from"));
         Timestamp validTo = parseTimestamp(request.getParameter("valid_to"));
         boolean isActive = Boolean.parseBoolean(request.getParameter("is_active"));
 
-        Promotion promotion = new Promotion(0, promoCode, discountAmount, discountPercentage, validFrom, validTo, isActive);
-        promotionDAO.addPromotion(promotion);
+        Promotion promotion = new Promotion(
+                isUpdate ? Integer.parseInt(promoIdStr) : 0,
+                promoCode, discountAmount, discountPercentage,
+                validFrom, validTo, isActive
+        );
 
-        System.out.println("✅ Thành công: Đã thêm khuyến mãi " + promoCode);
+        if (isUpdate) {
+            promotionDAO.updatePromotion(promotion);
+        } else {
+            promotionDAO.addPromotion(promotion);
+        }
+
         response.sendRedirect(request.getContextPath() + "/admin/promotions");
     }
+
+    private BigDecimal parseBigDecimal(String val) {
+        return (val == null || val.trim().isEmpty()) ? null : new BigDecimal(val);
+    }
+
 
 
 
