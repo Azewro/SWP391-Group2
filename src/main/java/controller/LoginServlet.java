@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
 
         // Kiểm tra nếu là admin, chuyển hướng đến admin dashboard
         if (user.getRoleId() == 1) {
-            response.sendRedirect("admin/dashboard.jsp");
+            response.sendRedirect("admin/dashboard");
         } else {
             response.sendRedirect("index.jsp"); // Người dùng bình thường về trang chính
         }

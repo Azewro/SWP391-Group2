@@ -16,6 +16,19 @@
             <div class="container mt-4">
                 <h2 class="mb-4">Quản lý Khuyến mãi</h2>
 
+                <!-- 🔹 Quản lý CronJob -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark"><i class="fas fa-clock"></i> Quản lý CronJob</div>
+                    <div class="card-body">
+                        <form action="${pageContext.request.contextPath}/admin/cronjob" method="post">
+                            <button type="submit" name="action" value="start" class="btn btn-success">Bật Cron Job</button>
+                            <button type="submit" name="action" value="stop" class="btn btn-danger">Dừng Cron Job</button>
+                            <button type="button" class="btn btn-info" onclick="checkCronJobStatus()">Kiểm tra trạng thái</button>
+                        </form>
+                        <p id="cronjob-status" class="mt-2"></p>
+                    </div>
+                </div>
+
                 <!-- Bảng danh sách khuyến mãi -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">Danh sách khuyến mãi</div>
@@ -49,7 +62,17 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editPromotion(${promo.promotionId}, '${promo.promoCode}', ${promo.discountAmount}, ${promo.discountPercentage}, '${promo.validFrom}', '${promo.validTo}', ${promo.active})">Chỉnh sửa</button>
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="editPromotion(
+                                                    ${promo.promotionId},
+                                                        '${promo.promoCode}',
+                                                    ${promo.discountAmount != null ? promo.discountAmount : 0},
+                                                    ${promo.discountPercentage != null ? promo.discountPercentage : 0},
+                                                        '${promo.validFrom != null ? promo.validFrom : ""}',
+                                                        '${promo.validTo != null ? promo.validTo : ""}',
+                                                    ${promo.active}
+                                                        )">Chỉnh sửa</button>
+
                                         <button class="btn btn-danger btn-sm" onclick="deletePromotion(${promo.promotionId})">Xóa</button>
                                     </td>
                                 </tr>
@@ -108,24 +131,50 @@
 
 <script>
     function editPromotion(id, code, amount, percentage, validFrom, validTo, isActive) {
+        console.log("🛠 ID:", id);
+        console.log("🕒 validFrom:", validFrom);
+        console.log("🕒 validTo:", validTo);
+
         document.getElementById('promotion_id').value = id;
         document.getElementById('promo_code').value = code;
         document.getElementById('discount_amount').value = amount;
         document.getElementById('discount_percentage').value = percentage;
-        document.getElementById('valid_from').value = validFrom.replace(" ", "T");
-        document.getElementById('valid_to').value = validTo.replace(" ", "T");
+
+        if (validFrom) {
+            document.getElementById('valid_from').value = validFrom.replace(" ", "T");
+        }
+        if (validTo) {
+            document.getElementById('valid_to').value = validTo.replace(" ", "T");
+        }
+
         document.getElementById('is_active').value = isActive ? "true" : "false";
     }
+
 
     function deletePromotion(promotionId) {
         if (confirm("Bạn có chắc chắn muốn xóa khuyến mãi này không?")) {
             fetch('${pageContext.request.contextPath}/admin/promotions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ promotion_id: promotionId, _method: "DELETE" })
+                body: new URLSearchParams({
+                    promotion_id: promotionId,
+                    _method: "DELETE"
+                })
             }).then(() => window.location.reload());
         }
     }
+
+</script>
+<!-- 🔹 Script kiểm tra trạng thái Cron Job -->
+<script>
+    function checkCronJobStatus() {
+        fetch('${pageContext.request.contextPath}/admin/cronjob')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("cronjob-status").innerText = data.running ? "✅ Cron Job đang chạy!" : "❌ Cron Job đã dừng.";
+            });
+    }
+
 </script>
 
 <%@ include file="footer.jsp" %>

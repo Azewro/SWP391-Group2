@@ -59,13 +59,16 @@
 <!-- Sidebar -->
 <div class="offcanvas offcanvas-start text-light" id="offcanvasSidebar">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Quản lý hệ thống</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        <h5 class="offcanvas-title" >Quản lý hệ thống</h5>
     </div>
     <div class="offcanvas-body">
         <nav class="nav flex-column">
-            <a class="nav-link ${pageName == 'dashboard' ? 'active' : ''}" href="dashboard.jsp">
+            <a class="nav-link ${pageName == 'dashboard' ? 'active' : ''}" href="dashboard">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a class="nav-link ${pageName == 'dashboard' ? 'active' : ''}" href="report">
+                <i class="fas fa-tachometer-alt"></i> Statistics & Reports
             </a>
             <a class="nav-link ${pageName == 'user_list' ? 'active' : ''}" href="users">
                 <i class="fas fa-users"></i> Người dùng
@@ -79,7 +82,7 @@
             <a class="nav-link ${pageName == 'bus_list' ? 'active' : ''}" href="bus">
                 <i class="fas fa-bus"></i> Danh sách xe bus
             </a>
-            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="admin-bus-trips.jsp">
+            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="bus-trips">
                 <i class="fas fa-route"></i> Danh sách Trips
             </a>
 
