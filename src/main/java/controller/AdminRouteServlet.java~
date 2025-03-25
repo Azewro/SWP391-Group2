@@ -47,12 +47,7 @@ public class AdminRouteServlet extends HttpServlet {
             request.setAttribute("locations", locations);
 
             request.getRequestDispatcher("/admin/route_form.jsp").forward(request, response);
-        }else if (action.equals("add-form")) {
-            List<Location> locations = routeDAO.getAllLocations();
-            request.setAttribute("locations", locations);
-            request.getRequestDispatcher("/admin/route_form.jsp").forward(request, response);
-        }
-        else if (action.equals("delete")) {
+        } else if (action.equals("delete")) {
             // Xóa tuyến đường
             int routeId = Integer.parseInt(request.getParameter("id"));
             routeDAO.deleteRoute(routeId);

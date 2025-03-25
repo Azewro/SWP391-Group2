@@ -23,13 +23,13 @@
               <input type="text" name="search" class="form-control" placeholder="Tìm theo tên tuyến...">
             </div>
             <div class="col-md-3">
-<%--              <select name="location" class="form-control">--%>
-<%--                <option value="">Chọn địa điểm</option>--%>
-<%--                <!-- Lặp danh sách địa điểm -->--%>
-<%--                <c:forEach var="location" items="${locations}">--%>
-<%--                  <option value="${location.locationId}">${location.name}</option>--%>
-<%--                </c:forEach>--%>
-<%--              </select>--%>
+              <select name="location" class="form-control">
+                <option value="">Chọn địa điểm</option>
+                <!-- Lặp danh sách địa điểm -->
+                <c:forEach var="location" items="${locations}">
+                  <option value="${location.locationId}">${location.name}</option>
+                </c:forEach>
+              </select>
             </div>
             <div class="col-md-2">
               <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>

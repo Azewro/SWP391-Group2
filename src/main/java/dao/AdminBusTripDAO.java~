@@ -9,18 +9,17 @@ import util.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.SeatAvailability;
 
 public class AdminBusTripDAO {
 
     // Lấy danh sách tất cả chuyến xe
     public List<BusTrip> getAllBusTrips() {
         List<BusTrip> busTrips = new ArrayList<>();
-        String sql = "SELECT bt.*, u.full_name FROM BusTrips bt " +
-                "JOIN Users u ON bt.driver_id = u.user_id";
+        String sql = "SELECT bt.*, u.full_name FROM BusTrips bt "
+                + "JOIN Users u ON bt.driver_id = u.user_id";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 BusTrip trip = extractBusTripFromResultSet(rs);
@@ -33,12 +32,10 @@ public class AdminBusTripDAO {
         return busTrips;
     }
 
-
     // Lấy thông tin một chuyến xe theo ID
     public BusTrip getBusTripById(int tripId) {
         String sql = "SELECT * FROM BusTrips WHERE trip_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, tripId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -54,10 +51,9 @@ public class AdminBusTripDAO {
 
     // Thêm một chuyến xe mới
     public boolean addBusTrip(BusTrip trip) {
-        String sql = "INSERT INTO BusTrips (route_id, bus_id, driver_id, departure_time, arrival_time, status, available_seats, current_price) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "INSERT INTO BusTrips (route_id, bus_id, driver_id, departure_time, arrival_time, status, available_seats, current_price) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, trip.getRoute().getRouteId());
             ps.setInt(2, trip.getBus().getBusId());
@@ -77,10 +73,9 @@ public class AdminBusTripDAO {
 
     // Cập nhật thông tin chuyến xe
     public boolean updateBusTrip(BusTrip trip) {
-        String sql = "UPDATE BusTrips SET route_id = ?, bus_id = ?, driver_id = ?, departure_time = ?, arrival_time = ?, status = ?, " +
-                "available_seats = ?, current_price = ? WHERE trip_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "UPDATE BusTrips SET route_id = ?, bus_id = ?, driver_id = ?, departure_time = ?, arrival_time = ?, status = ?, "
+                + "available_seats = ?, current_price = ? WHERE trip_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, trip.getRoute().getRouteId());
             ps.setInt(2, trip.getBus().getBusId());
@@ -102,8 +97,7 @@ public class AdminBusTripDAO {
     // Xóa một chuyến xe
     public boolean deleteBusTrip(int tripId) {
         String sql = "DELETE FROM BusTrips WHERE trip_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, tripId);
             return ps.executeUpdate() > 0;
@@ -128,7 +122,13 @@ public class AdminBusTripDAO {
 
         User driver = new User();
         driver.setUserId(rs.getInt("driver_id"));
-        driver.setFullName(rs.getString("full_name")); // Gán tên tài xế
+
+        // Kiểm tra xem cột "full_name" có tồn tại trong kết quả không
+        try {
+            driver.setFullName(rs.getString("full_name"));
+        } catch (SQLException e) {
+            driver.setFullName("Không có dữ liệu"); // Gán giá trị mặc định nếu không tìm thấy cột
+        }
         trip.setDriver(driver);
 
         trip.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
@@ -139,21 +139,16 @@ public class AdminBusTripDAO {
         trip.setCurrentPrice(rs.getBigDecimal("current_price"));
         trip.setDelayReason(rs.getString("delay_reason"));
 
-        // Tính số ghế còn lại
         trip.setAvailableSeats(getAvailableSeats(trip.getTripId(), trip.getBus().getBusId()));
 
         return trip;
     }
 
-
-
     public List<User> getAllDrivers() {
         List<User> drivers = new ArrayList<>();
         String sql = "SELECT user_id, full_name FROM Users WHERE role_id = 4 AND is_active = TRUE";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 User driver = new User();
@@ -167,11 +162,10 @@ public class AdminBusTripDAO {
         return drivers;
     }
 
-
     public List<BusTrip> searchBusTrips(String route, String driver, int page, int pageSize) {
         List<BusTrip> busTrips = new ArrayList<>();
-        String sql = "SELECT bt.*, u.full_name FROM BusTrips bt " +
-                "JOIN Users u ON bt.driver_id = u.user_id WHERE 1=1";
+        String sql = "SELECT bt.*, u.full_name FROM BusTrips bt "
+                + "JOIN Users u ON bt.driver_id = u.user_id WHERE 1=1";
 
         if (route != null && !route.isEmpty()) {
             sql += " AND bt.route_id LIKE ?";
@@ -181,8 +175,7 @@ public class AdminBusTripDAO {
         }
         sql += " LIMIT ?, ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             int index = 1;
             if (route != null && !route.isEmpty()) {
@@ -207,7 +200,6 @@ public class AdminBusTripDAO {
         return busTrips;
     }
 
-
     public int countBusTrips(String route, String driver) {
         String sql = "SELECT COUNT(*) FROM BusTrips WHERE 1=1";
 
@@ -218,8 +210,7 @@ public class AdminBusTripDAO {
             sql += " AND driver_id IN (SELECT user_id FROM Users WHERE full_name LIKE ?)";
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             int index = 1;
             if (route != null && !route.isEmpty()) {
@@ -240,14 +231,11 @@ public class AdminBusTripDAO {
         return 0;
     }
 
-
     public List<Route> getAllRoutes() {
         List<Route> routes = new ArrayList<>();
         String sql = "SELECT route_id, route_name FROM Routes";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Route route = new Route();
@@ -265,9 +253,7 @@ public class AdminBusTripDAO {
         List<Bus> buses = new ArrayList<>();
         String sql = "SELECT bus_id, plate_number, bus_type, capacity FROM Bus WHERE is_active = TRUE";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Bus bus = new Bus();
@@ -291,9 +277,7 @@ public class AdminBusTripDAO {
         String queryTotalSeats = "SELECT capacity FROM Bus WHERE bus_id = ?";
         String queryBookedSeats = "SELECT COUNT(*) FROM Tickets WHERE trip_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement psTotal = conn.prepareStatement(queryTotalSeats);
-             PreparedStatement psBooked = conn.prepareStatement(queryBookedSeats)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement psTotal = conn.prepareStatement(queryTotalSeats); PreparedStatement psBooked = conn.prepareStatement(queryBookedSeats)) {
 
             // Lấy tổng số ghế của xe
             psTotal.setInt(1, busId);
@@ -350,4 +334,68 @@ public class AdminBusTripDAO {
         }
     }
 
+    public List<BusTrip> searchBusTrips(String route, int page, int pageSize) {
+        List<BusTrip> busTrips = new ArrayList<>();
+        String sql = "SELECT bt.*, u.full_name, b.bus_type FROM BusTrips bt "
+                + "JOIN Users u ON bt.driver_id = u.user_id join bus b on b.bus_id = bt.bus_id  WHERE 1=1";
+
+        if (route != null && !route.isEmpty()) {
+            sql += " AND bt.route_id = " + route;
+        }
+
+        sql += " LIMIT ?, ?";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, (page - 1) * pageSize);
+            ps.setInt(2, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    BusTrip trip = extractBusTripFromResultSet(rs);
+                    trip.getDriver().setFullName(rs.getString("full_name")); // Gán tên tài xế
+                    trip.getBus().setBusType(rs.getString("bus_type"));
+                    busTrips.add(trip);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return busTrips;
+    }
+
+    public List<SeatAvailability> getAvailableSeatsByTripId(String tripId) {
+        List<SeatAvailability> seatList = new ArrayList<>();
+        String GET_AVAILABLE_SEATS = """
+        SELECT s.seat_id, s.seat_number, s.seat_type,
+               CASE 
+                   WHEN t.seat_id IS NOT NULL THEN 0  
+                   ELSE 1  
+               END AS isAvailable
+        FROM seats s
+        JOIN bustrips bt ON s.bus_id = bt.bus_id
+        LEFT JOIN tickets t ON s.seat_id = t.seat_id AND t.trip_id = bt.trip_id
+        WHERE bt.trip_id = ?;
+    """;
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(GET_AVAILABLE_SEATS)) {
+            stmt.setString(1, tripId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    SeatAvailability seat = new SeatAvailability(
+                            rs.getInt("seat_id"),
+                            rs.getInt("seat_number"),
+                            rs.getString("seat_type"),
+                            rs.getBoolean("isAvailable")
+                    );
+                    seatList.add(seat);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return seatList;
+    }
+
+    public Bus getBusById(int busId) {
+    }
 }

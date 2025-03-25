@@ -22,7 +22,14 @@
             <div class="col-md-4">
               <input type="text" name="search" class="form-control" placeholder="Tìm theo tên điểm dừng...">
             </div>
-
+            <div class="col-md-3">
+              <select name="route_id" class="form-control">
+                <option value="">Chọn tuyến đường</option>
+                <c:forEach var="route" items="${routes}">
+                  <option value="${route.routeId}">${route.routeName}</option>
+                </c:forEach>
+              </select>
+            </div>
             <div class="col-md-2">
               <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
             </div>

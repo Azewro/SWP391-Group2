@@ -79,6 +79,36 @@ public class AdminBusDAO {
         return false;
     }
 
+    public List<Bus> searchBusByPlateNumber(String keyword) {
+        List<Bus> buses = new ArrayList<>();
+        String sql = "SELECT * FROM Bus WHERE plate_number LIKE ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + keyword + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Bus bus = new Bus(
+                        rs.getInt("bus_id"),
+                        rs.getString("plate_number"),
+                        rs.getInt("capacity"),
+                        rs.getString("bus_type"),
+                        rs.getBoolean("is_active"),
+                        rs.getTimestamp("last_maintenance") != null ? rs.getTimestamp("last_maintenance").toLocalDateTime() : null
+                );
+                buses.add(bus);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return buses;
+    }
+
+
     // Cập nhật thông tin xe buýt
     public boolean updateBus(Bus bus) {
         String query = "UPDATE Bus SET plate_number = ?, capacity = ?, bus_type = ?, is_active = ?, last_maintenance = ? WHERE bus_id = ?";

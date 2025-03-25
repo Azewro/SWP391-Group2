@@ -35,8 +35,8 @@ public class PromotionDAO {
                 Promotion promo = new Promotion(
                         rs.getInt("promotion_id"),
                         rs.getString("promo_code"),
-                        rs.getBigDecimal("discount_amount").doubleValue(),
-                        rs.getBigDecimal("discount_percentage").doubleValue(),
+                        rs.getBigDecimal("discount_amount"),
+                        rs.getBigDecimal("discount_percentage"),
                         rs.getTimestamp("valid_from"),
                         rs.getTimestamp("valid_to"),
                         rs.getBoolean("is_active")

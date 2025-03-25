@@ -13,8 +13,8 @@
             <div class="container mt-4">
                 <h2 class="mb-3"><%= (log != null) ? "Chỉnh sửa Bảo Trì" : "Thêm Bảo Trì" %></h2>
 
-                <form action="${pageContext.request.contextPath}/admin/bus-maintenance" method="POST">
-                <input type="hidden" name="action" value="<%= (log != null) ? "update" : "insert" %>">
+                <form action="admin/bus-maintenance" method="POST">
+                    <input type="hidden" name="action" value="<%= (log != null) ? "update" : "insert" %>">
                     <input type="hidden" name="logId" value="<%= (log != null) ? log.getLogId() : "" %>">
                     <input type="hidden" name="busId" value="${busId}">
 

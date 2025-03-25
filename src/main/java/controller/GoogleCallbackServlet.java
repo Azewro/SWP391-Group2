@@ -100,6 +100,9 @@ public class GoogleCallbackServlet extends HttpServlet {
             } else {
                 // Nếu user chưa có, lưu vào database và chuyển hướng đến đăng ký
                 saveUserToDatabase(email, fullName, pictureUrl);
+                // Gán email và tên đầy đủ vào session
+                session.setAttribute("user_email", email);
+                session.setAttribute("user_fullname", fullName);
                 response.sendRedirect("register2.jsp");
             }
 

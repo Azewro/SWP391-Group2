@@ -33,16 +33,6 @@
                 <label class="form-label">Tên Điểm Dừng</label>
                 <input type="text" name="stop_name" class="form-control" required value="${busStop.stopName}">
               </div>
-              <div class="mb-3">
-                <label class="form-label">Vị trí</label>
-                <select name="location_id" class="form-select" required>
-                  <c:forEach var="loc" items="${requestScope.locations}">
-                    <option value="${loc.locationId}" ${busStop.location.locationId == loc.locationId ? 'selected' : ''}>
-                        ${loc.name} - ${loc.address}
-                    </option>
-                  </c:forEach>
-                </select>
-              </div>
 
               <div class="mb-3">
                 <label class="form-label">Tuyến Đường</label>

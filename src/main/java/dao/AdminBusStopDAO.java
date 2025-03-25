@@ -1,6 +1,7 @@
 package dao;
 
 import model.BusStop;
+import model.Location;
 import model.Route;
 import util.DatabaseConnection;
 
@@ -56,7 +57,35 @@ public class AdminBusStopDAO {
     }
 
 
+    public List<Location> getAllLocations() {
+        List<Location> locations = new ArrayList<>();
+        String sql = "SELECT location_id, name, address, ward_id, latitude, longitude, location_type, is_active, description FROM Locations";
 
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Location loc = new Location();
+                loc.setLocationId(rs.getInt("location_id"));
+                loc.setName(rs.getString("name"));
+                loc.setAddress(rs.getString("address"));
+                loc.setWardId(rs.getInt("ward_id")); // nếu Location class có trường này
+                loc.setLatitude(rs.getBigDecimal("latitude"));
+                loc.setLongitude(rs.getBigDecimal("longitude"));
+                loc.setLocationType(rs.getString("location_type"));
+                loc.setActive(rs.getBoolean("is_active"));
+                loc.setDescription(rs.getString("description"));
+
+                locations.add(loc);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return locations;
+    }
 
     // Lấy thông tin điểm dừng theo ID
     public BusStop getBusStopById(int stopId) {

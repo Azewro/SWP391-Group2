@@ -48,9 +48,9 @@
                                     <a href="order-details?orderId=${order.orderId}" class="btn btn-primary btn-sm">
                                         <i class="fa fa-eye"></i> Chi tiết
                                     </a>
-                                    <button class="btn btn-danger btn-sm" onclick="cancelOrder(${order.orderId})">
-                                        <i class="fa fa-times"></i> Hủy
-                                    </button>
+<%--                                    <button class="btn btn-danger btn-sm" onclick="cancelOrder(${order.orderId})">--%>
+<%--                                        <i class="fa fa-times"></i> Hủy--%>
+<%--                                    </button>--%>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -108,7 +108,7 @@
 
     function cancelOrder(orderId) {
         if (confirm("Bạn có chắc muốn hủy đơn hàng này?")) {
-            window.location.href = `admin/orders?orderId=${orderId}&status=Cancelled`;
+            window.location.href = `orders?orderId=${orderId}&status=Cancelled`;
         }
     }
 

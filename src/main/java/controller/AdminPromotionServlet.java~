@@ -93,8 +93,7 @@ public class AdminPromotionServlet extends HttpServlet {
         Promotion promotion = new Promotion(promoId, promoCode, discountAmount, discountPercentage, validFrom, validTo, isActive);
         promotionDAO.updatePromotion(promotion);
 
-        response.sendRedirect(request.getContextPath() + "/admin/promotions");
-
+        response.sendRedirect("/admin/promotions");
     }
 
     // 4️⃣ Xóa hoặc vô hiệu hóa chương trình khuyến mãi (DELETE)
@@ -103,8 +102,7 @@ public class AdminPromotionServlet extends HttpServlet {
         int promoId = Integer.parseInt(request.getParameter("promotion_id"));
         promotionDAO.disablePromotion(promoId);
 
-        response.sendRedirect(request.getContextPath() + "/admin/promotions");
-
+        response.sendRedirect("/admin/promotions");
     }
 
     private Timestamp parseTimestamp(String dateStr) {

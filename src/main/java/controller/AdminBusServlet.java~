@@ -97,20 +97,6 @@ public class AdminBusServlet extends HttpServlet {
         request.getRequestDispatcher("/admin/bus-list.jsp").forward(request, response);
     }
 
-    private void searchBus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
-
-        List<Bus> busList = busDAO.searchBusByPlateNumber(keyword);
-        request.setAttribute("busList", busList);
-
-        // Không cần phân trang khi tìm kiếm
-        request.setAttribute("currentPage", 1);
-        request.setAttribute("totalPages", 1);
-
-        request.getRequestDispatcher("/admin/bus-list.jsp").forward(request, response);
-    }
-
-
     // 2. Hiển thị form chỉnh sửa xe buýt
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String busIdParam = request.getParameter("busId");

@@ -23,8 +23,8 @@ public class AdminPromotionDAO {
                 promotions.add(new Promotion(
                         rs.getInt("promotion_id"),
                         rs.getString("promo_code"),
-                        rs.getDouble("discount_amount"),
-                        rs.getDouble("discount_percentage"),
+                        rs.getBigDecimal("discount_amount"),
+                        rs.getBigDecimal("discount_percentage"),
                         rs.getTimestamp("valid_from"),
                         rs.getTimestamp("valid_to"),
                         rs.getBoolean("is_active")
@@ -42,8 +42,9 @@ public class AdminPromotionDAO {
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, promo.getPromoCode());
-            stmt.setDouble(2, promo.getDiscountAmount());
-            stmt.setDouble(3, promo.getDiscountPercentage());
+            stmt.setBigDecimal(2, promo.getDiscountAmount()); // Thay vì setDouble
+            stmt.setBigDecimal(3, promo.getDiscountPercentage());
+
             stmt.setTimestamp(4, promo.getValidFrom());
             stmt.setTimestamp(5, promo.getValidTo());
             stmt.setBoolean(6, promo.isActive());
@@ -61,8 +62,9 @@ public class AdminPromotionDAO {
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, promo.getPromoCode());
-            stmt.setDouble(2, promo.getDiscountAmount());
-            stmt.setDouble(3, promo.getDiscountPercentage());
+            stmt.setBigDecimal(2, promo.getDiscountAmount()); // Thay vì setDouble
+            stmt.setBigDecimal(3, promo.getDiscountPercentage());
+
             stmt.setTimestamp(4, promo.getValidFrom());
             stmt.setTimestamp(5, promo.getValidTo());
             stmt.setBoolean(6, promo.isActive());
@@ -100,8 +102,8 @@ public class AdminPromotionDAO {
                 return new Promotion(
                         rs.getInt("promotion_id"),
                         rs.getString("promo_code"),
-                        rs.getDouble("discount_amount"),
-                        rs.getDouble("discount_percentage"),
+                        rs.getBigDecimal("discount_amount"),
+                        rs.getBigDecimal("discount_percentage"),
                         rs.getTimestamp("valid_from"),
                         rs.getTimestamp("valid_to"),
                         rs.getBoolean("is_active")
