@@ -38,8 +38,17 @@ public class BusStop {
         this.isActive = isActive;
         this.description = description;
     }
+    public BusStop(int stopId, String stopName, int stopOrder, Integer estimatedWaitingTime, boolean isActive, String description, Location location) {
+    this.stopId = stopId;
+    this.stopName = stopName;
+    this.stopOrder = stopOrder;
+    this.estimatedWaitingTime = estimatedWaitingTime;
+    this.isActive = isActive;
+    this.description = description;
+    this.location = location;
+}
 
-
+  
 
     public int getStopId() { return stopId; }
     public void setStopId(int stopId) { this.stopId = stopId; }
@@ -70,6 +79,9 @@ public class BusStop {
     public int getLocationId() {
         return (location != null) ? location.getLocationId() : 0; // Tránh lỗi NullPointerException
     }
+    public String getLocationName() {
+    return (location != null) ? location.getName() : "";
+}
 
     @Override
     public String toString() {

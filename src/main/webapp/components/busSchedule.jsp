@@ -4,6 +4,10 @@
     Author     : ktleg
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <style>
     body {
@@ -194,16 +198,13 @@
                             <td>${route.routeType != null ? route.routeType : "---"}</td>
 
                             <td>${route.distance} km</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${route.estimatedDuration >= 60}">
-                                        ${route.estimatedDuration / 60} giờ ${route.estimatedDuration % 60} phút
-                                    </c:when>
-                                    <c:otherwise>
-                                        ${route.estimatedDuration} phút
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
+                          <td>
+<c:set var="hours" value="${route.estimatedDuration / 60 -1}" />
+<c:set var="minutes" value="${route.estimatedDuration % 60}" />
+<fmt:formatNumber var="hoursInt" value="${hours}" maxFractionDigits="0"/>
+${hoursInt} giờ ${minutes} phút
+
+</td>
                             <td>
                                 <c:choose>
                                     <c:when test="${route.basePrice != null}">
@@ -215,6 +216,12 @@
                                 </c:choose>
                             </td>
                             <td><button class="search-button">Tìm tuyến xe</button></td>
+                            <td>
+  <a href="bus-stop-locations?routeId=${route.routeId}">
+    Xem trạm dừng
+  </a>
+</td>
+
                         </tr>
                     </c:forEach>
                 </tbody>

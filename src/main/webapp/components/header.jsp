@@ -143,8 +143,9 @@
                 <a class="nav-link text-white fw-bold" href="home">TRANG CHỦ</a>
                 <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
                 <a class="nav-link text-white fw-bold" href="SearchBus">TÌM BUS</a>
-                <a class="nav-link text-white fw-bold" href="#">TRA CỨU VÉ</a>
+                <a class="nav-link text-white fw-bold" href="ticket-lookup">TRA CỨU VÉ</a>
                 <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
+                <a class="nav-link text-white fw-bold" href="promotions">KHUYẾN MÃI</a>
                 <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
                 <a class="nav-link text-white fw-bold" href="SearchRoute">TUYẾN ĐƯỜNG</a>
             </nav>
