@@ -62,7 +62,17 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editPromotion(${promo.promotionId}, '${promo.promoCode}', ${promo.discountAmount}, ${promo.discountPercentage}, '${promo.validFrom}', '${promo.validTo}', ${promo.active})">Chỉnh sửa</button>
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="editPromotion(
+                                                    ${promo.promotionId},
+                                                        '${promo.promoCode}',
+                                                    ${promo.discountAmount != null ? promo.discountAmount : 0},
+                                                    ${promo.discountPercentage != null ? promo.discountPercentage : 0},
+                                                        '${promo.validFrom != null ? promo.validFrom : ""}',
+                                                        '${promo.validTo != null ? promo.validTo : ""}',
+                                                    ${promo.active}
+                                                        )">Chỉnh sửa</button>
+
                                         <button class="btn btn-danger btn-sm" onclick="deletePromotion(${promo.promotionId})">Xóa</button>
                                     </td>
                                 </tr>
@@ -121,24 +131,39 @@
 
 <script>
     function editPromotion(id, code, amount, percentage, validFrom, validTo, isActive) {
+        console.log("🛠 ID:", id);
+        console.log("🕒 validFrom:", validFrom);
+        console.log("🕒 validTo:", validTo);
+
         document.getElementById('promotion_id').value = id;
         document.getElementById('promo_code').value = code;
         document.getElementById('discount_amount').value = amount;
         document.getElementById('discount_percentage').value = percentage;
-        document.getElementById('valid_from').value = validFrom.replace(" ", "T");
-        document.getElementById('valid_to').value = validTo.replace(" ", "T");
+
+        if (validFrom) {
+            document.getElementById('valid_from').value = validFrom.replace(" ", "T");
+        }
+        if (validTo) {
+            document.getElementById('valid_to').value = validTo.replace(" ", "T");
+        }
+
         document.getElementById('is_active').value = isActive ? "true" : "false";
     }
+
 
     function deletePromotion(promotionId) {
         if (confirm("Bạn có chắc chắn muốn xóa khuyến mãi này không?")) {
             fetch('${pageContext.request.contextPath}/admin/promotions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ promotion_id: promotionId, _method: "DELETE" })
+                body: new URLSearchParams({
+                    promotion_id: promotionId,
+                    _method: "DELETE"
+                })
             }).then(() => window.location.reload());
         }
     }
+
 </script>
 <!-- 🔹 Script kiểm tra trạng thái Cron Job -->
 <script>
@@ -150,15 +175,6 @@
             });
     }
 
-    function deletePromotion(promotionId) {
-        if (confirm("Bạn có chắc chắn muốn xóa khuyến mãi này không?")) {
-            fetch('${pageContext.request.contextPath}/admin/promotions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ promotion_id: promotionId, _method: "DELETE" })
-            }).then(() => window.location.reload());
-        }
-    }
 </script>
 
 <%@ include file="footer.jsp" %>

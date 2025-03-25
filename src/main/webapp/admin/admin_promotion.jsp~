@@ -62,7 +62,17 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editPromotion(${promo.promotionId}, '${promo.promoCode}', ${promo.discountAmount}, ${promo.discountPercentage}, '${promo.validFrom}', '${promo.validTo}', ${promo.active})">Chỉnh sửa</button>
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="editPromotion(
+                                                    ${promo.promotionId},
+                                                        '${promo.promoCode}',
+                                                    ${promo.discountAmount != null ? promo.discountAmount : 0},
+                                                    ${promo.discountPercentage != null ? promo.discountPercentage : 0},
+                                                        '${promo.validFrom != null ? promo.validFrom : ""}',
+                                                        '${promo.validTo != null ? promo.validTo : ""}',
+                                                    ${promo.active}
+                                                        )">Chỉnh sửa</button>
+
                                         <button class="btn btn-danger btn-sm" onclick="deletePromotion(${promo.promotionId})">Xóa</button>
                                     </td>
                                 </tr>
@@ -135,10 +145,25 @@
             fetch('${pageContext.request.contextPath}/admin/promotions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ promotion_id: promotionId, _method: "DELETE" })
+                body: new URLSearchParams({
+                    promotion_id: promotionId,
+                    _method: "DELETE"
+                })
             }).then(() => window.location.reload());
         }
     }
+
+</script>
+<!-- 🔹 Script kiểm tra trạng thái Cron Job -->
+<script>
+    function checkCronJobStatus() {
+        fetch('${pageContext.request.contextPath}/admin/cronjob')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("cronjob-status").innerText = data.running ? "✅ Cron Job đang chạy!" : "❌ Cron Job đã dừng.";
+            });
+    }
+
 </script>
 
 <%@ include file="footer.jsp" %>
