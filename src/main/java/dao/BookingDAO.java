@@ -11,6 +11,52 @@ import java.util.List;
 
 public class BookingDAO {
 
+    public OrderDetail getOrderDetailById(int orderDetailId) throws SQLException {
+        String sql = "SELECT od.order_detail_id, od.ticket_id, od.price, o.order_id, o.order_date, o.total_amount, o.status, " +
+                "t.ticket_id, t.seat_id, t.trip_id, t.price AS ticket_price, t.status AS ticket_status " +
+                "FROM OrderDetails od " +
+                "JOIN Orders o ON od.order_id = o.order_id " +
+                "JOIN Tickets t ON od.ticket_id = t.ticket_id " +
+                "WHERE od.order_detail_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderDetailId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Mapping dữ liệu sang model
+                    Order order = new Order();
+                    order.setOrderId(rs.getInt("order_id"));
+                    order.setOrderDate(rs.getTimestamp("order_date").toLocalDateTime());
+                    order.setTotalAmount(rs.getBigDecimal("total_amount"));
+                    order.setStatus(rs.getString("status"));
+
+                    Ticket ticket = new Ticket();
+                    ticket.setTicketId(rs.getInt("ticket_id"));
+                    ticket.setPrice(rs.getBigDecimal("ticket_price"));
+                    ticket.setStatus(rs.getString("ticket_status"));
+
+                    Seat seat = new Seat();
+                    seat.setSeatId(rs.getInt("seat_id"));
+                    ticket.setSeat(seat);
+
+                    BusTrip trip = new BusTrip();
+                    trip.setTripId(rs.getInt("trip_id"));
+                    ticket.setTrip(trip);
+
+                    OrderDetail orderDetail = new OrderDetail();
+                    orderDetail.setOrderDetailId(orderDetailId);
+                    orderDetail.setOrder(order);
+                    orderDetail.setTicket(ticket);
+                    orderDetail.setPrice(rs.getBigDecimal("price"));
+
+                    return orderDetail;
+                }
+            }
+        }
+        return null;
+    }
+
+
     public Ticket modifyBooking(int orderDetailId, Integer newSeatId, Integer newTripId, BigDecimal newPrice) throws SQLException {
         Connection conn = null;
         try {
@@ -278,11 +324,11 @@ public class BookingDAO {
             while (rs.next()) {
                 Order order = new Order();
                 // Chuyển từ Timestamp -> LocalDateTime
-                Timestamp timestamp = rs.getTimestamp("orderDate");
+                Timestamp timestamp = rs.getTimestamp("order_date");
                 if (timestamp != null) {
                     order.setOrderDate(timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
                 }
-                order.setTotalAmount(rs.getBigDecimal("totalAmount"));
+                order.setTotalAmount(rs.getBigDecimal("total_amount"));
                 order.setStatus(rs.getString("status"));
                 orders.add(order);
             }
