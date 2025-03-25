@@ -87,6 +87,8 @@
             </div>
           </c:if>
 
+          <p>🚍 Bus ID được gửi: <strong>${param.busId}</strong></p>
+
           <!-- Nút -->
           <div class="mb-3">
             <button type="submit" name="action" value="${busTrip != null ? 'update' : 'add'}"
