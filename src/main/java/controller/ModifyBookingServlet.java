@@ -6,14 +6,40 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.OrderDetail;
 import model.Ticket;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 @WebServlet("/modify-booking")
 public class ModifyBookingServlet extends HttpServlet {
     private BookingDAO bookingDAO = new BookingDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderDetailIdStr = req.getParameter("orderDetailId");
+        if (orderDetailIdStr == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing orderDetailId");
+            return;
+        }
+        try {
+            int orderDetailId = Integer.parseInt(orderDetailIdStr);
+            OrderDetail orderDetail = bookingDAO.getOrderDetailById(orderDetailId);  // Thêm hàm getOrderDetailById() trong BookingDAO
+            if (orderDetail == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "OrderDetail không tồn tại");
+                return;
+            }
+            req.setAttribute("orderDetail", orderDetail);
+            req.getRequestDispatcher("modify-booking.jsp").forward(req, resp);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid orderDetailId");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi hệ thống");
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

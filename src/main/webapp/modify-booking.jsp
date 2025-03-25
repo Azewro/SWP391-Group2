@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <h2 class="mb-4">Chỉnh sửa đặt vé</h2>
+    <a href="modify-booking?orderDetailId=<%= orderDetail.getOrderDetailId() %>" class="btn btn-warning">Chỉnh sửa vé</a>
     <!-- Form cập nhật vé -->
     <form action="modify-booking" method="post">
         <!-- Gửi OrderDetail ID để truy xuất đúng đối tượng -->
