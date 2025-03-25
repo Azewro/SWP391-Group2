@@ -1,6 +1,7 @@
 package controller;
 
 import dao.PopularRoutesDAO;
+import dao.PromotionsDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,10 +12,11 @@ import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Promotion;
 import model.Route;
 
-@WebServlet(name="PopularRoutesServlet", urlPatterns="/home")
-public class PopularRoutesServlet extends HttpServlet {
+@WebServlet(name="HomeServlet", urlPatterns="/home")
+public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -28,6 +30,10 @@ public class PopularRoutesServlet extends HttpServlet {
         System.out.println("✅ Số tuyến xe phổ biến: " + popularRoutes.size());
     }
             HttpSession session = request.getSession();
+            PromotionsDAO dao = new PromotionsDAO();
+List<Promotion> promotions = dao.getAllPromotions();
+session.setAttribute("promotions", promotions);
+
             session.setAttribute("popularRoutes", popularRoutes);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } catch (SQLException e) {

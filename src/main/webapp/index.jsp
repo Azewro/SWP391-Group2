@@ -19,11 +19,11 @@
           <jsp:include page="/components/header.jsp" />
 
 
-
+          
           <!-- content -->
           <%@ include file="./components/popularRoutes.jsp" %>
 
-
+          <%@ include file="./components/promotion.jsp" %>
             <footer class="footer">
               <div class="footer-content">
                 <div class="support-info">
