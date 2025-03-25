@@ -52,12 +52,12 @@ public class PromotionsDAO {
         return null;
     }
 
-    // ✅ Tạo Promotion bằng constructor có double thay vì BigDecimal
+    // ✅ Dùng đúng constructor khớp với BigDecimal
     private Promotion extractPromotionFromResultSet(ResultSet rs) throws Exception {
         int id = rs.getInt("promotion_id");
         String code = rs.getString("promo_code");
-        double amount = rs.getBigDecimal("discount_amount").doubleValue();
-        double percent = rs.getBigDecimal("discount_percentage").doubleValue();
+        BigDecimal amount = rs.getBigDecimal("discount_amount");
+        BigDecimal percent = rs.getBigDecimal("discount_percentage");
         Timestamp validFrom = rs.getTimestamp("valid_from");
         Timestamp validTo = rs.getTimestamp("valid_to");
         boolean isActive = rs.getBoolean("is_active");
