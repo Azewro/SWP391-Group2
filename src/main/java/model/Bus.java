@@ -24,6 +24,16 @@ public class Bus {
     }
 
     public Bus(int busId) {
+        this.busId = busId;
+    }
+
+    public Bus(int busId, LocalDateTime lastMaintenance, boolean isActive, String busType, int capacity, String plateNumber) {
+        this.busId = busId;
+        this.lastMaintenance = lastMaintenance;
+        this.isActive = isActive;
+        this.busType = busType;
+        this.capacity = capacity;
+        this.plateNumber = plateNumber;
     }
 
     // Getters and Setters
