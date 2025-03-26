@@ -70,6 +70,7 @@
                             <td>${order.totalAmount} VNĐ</td>
                             <td>${order.status}</td>
                             <td>
+                                Order ID: ${order.orderId} <br>
                                 <a href="modify-booking?orderId=${order.orderId}" class="btn btn-primary btn-sm">Xem chi tiết</a>
                             </td>
                         </tr>
