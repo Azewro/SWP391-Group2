@@ -28,24 +28,24 @@
               <th>Ghế</th>
               <th>Giá</th>
               <th>Trạng thái</th>
-              <th>Hành động</th>
+<%--              <th>Hành động</th>--%>
             </tr>
             </thead>
             <tbody>
             <c:forEach var="ticket" items="${tickets}">
               <tr>
                 <td>${ticket.ticketId}</td>
-                <td>${ticket.user.fullName}</td>
-                <td>${ticket.trip.tripId}</td>
-                <td>${ticket.seat.seatNumber}</td>
+                <td>${ticket.user != null ? ticket.user.fullName : 'Không có dữ liệu'}</td>
+                <td>${ticket.trip != null ? ticket.trip.tripId : 'Không có dữ liệu'}</td>
+                <td>${ticket.seat != null ? ticket.seat.seatNumber : 'Không có dữ liệu'}</td>
                 <td>${ticket.price} VNĐ</td>
                 <td>
-                                        <span class="badge
-                                            ${ticket.status == 'Booked' ? 'bg-info' :
-                                              ticket.status == 'Used' ? 'bg-success' :
-                                              'bg-danger'}">
-                                            ${ticket.status}
-                                        </span>
+      <span class="badge
+          ${ticket.status == 'Booked' ? 'bg-info' :
+            ticket.status == 'Used' ? 'bg-success' :
+            'bg-danger'}">
+          ${ticket.status != null ? ticket.status : 'Không có dữ liệu'}
+      </span>
                 </td>
                 <td>
                   <button class="btn btn-danger btn-sm" onclick="updateTicketStatus(${ticket.ticketId}, 'Cancelled')">
@@ -57,6 +57,7 @@
                 </td>
               </tr>
             </c:forEach>
+
             </tbody>
           </table>
         </div>

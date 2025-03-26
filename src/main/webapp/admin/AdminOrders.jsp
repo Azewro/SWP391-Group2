@@ -15,6 +15,11 @@
         <main class="content-wrapper">
             <div class="container mt-4">
                 <h2 class="mb-4">Danh sách đơn hàng</h2>
+                <!-- Thanh tìm kiếm theo tên khách hàng -->
+                <form method="get" action="orders" class="mb-3 d-flex justify-content-end">
+                    <input type="text" name="search" class="form-control me-2 w-25" placeholder="Tìm theo tên khách hàng" value="${param.search}">
+                    <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+                </form>
 
                 <!-- Bảng hiển thị danh sách đơn hàng -->
                 <div class="table-responsive">

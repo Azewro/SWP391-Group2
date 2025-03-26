@@ -113,4 +113,43 @@ public class AdminOrderDAO {
         return orders;
     }
 
+    public List<Order> searchOrdersByCustomerName(String keyword) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT o.order_id, o.order_date, o.total_amount, o.status, " +
+                "u.user_id, u.full_name FROM Orders o " +
+                "JOIN Users u ON o.user_id = u.user_id " +
+                "WHERE u.full_name LIKE ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order order = new Order();
+                    order.setOrderId(rs.getInt("order_id"));
+
+                    Timestamp timestamp = rs.getTimestamp("order_date");
+                    if (timestamp != null) {
+                        order.setOrderDate(timestamp.toLocalDateTime());
+                    }
+
+                    order.setTotalAmount(rs.getBigDecimal("total_amount"));
+                    order.setStatus(rs.getString("status"));
+
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setFullName(rs.getString("full_name"));
+                    order.setUser(user);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orders;
+    }
+
+
 }

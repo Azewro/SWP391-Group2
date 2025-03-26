@@ -16,15 +16,6 @@
       <div class="container mt-4">
         <h2 class="mb-4">Quản lý hoàn tiền</h2>
         <a href="orders" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left"></i> Quay lại</a>
-        <form method="get" action="refunds" class="mb-3 d-flex align-items-center gap-2">
-          <label for="status" class="form-label fw-bold mb-0">Lọc theo trạng thái:</label>
-          <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
-            <option value="">-- Tất cả --</option>
-            <option value="Pending" ${selectedStatus == 'Pending' ? 'selected' : ''}>Chờ xử lý</option>
-            <option value="Refunded" ${selectedStatus == 'Refunded' ? 'selected' : ''}>Đã hoàn tiền</option>
-            <option value="Rejected" ${selectedStatus == 'Rejected' ? 'selected' : ''}>Từ chối hoàn</option>
-          </select>
-        </form>
 
         <!-- Bảng danh sách hoàn tiền -->
         <div class="table-responsive">
