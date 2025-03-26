@@ -87,7 +87,14 @@ public class GoogleCallbackServlet extends HttpServlet {
             User user = userDAO.findByUsernameOrEmail(email);
 
             HttpSession session = request.getSession();
+
             if (user != null) {
+                if (!user.isActive()) {
+                    request.setAttribute("error", "Tài khoản của bạn đã bị khóa. Lý do: " + user.getStatusReason());
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                }
+
                 // Nếu user đã tồn tại, đồng bộ session với LoginServlet
                 session.setAttribute("user", user);
                 session.setAttribute("role_id", user.getRoleId());
@@ -98,13 +105,11 @@ public class GoogleCallbackServlet extends HttpServlet {
                     response.sendRedirect("index.jsp");
                 }
             } else {
-                // Nếu user chưa có, lưu vào database và chuyển hướng đến đăng ký
-                saveUserToDatabase(email, fullName, pictureUrl);
-                // Gán email và tên đầy đủ vào session
-                session.setAttribute("user_email", email);
-                session.setAttribute("user_fullname", fullName);
-                response.sendRedirect("register2.jsp");
+                // ❌ Không tồn tại user → hiện thông báo lỗi và quay về login
+                request.setAttribute("error", "Bạn chưa có tài khoản, vui lòng đăng ký.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             }
+
 
         } catch (GeneralSecurityException | SQLException e) {
             throw new ServletException("Lỗi khi xác minh Google ID Token", e);

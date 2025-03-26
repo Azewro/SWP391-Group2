@@ -130,11 +130,25 @@
     </script>
     <script>
         function loginWithGoogle() {
-            window.location.href = "https://accounts.google.com/o/oauth2/auth?client_id=your-client-id"
-                + "&redirect_uri=http://localhost:8080/SWP391_Group2_war_exploded/google-callback"
+            const clientId = "627788153739-pqbr1b10t2m0ggsrvfjihc5tacgi2jes.apps.googleusercontent.com";
+            const redirectUri = encodeURIComponent("http://localhost:8080/SWP391_Group2_war_exploded/google-callback");
+            const scope = encodeURIComponent("openid email profile");
+
+            // Xây dựng URL đúng format
+            const googleAuthUrl = "https://accounts.google.com/o/oauth2/auth"
+                + "?client_id=" + clientId
+                + "&redirect_uri=" + redirectUri
                 + "&response_type=code"
-                + "&scope=email%20profile";
+                + "&scope=" + scope
+                + "&access_type=offline"
+                + "&prompt=consent";
+
+            console.log("🔗 Google Auth URL:", googleAuthUrl); // Debug URL xem có lỗi không
+            window.location.href = googleAuthUrl;
         }
+
+
+
     </script>
 </head>
 <body>
@@ -156,7 +170,10 @@
             <% } %>
 
             <!-- ✅ Nút đăng ký bằng Google -->
-            <button onclick="loginWithGoogle()">Đăng ký bằng Google</button>
+<%--            <button onclick="loginWithGoogle()" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">--%>
+<%--                Đăng nhập bằng Google--%>
+<%--                <i class="fab fa-google"></i>--%>
+<%--            </button>--%>
             <hr>
 
             <h3>Hoặc đăng ký thông thường:</h3>
