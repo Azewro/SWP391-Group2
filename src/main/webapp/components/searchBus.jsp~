@@ -315,7 +315,7 @@
                 <form action="SearchBus" method="GET" class="mb-3 search-bar">
                     <input type="hidden" name="action" value="search">
                     <div class="input-group">
-                        <input type="text" name="keyword" value="${param.keyword}"  style="width: 450px;" placeholder="Nhập biển số xe...">
+                        <input type="text" name="keyword"  style="width: 450px;" placeholder="Nhập biển số xe...">
                         <button type="submit" class="search-button"><i class="fas fa-search"></i> Tìm kiếm</button>
                     </div>
                 </form>

@@ -85,7 +85,12 @@
             <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="bus-trips">
                 <i class="fas fa-route"></i> Danh sách Trips
             </a>
-
+            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="blog">
+                <i class="fas fa-list"></i> Danh sách bài viết
+            </a>
+            <a class="nav-link ${pageName == 'bus_trips' ? 'active' : ''}" href="blog-category">
+                <i class="fas fa-list"></i> Danh sách danh mục bài viết
+            </a>
             <hr class="text-white">
 
             <!-- Quản lý Đơn hàng -->
