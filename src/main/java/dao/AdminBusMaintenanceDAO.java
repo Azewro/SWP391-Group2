@@ -118,4 +118,22 @@ public class AdminBusMaintenanceDAO {
         return null;
     }
 
+    public void updateLastMaintenanceDate(int busId) {
+        String query = "UPDATE Bus SET last_maintenance = (" +
+                "SELECT MAX(maintenance_date) FROM BusMaintenanceLogs WHERE bus_id = ?" +
+                ") WHERE bus_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, busId);
+            stmt.setInt(2, busId);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

@@ -74,11 +74,6 @@ public class UserService {
         return true;
     }
 
-    public boolean isPhoneExist(String phone) {
-        return userDAO.isPhoneExist(phone);
-    }
-
-
     // Xác minh mã khôi phục
     public boolean verifyResetCode(String email, String code) {
         if (!resetCodes.containsKey(email)) {

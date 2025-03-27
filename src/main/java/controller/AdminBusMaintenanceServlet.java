@@ -143,6 +143,10 @@ public class AdminBusMaintenanceServlet extends HttpServlet {
         BusMaintenanceLog log = new BusMaintenanceLog(0, busId, maintenanceDate, description, cost, status);
         maintenanceDAO.insertMaintenanceLog(log);
 
+
+        maintenanceDAO.updateLastMaintenanceDate(busId); // Gọi thêm dòng này
+
+
         response.sendRedirect("bus-maintenance?action=list&busId=" + busId);
     }
 
@@ -157,6 +161,10 @@ public class AdminBusMaintenanceServlet extends HttpServlet {
         BusMaintenanceLog log = new BusMaintenanceLog(logId, 0, maintenanceDate, description, cost, status);
         maintenanceDAO.updateMaintenanceLog(log);
 
+
+        maintenanceDAO.updateLastMaintenanceDate(log.getBusId()); // Gọi thêm dòng này
+
+
         response.sendRedirect(request.getContextPath() + "/admin/bus?action=list");
 
     }
@@ -165,6 +173,11 @@ public class AdminBusMaintenanceServlet extends HttpServlet {
     private void deleteMaintenanceLog(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int logId = Integer.parseInt(request.getParameter("logId"));
         maintenanceDAO.deleteMaintenanceLog(logId);
+
+        int busId = maintenanceDAO.getMaintenanceLogById(logId).getBusId(); // Lấy busId trước khi xóa
+
+        maintenanceDAO.updateLastMaintenanceDate(busId); // Cập nhật sau khi xóa
+
 
         response.sendRedirect(request.getContextPath() + "/admin/bus?action=list");
 
