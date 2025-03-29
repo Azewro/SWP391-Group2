@@ -131,12 +131,13 @@ public class AdminReportDAO {
     // 8. Số lượng vé bán theo ngày (dùng để vẽ biểu đồ)
     public Map<String, Integer> getTicketsSoldByDate(Date from, Date to) throws SQLException {
         String sql = """
-            SELECT DATE(purchase_date) as date, COUNT(*) as ticket_count
-            FROM Tickets
-            WHERE purchase_date BETWEEN ? AND ? AND status = 'Used'
-            GROUP BY DATE(purchase_date)
-            ORDER BY date ASC
-            """;
+    SELECT DATE(purchase_date) as date, COUNT(*) as ticket_count
+    FROM Tickets
+    WHERE purchase_date BETWEEN ? AND ? AND status IN ('Booked', 'Used')
+    GROUP BY DATE(purchase_date)
+    ORDER BY date ASC
+    """;
+
 
         Map<String, Integer> data = new LinkedHashMap<>();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

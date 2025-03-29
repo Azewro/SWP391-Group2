@@ -27,7 +27,7 @@ public class AdminReportDAO {
 
     // 2. Tổng số vé đã bán
     public int getTotalTicketsSold(Date from, Date to) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Tickets WHERE purchase_date BETWEEN ? AND ? AND status = 'Used'";
+        String sql = "SELECT COUNT(*) FROM Tickets WHERE purchase_date BETWEEN ? AND ? AND status = 'Booked'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setTimestamp(1, new Timestamp(from.getTime()));
             ps.setTimestamp(2, new Timestamp(to.getTime()));
@@ -133,7 +133,7 @@ public class AdminReportDAO {
         String sql = """
             SELECT DATE(purchase_date) as date, COUNT(*) as ticket_count
             FROM Tickets
-            WHERE purchase_date BETWEEN ? AND ? AND status = 'Used'
+            WHERE purchase_date BETWEEN ? AND ? AND status = 'Completed'
             GROUP BY DATE(purchase_date)
             ORDER BY date ASC
             """;
