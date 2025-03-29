@@ -150,6 +150,30 @@ public class BookingDAO {
         }
     }
 
+    // Đếm số lượng vé còn lại trong đơn hàng
+    public int countOrderDetails(int orderId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM OrderDetails WHERE orderId = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, orderId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    // Hủy đơn hàng nếu không còn vé
+    public void cancelOrder(int orderId) throws SQLException {
+        String sql = "UPDATE Orders SET status = 'CANCELLED' WHERE orderId = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, orderId);
+            stmt.executeUpdate();
+        }
+    }
+
 
     public List<Order> viewBookingHistory(int userId) {
         List<Order> orders = new ArrayList<>();

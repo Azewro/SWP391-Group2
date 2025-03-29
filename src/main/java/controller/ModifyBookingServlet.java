@@ -20,20 +20,33 @@ public class ModifyBookingServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int orderId = Integer.parseInt(req.getParameter("orderId"));
+        String orderIdParam = req.getParameter("orderId");
+
+        // Kiểm tra orderIdParam không null và không rỗng
+        if (orderIdParam == null || orderIdParam.trim().isEmpty()) {
+            resp.sendRedirect("error.jsp?message=Order ID is missing");
+            return;
+        }
+
+        int orderId;
+        try {
+            orderId = Integer.parseInt(orderIdParam);
+        } catch (NumberFormatException e) {
+            resp.sendRedirect("error.jsp?message=Invalid Order ID");
+            return;
+        }
+        req.getSession().setAttribute("orderId", orderId);
+
         try {
             List<OrderDetail> orderDetails = bookingDAO.getOrderDetailsByOrderId(orderId);
+            req.setAttribute("orderId", orderId);
             req.setAttribute("orderDetails", orderDetails);
             req.getRequestDispatcher("modify-booking.jsp").forward(req, resp);
         } catch (SQLException e) {
             e.printStackTrace();
-            // Có thể chuyển sang trang lỗi hoặc hiển thị thông báo
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi truy vấn dữ liệu");
         }
+
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    }
 }
