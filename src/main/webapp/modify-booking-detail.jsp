@@ -33,13 +33,19 @@
       <input type="text" value="${orderDetail.ticket.trip.tripId}" readonly />
 
       <label>Chọn Ghế mới:</label>
-      <input type="number" name="seatId" required placeholder="Nhập ID ghế mới" />
+      <input type="number" name="seatId" required placeholder="Nhập ghế mới" />
 
       <label>Chọn Chuyến xe mới:</label>
-      <input type="number" name="tripId" required placeholder="Nhập ID chuyến xe mới" />
+      <input type="number" name="tripId" required placeholder="Nhập chuyến xe mới" />
 
       <button type="submit">Cập nhật Vé</button>
-      <a href="modify-booking?orderId=${order.orderId}" class="btn btn-primary btn-sm">Quay lại</a>
+        <c:if test="${empty orderId}">
+            <c:set var="orderId" value="${sessionScope.orderId}" />
+        </c:if>
+
+        <a href="modify-booking?orderId=${orderId}" class="btn btn-primary btn-sm">Quay lại</a>
+
+
     </form>
   </c:if>
 

@@ -29,8 +29,8 @@
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-dark text-center">
                 <tr>
-                    <th>Ghế (Seat ID)</th>
-                    <th>Chuyến xe (Trip ID)</th>
+                    <th>Ghế</th>
+                    <th>Chuyến xe</th>
                     <th>Giá vé</th>
                     <th>Hành động</th>
                 </tr>
@@ -46,10 +46,11 @@
 
                             <!-- Form POST để hủy vé an toàn -->
                             <form action="cancelBooking" method="post" style="display:inline-block;"
-                                  onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này không?');">
+                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này không?');">
                                 <input type="hidden" name="orderDetailId" value="${od.orderDetailId}">
                                 <input type="hidden" name="orderId" value="${orderId}">
-                                <button type="submit" class="btn btn-danger btn-sm">❌ Hủy vé</button>
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="cancelTicket(${od.orderDetailId}, ${orderId}, this)">❌ Hủy vé</button>
                             </form>
                         </td>
                     </tr>
@@ -63,6 +64,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    function cancelTicket(orderDetailId, orderId, btn) {
+        if (!confirm("Bạn có chắc chắn muốn hủy vé này không?")) {
+            return;
+        }
+
+        fetch('cancelBooking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `orderDetailId=${orderDetailId}&orderId=${orderId}`
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Lỗi khi hủy vé');
+                return response.text();
+            })
+            .then(() => {
+                // Xóa hàng của vé bị hủy khỏi bảng
+                const row = btn.closest('tr');
+                row.remove();
+            })
+            .catch(error => {
+                alert("Không thể hủy vé, vui lòng thử lại.");
+                console.error(error);
+            });
+    }
+</script>
 
 </body>
 </html>

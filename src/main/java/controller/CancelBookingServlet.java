@@ -17,13 +17,18 @@ public class CancelBookingServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Lấy tham số từ form
+        System.out.println("Received request to cancel booking"); // Kiểm tra request có vào servlet không
+
         String orderDetailIdStr = request.getParameter("orderDetailId");
         String orderIdStr = request.getParameter("orderId");
 
-        // Kiểm tra null hoặc rỗng tránh lỗi NumberFormatException
+        System.out.println("orderDetailIdStr: " + orderDetailIdStr); // Debug giá trị nhận được
+        System.out.println("orderIdStr: " + orderIdStr);
+
         if (orderDetailIdStr == null || orderIdStr == null || orderDetailIdStr.isEmpty() || orderIdStr.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Dữ liệu không hợp lệ");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Dữ liệu không hợp lệ");
+            System.out.println("LỖI: Dữ liệu nhận được không hợp lệ!");
             return;
         }
 
@@ -31,16 +36,26 @@ public class CancelBookingServlet extends HttpServlet {
             int orderDetailId = Integer.parseInt(orderDetailIdStr);
             int orderId = Integer.parseInt(orderIdStr);
 
-            // Gọi DAO để hủy vé
+            System.out.println("Hủy vé với orderDetailId: " + orderDetailId + ", orderId: " + orderId);
+
             bookingDAO.cancelBooking(orderDetailId);
 
-            // Sau khi hủy redirect về booking-history của đơn hàng đó
-            response.sendRedirect("booking-history?orderId=" + orderId);
+            if (bookingDAO.countOrderDetails(orderId) == 0) {
+                System.out.println("Không còn vé trong order " + orderId + ", hủy luôn order");
+                bookingDAO.cancelOrder(orderId);
+            }
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("Success");
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Dữ liệu không hợp lệ");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Dữ liệu không hợp lệ");
+            System.out.println("LỖI: orderDetailId hoặc orderId không phải số hợp lệ!");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi hủy vé");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Lỗi khi hủy vé");
+            System.out.println("LỖI: SQLException xảy ra!");
         }
     }
 }
