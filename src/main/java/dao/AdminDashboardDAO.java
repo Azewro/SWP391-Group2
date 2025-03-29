@@ -3,6 +3,7 @@ package dao;
 import util.DatabaseConnection;
 
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 public class AdminDashboardDAO {
@@ -20,7 +21,7 @@ public class AdminDashboardDAO {
     }
 
     public int getTodayRevenue() {
-        return getInt("SELECT SUM(amount) FROM Payments WHERE DATE(payment_time) = CURDATE() AND status = 'Success'");
+        return getInt("SELECT SUM(amount) FROM Payments WHERE DATE(payment_time) = CURDATE() AND status = 'Completed'");
     }
 
     public int getUpcomingTripsToday() {
@@ -34,52 +35,56 @@ public class AdminDashboardDAO {
     // --------------------------
     // Dữ liệu cho biểu đồ 7 ngày
     // --------------------------
-
     public List<String> getLast7DaysLabels() {
         List<String> labels = new ArrayList<>();
-        String sql = "SELECT DATE_FORMAT(date, '%a') FROM DailyStats ORDER BY date DESC LIMIT 7";
+        String sql = "SELECT DATE(payment_time) AS day " +
+                "FROM Payments " +
+                "WHERE status = 'Completed' AND payment_time >= CURDATE() - INTERVAL 6 DAY " +
+                "GROUP BY day ORDER BY day";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                labels.add(rs.getString(1)); // Thứ viết tắt: Mon, Tue,...
+                Date date = rs.getDate("day");
+                labels.add(new java.text.SimpleDateFormat("E").format(date)); // Mon, Tue,...
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Collections.reverse(labels); // để đúng thứ tự thời gian
         return labels;
     }
 
     public List<Integer> getLast7DaysRevenue() {
         List<Integer> data = new ArrayList<>();
-        String sql = "SELECT total_revenue FROM DailyStats ORDER BY date DESC LIMIT 7";
+        String sql = "SELECT DATE(payment_time) AS day, SUM(amount) AS revenue " +
+                "FROM Payments WHERE status = 'Completed' AND payment_time >= CURDATE() - INTERVAL 6 DAY " +
+                "GROUP BY day ORDER BY day";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                data.add(rs.getInt(1));
+                data.add(rs.getInt("revenue"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Collections.reverse(data);
         return data;
     }
 
     public List<Integer> getLast7DaysTicketCount() {
         List<Integer> data = new ArrayList<>();
-        String sql = "SELECT total_tickets_sold FROM DailyStats ORDER BY date DESC LIMIT 7";
+        String sql = "SELECT DATE(purchase_date) AS day, COUNT(*) AS ticket_count " +
+                "FROM Tickets WHERE status = 'Booked' AND purchase_date >= CURDATE() - INTERVAL 6 DAY " +
+                "GROUP BY day ORDER BY day";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                data.add(rs.getInt(1));
+                data.add(rs.getInt("ticket_count"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Collections.reverse(data);
         return data;
     }
 

@@ -119,6 +119,9 @@
                 <a class="nav-link ${pageName == 'promotion_list' ? 'active' : ''}" href="promotions">
                     <i class="fas fa-list"></i> Danh sách khuyến mãi
                 </a>
+                <a class="nav-link ${pageName == 'promotion_cronjob' ? 'active' : ''}" href="cronjob">
+                    <i class="fas fa-cog"></i> Quản lý Cron Job
+                </a>
             </div>
 
             <hr class="text-white">

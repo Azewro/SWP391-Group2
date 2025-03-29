@@ -16,7 +16,7 @@ public class AdminReportDAO {
 
     // 1. Tổng doanh thu trong khoảng thời gian
     public BigDecimal getTotalRevenue(Date from, Date to) throws SQLException {
-        String sql = "SELECT SUM(amount) FROM Payments WHERE payment_time BETWEEN ? AND ? AND status = 'Success'";
+        String sql = "SELECT SUM(amount) FROM Payments WHERE payment_time BETWEEN ? AND ? AND status = 'Completed'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setTimestamp(1, new Timestamp(from.getTime()));
             ps.setTimestamp(2, new Timestamp(to.getTime()));
@@ -27,7 +27,7 @@ public class AdminReportDAO {
 
     // 2. Tổng số vé đã bán
     public int getTotalTicketsSold(Date from, Date to) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Tickets WHERE purchase_date BETWEEN ? AND ? AND status = 'Used'";
+        String sql = "SELECT COUNT(*) FROM Tickets WHERE purchase_date BETWEEN ? AND ? AND status = 'Booked'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setTimestamp(1, new Timestamp(from.getTime()));
             ps.setTimestamp(2, new Timestamp(to.getTime()));
