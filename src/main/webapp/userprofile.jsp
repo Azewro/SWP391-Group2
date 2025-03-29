@@ -54,7 +54,7 @@
   </div>
 
   <div class="card mt-4 p-4">
-    <h5>Profile Information</h5>
+    <h5>Thông tin cá nhân người dùng</h5>
     <form id="profileForm" action="profile" method="post">
       <div class="row mt-3">
         <div class="col-md-6">

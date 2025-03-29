@@ -124,7 +124,7 @@ public class BookingDAO {
     }
 
     public boolean updateTicket(Ticket ticket) throws SQLException {
-        String sql = "UPDATE Tickets SET trip_id = ?, seat_id = ?, price = ?, status = ?, purchase_date = ? " +
+        String sql = "UPDATE tickets SET trip_id = ?, seat_id = ?, price = ?, status = ?, purchase_date = ? " +
                 "WHERE ticket_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -142,7 +142,7 @@ public class BookingDAO {
 
 
     public void cancelBooking(int orderDetailId) throws SQLException {
-        String sql = "DELETE FROM OrderDetails WHERE orderDetailId = ?";
+        String sql = "DELETE FROM orderdetails WHERE order_detail_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, orderDetailId);
@@ -152,7 +152,7 @@ public class BookingDAO {
 
     // Đếm số lượng vé còn lại trong đơn hàng
     public int countOrderDetails(int orderId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM OrderDetails WHERE orderId = ?";
+        String sql = "SELECT COUNT(*) FROM orderdetails WHERE order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, orderId);
@@ -166,7 +166,7 @@ public class BookingDAO {
 
     // Hủy đơn hàng nếu không còn vé
     public void cancelOrder(int orderId) throws SQLException {
-        String sql = "UPDATE Orders SET status = 'CANCELLED' WHERE orderId = ?";
+        String sql = "UPDATE orders SET status = 'CANCELLED' WHERE order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, orderId);
@@ -177,7 +177,7 @@ public class BookingDAO {
 
     public List<Order> viewBookingHistory(int userId) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT order_id, order_date, total_amount, status FROM Orders WHERE user_id = ? ORDER BY order_date DESC";
+        String sql = "SELECT order_id, order_date, total_amount, status FROM orders WHERE user_id = ? ORDER BY order_date DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
