@@ -99,7 +99,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                 session.setAttribute("user", user);
                 session.setAttribute("role_id", user.getRoleId());
 
-                if (user.getRoleId() == 1) {
+                if (user.getRoleId() == 1 || user.getRoleId() == 2) {
                     response.sendRedirect("admin/dashboard");
                 } else {
                     response.sendRedirect("index.jsp");

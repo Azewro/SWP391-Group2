@@ -48,11 +48,12 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("user", user);
         session.setAttribute("role_id", user.getRoleId()); // Lưu role_id vào session
 
-        // Kiểm tra nếu là admin, chuyển hướng đến admin dashboard
-        if (user.getRoleId() == 1) {
+
+        if (user.getRoleId() == 1 || user.getRoleId() == 2) {
             response.sendRedirect("admin/dashboard");
         } else {
-            response.sendRedirect("index.jsp"); // Người dùng bình thường về trang chính
+            response.sendRedirect("index.jsp");
         }
+
     }
 }
