@@ -62,7 +62,7 @@ public class SearchBus extends HttpServlet {
             throws ServletException, IOException {
         int page = 1;
         int recordsPerPage = 5;
-        String keyword =request.getParameter("keyword")==null ? "" : request.getParameter("keyword");
+        String keyword =request.getParameter("keyword")==null ? "" : request.getParameter("keyword      ");
         if (request.getParameter("page") != null) {
             page = Integer.parseInt(request.getParameter("page"));
         }

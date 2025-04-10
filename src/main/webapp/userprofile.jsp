@@ -54,11 +54,11 @@
   </div>
 
   <div class="card mt-4 p-4">
-    <h5>Profile Information</h5>
+    <h5>Thông tin cá nhân người dùng</h5>
     <form id="profileForm" action="profile" method="post">
       <div class="row mt-3">
         <div class="col-md-6">
-          <label class="form-label">Full Name</label>
+          <label class="form-label">Họ và Tên</label>
           <input type="text" class="form-control" id="fullName" name="fullName" value="${user.fullName}" readonly>
         </div>
         <div class="col-md-6">
@@ -68,18 +68,18 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-6">
-          <label class="form-label">Phone</label>
+          <label class="form-label">Số điện thoại</label>
           <input type="text" class="form-control" id="phone" name="phone" value="${user.phone}" readonly>
         </div>
       </div>
 
       <div class="text-center mt-3">
-        <button type="button" class="btn btn-primary" id="editBtn">Edit</button>
-        <button type="button" class="btn btn-success d-none" id="saveBtn">Save</button>
-        <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="editBtn">Chỉnh sửa</button>
+        <button type="button" class="btn btn-success d-none" id="saveBtn">Lưu</button>
+        <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Hủy</button>
       </div>
       <div class="text-center mt-3">
-        <a href="booking-history" class="btn btn-info">View Booking History</a>
+        <a href="booking-history" class="btn btn-info">Xem lịch sử đặt vé</a>
       </div>
     </form>
   </div>

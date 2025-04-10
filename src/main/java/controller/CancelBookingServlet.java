@@ -6,46 +6,60 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Ticket;
+import model.OrderDetail;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet("/cancelBooking")
 public class CancelBookingServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     private BookingDAO bookingDAO = new BookingDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy parameter orderDetailId từ request
+        System.out.println("Received request to cancel booking");
+
         String orderDetailIdStr = request.getParameter("orderDetailId");
-        if (orderDetailIdStr == null || orderDetailIdStr.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "OrderDetailId is required.");
+        String orderIdStr = request.getParameter("orderId");
+
+        if (orderDetailIdStr == null || orderIdStr == null ||
+                orderDetailIdStr.isEmpty() || orderIdStr.isEmpty()) {
+            request.setAttribute("errorMessage", "Dữ liệu không hợp lệ.");
+            request.getRequestDispatcher("modify-booking.jsp").forward(request, response);
             return;
         }
-        int orderDetailId;
+
         try {
-            orderDetailId = Integer.parseInt(orderDetailIdStr);
+            int orderDetailId = Integer.parseInt(orderDetailIdStr);
+            int orderId = Integer.parseInt(orderIdStr);
+
+            System.out.println("Hủy vé với orderDetailId: " + orderDetailId + ", orderId: " + orderId);
+            bookingDAO.cancelBooking(orderDetailId);
+
+            if (bookingDAO.countOrderDetails(orderId) == 0) {
+                System.out.println("Không còn vé trong order " + orderId + ", hủy luôn order");
+                bookingDAO.cancelOrder(orderId);
+            }
+
+            // Lấy danh sách vé còn lại để cập nhật giao diện
+            List<OrderDetail> orderDetails = bookingDAO.getOrderDetailsByOrderId(orderId);
+            request.setAttribute("orderId", orderId);
+            request.setAttribute("orderDetails", orderDetails);
+
+            // Chuyển hướng về modify-booking.jsp
+            request.getRequestDispatcher("modify-booking.jsp").forward(request, response);
+
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid orderDetailId parameter.");
-            return;
-        }
+            request.setAttribute("errorMessage", "Lỗi định dạng số.");
+            request.getRequestDispatcher("modify-booking.jsp").forward(request, response);
 
-        try {
-            // Gọi hàm DAO để huỷ booking dựa vào orderDetailId
-            Ticket cancelledTicket = bookingDAO.cancelBooking(orderDetailId);
-
-            // Trả về kết quả dưới dạng JSON (ví dụ: ticketId và trạng thái)
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            String jsonResponse = String.format("{\"ticketId\": %d, \"status\": \"%s\"}",
-                    cancelledTicket.getTicketId(), cancelledTicket.getStatus());
-            response.getWriter().write(jsonResponse);
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Error cancelling booking: " + e.getMessage());
+            request.setAttribute("errorMessage", "Lỗi hệ thống khi hủy vé.");
+            request.getRequestDispatcher("modify-booking.jsp").forward(request, response);
         }
     }
 }

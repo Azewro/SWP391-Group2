@@ -8,12 +8,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static util.DatabaseConnection.getConnection;
+
 
 public class UserDAO {
     private Connection conn;
 
     public UserDAO() throws SQLException {
-        this.conn = DatabaseConnection.getConnection();
+        this.conn = getConnection();
     }
 
 
@@ -23,7 +25,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
 
         try {
-            conn = DatabaseConnection.getConnection();
+            conn = getConnection();
             conn.setAutoCommit(false); // Bắt đầu transaction
 
             stmt = conn.prepareStatement(sql);
@@ -111,7 +113,7 @@ public class UserDAO {
 
     public boolean updatePassword(String email, String newPasswordHash) {
         String sql = "UPDATE Users SET password_hash = ? WHERE email = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, newPasswordHash);
             stmt.setString(2, email);
@@ -264,6 +266,22 @@ public class UserDAO {
             }
             return rowsUpdated > 0;
         }
+    }
+
+
+    public boolean isPhoneExist(String phone) {
+        String query = "SELECT COUNT(*) FROM users WHERE phone = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

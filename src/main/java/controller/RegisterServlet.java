@@ -36,6 +36,12 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
+        if (userService.isPhoneExist(phone)) {
+            request.setAttribute("error", "Số điện thoại đã được sử dụng!");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
         // ✅ Tạo mã OTP ngẫu nhiên (6 chữ số)
         String otpCode = String.valueOf(new Random().nextInt(900000) + 100000);
         Instant otpCreationTime = Instant.now(); // ✅ Lưu thời gian OTP được tạo

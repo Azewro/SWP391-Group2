@@ -28,7 +28,7 @@
               <th>Ghế</th>
               <th>Giá</th>
               <th>Trạng thái</th>
-              <th>Hành động</th>
+<%--              <th>Hành động</th>--%>
             </tr>
             </thead>
             <tbody>
@@ -47,14 +47,14 @@
           ${ticket.status != null ? ticket.status : 'Không có dữ liệu'}
       </span>
                 </td>
-                <td>
-                  <button class="btn btn-danger btn-sm" onclick="updateTicketStatus(${ticket.ticketId}, 'Cancelled')">
-                    <i class="fa fa-times"></i> Hủy vé
-                  </button>
-                  <button class="btn btn-success btn-sm" onclick="updateTicketStatus(${ticket.ticketId}, 'Used')">
-                    <i class="fa fa-check"></i> Đánh dấu đã sử dụng
-                  </button>
-                </td>
+<%--                <td>--%>
+<%--                  <button class="btn btn-danger btn-sm" onclick="updateTicketStatus(${ticket.ticketId}, 'Cancelled')">--%>
+<%--                    <i class="fa fa-times"></i> Hủy vé--%>
+<%--                  </button>--%>
+<%--                  <button class="btn btn-success btn-sm" onclick="updateTicketStatus(${ticket.ticketId}, 'Used')">--%>
+<%--                    <i class="fa fa-check"></i> Đánh dấu đã sử dụng--%>
+<%--                  </button>--%>
+<%--                </td>--%>
               </tr>
             </c:forEach>
 

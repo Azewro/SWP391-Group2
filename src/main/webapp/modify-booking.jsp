@@ -1,98 +1,69 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: LONG
-  Date: 3/12/2025
-  Time: 9:45 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.OrderDetail" %>
-<%@ page import="model.Ticket" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
-
-<%
-    // Lấy đối tượng OrderDetail từ request (được servlet load dựa trên orderId)
-    OrderDetail orderDetail = (OrderDetail) request.getAttribute("orderDetail");
-    if (orderDetail == null) {
-        out.println("<h3>Không tìm thấy thông tin đặt vé cho đơn hàng này.</h3>");
-        return;
-    }
-    Ticket ticket = orderDetail.getTicket();
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Chỉnh sửa đặt vé - Order ID: <%= orderDetail.getOrder().getOrderId() %></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Danh sách Vé</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .container { margin-top: 30px; max-width: 700px; }
-        .card { border-radius: 10px; padding: 20px; }
+        body { background-color: #f8f9fa; padding: 20px; }
+        .table thead { background-color: #343a40; color: #fff; }
+        .table tbody tr:hover { background-color: #f1f1f1; }
+        .btn-warning { color: #fff; }
+        h2 { text-align: center; margin-bottom: 30px; color: #343a40; }
+        .card { box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 15px; }
+        .card-body { padding: 30px; }
+        .price { font-size: 1.1rem; font-weight: bold; color: #28a745; }
+        .action-btn { margin-right: 8px; }
     </style>
 </head>
 <body>
+
 <jsp:include page="/components/header.jsp" />
+
 <div class="container">
-    <h2 class="mb-4">Thông tin đặt vé</h2>
-    <div class="card mb-4">
-        <h5>Thông tin hiện tại</h5>
-        <div class="mb-2">
-            <strong>Order ID:</strong> <%= orderDetail.getOrder().getOrderId() %>
-        </div>
-        <div class="mb-2">
-            <strong>Ngày đặt:</strong>
-            <%
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                out.print(orderDetail.getOrder().getOrderDate().format(formatter));
-            %>
-        </div>
-        <div class="mb-2">
-            <strong>Tổng tiền:</strong> <%= orderDetail.getOrder().getTotalAmount() %> VNĐ
-        </div>
-        <div class="mb-2">
-            <strong>Trạng thái:</strong> <%= orderDetail.getOrder().getStatus() %>
-        </div>
-        <hr>
-        <h5>Thông tin vé</h5>
-        <div class="mb-2">
-            <strong>Ticket ID:</strong> <%= ticket.getTicketId() %>
-        </div>
-        <div class="mb-2">
-            <strong>Ghế hiện tại:</strong> <%= ticket.getSeat().getSeatId() %>
-        </div>
-        <div class="mb-2">
-            <strong>Chuyến xe hiện tại:</strong> <%= ticket.getTrip().getTripId() %>
-        </div>
-        <div class="mb-2">
-            <strong>Giá hiện tại:</strong> <%= ticket.getPrice() %>
+    <div class="card">
+        <div class="card-body">
+            <h2>🚌 Danh sách vé của Đơn hàng #${orderId}</h2>
+
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark text-center">
+                <tr>
+                    <th>Ghế</th>
+                    <th>Chuyến xe</th>
+                    <th>Giá vé</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody class="text-center">
+                <c:forEach var="od" items="${orderDetails}">
+                    <tr>
+                        <td>${od.ticket.seat.seatId}</td>
+                        <td>${od.ticket.trip.tripId}</td>
+                        <td class="price">${od.ticket.price} VNĐ</td>
+                        <td>
+                            <a href="modify-booking-detail?orderDetailId=${od.orderDetailId}" class="btn btn-warning btn-sm action-btn">✏️ Chỉnh sửa</a>
+
+                            <!-- Form POST để hủy vé an toàn -->
+                            <form action="cancelBooking" method="post" style="display:inline-block;"
+                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này không?');">
+                                <input type="hidden" name="orderDetailId" value="${od.orderDetailId}">
+                                <input type="hidden" name="orderId" value="${orderId}">
+                                <button type="submit" class="btn btn-danger btn-sm">❌ Hủy vé</button>
+                            </form>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+
+            <div class="text-center mt-4">
+                <a href="booking-history" class="btn btn-secondary">⬅️ Quay lại danh sách đơn hàng</a>
+            </div>
         </div>
     </div>
-
-    <a href="modify-booking?orderDetailId=<%= orderDetail.getOrderDetailId() %>" class="btn btn-warning">Chỉnh sửa vé</a>
-    <!-- Form cập nhật vé -->
-    <form action="modify-booking" method="post">
-        <!-- Gửi OrderDetail ID để truy xuất đúng đối tượng -->
-        <input type="hidden" name="orderDetailId" value="<%= orderDetail.getOrderDetailId() %>">
-        <div class="mb-3">
-            <label for="newSeatId" class="form-label">Nhập Seat ID mới (nếu muốn thay đổi):</label>
-            <input type="number" class="form-control" id="newSeatId" name="newSeatId" placeholder="Ví dụ: 101">
-        </div>
-        <div class="mb-3">
-            <label for="newTripId" class="form-label">Nhập Trip ID mới (nếu muốn thay đổi):</label>
-            <input type="number" class="form-control" id="newTripId" name="newTripId" placeholder="Ví dụ: 202">
-        </div>
-        <!-- Không cần nhập Price -->
-        <button type="submit" class="btn btn-primary">Cập nhật vé</button>
-    </form>
-
-    <!-- Form Huỷ đặt vé -->
-    <form action="cancelBooking" method="post" style="margin-top:20px;">
-        <!-- Gửi OrderDetail ID để xác định vé cần huỷ -->
-        <input type="hidden" name="orderDetailId" value="<%= orderDetail.getOrderDetailId() %>">
-        <button type="submit" class="btn btn-danger">Huỷ đặt vé</button>
-    </form>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
 </html>

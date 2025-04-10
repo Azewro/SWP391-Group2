@@ -222,7 +222,7 @@ public class AdminBusDAO {
     public List<Bus> getBusesSearchByPage(int offset, int limit,String search) {
         List<Bus> busList = new ArrayList<>();
         String query = "SELECT * FROM Bus where plate_number like '%"+search+"%' LIMIT ? OFFSET ?";
-        System.out.println("*----------------" +query);
+        System.out.println(query);
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 

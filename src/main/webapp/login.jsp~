@@ -164,7 +164,7 @@
         </div>
         <!-- ✅ Nút đăng nhập bằng Google -->
         <button onclick="loginWithGoogle()" class="btn btn-outline-danger d-flex align-items-center gap-2">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="12" height="12">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="24" height="24">
             Đăng nhập bằng Google
         </button>
 

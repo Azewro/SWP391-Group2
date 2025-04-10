@@ -170,13 +170,13 @@
             <% } %>
 
             <!-- ✅ Nút đăng ký bằng Google -->
-            <button onclick="loginWithGoogle()" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                Đăng nhập bằng Google
-                <i class="fab fa-google"></i>
-            </button>
+<%--            <button onclick="loginWithGoogle()" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">--%>
+<%--                Đăng nhập bằng Google--%>
+<%--                <i class="fab fa-google"></i>--%>
+<%--            </button>--%>
             <hr>
 
-            <h3>Hoặc đăng ký thông thường:</h3>
+            <h3>Đăng Ký Tài Khoản Thành Viên</h3>
             <form action="register" method="post" onsubmit="return validatePassword();">
                 <div class="input-group">
                     <input type="text" name="username" placeholder="Tên đăng nhập" required>

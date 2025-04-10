@@ -92,7 +92,9 @@ public class User {
     }
 
     public User(int driverId) {
+        this.userId = driverId;
     }
+
 
     @PrePersist
     protected void onCreate() {
