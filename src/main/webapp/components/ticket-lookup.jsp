@@ -39,6 +39,9 @@
         <p><strong>Giá vé:</strong> ${ticket.price}</p>
         <p><strong>Trạng thái:</strong> ${ticket.status}</p>
     </div>
+    <form method="get" action="print-ticket" target="_blank">
+        <button type="submit" class="btn btn-outline-success">📄 In thẻ vé (PDF)</button>
+    </form>
 </c:if>
 
 <c:if test="${empty ticket && param.phone != null}">
