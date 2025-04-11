@@ -198,5 +198,34 @@ public class BusTripDAO {
     return list;
 }
 
+public static BusTrip getTripById(int tripId) {
+    BusTrip trip = new BusTrip();
+    String sql = """
+        SELECT bt.*, r.*, l1.name AS start_name, l2.name AS end_name
+        FROM BusTrips bt
+        JOIN Routes r ON bt.route_id = r.route_id
+        JOIN Locations l1 ON r.start_location_id = l1.location_id
+        JOIN Locations l2 ON r.end_location_id = l2.location_id
+        WHERE bt.trip_id = ?
+    """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, tripId);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            trip.setTripId(rs.getInt("trip_id"));
+            trip.setCurrentPrice(rs.getBigDecimal("current_price"));
+            Route route = new Route();
+            route.setRouteId(rs.getInt("route_id"));
+            route.setRouteName(rs.getString("route_name"));
+            trip.setRoute(route);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return trip;
+}
 
 }

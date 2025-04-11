@@ -41,4 +41,27 @@ public class BusStopDAO {
 
         return list;
     }
+    
+    public static List<BusStop> getStopsByRouteIdOrdered(int routeId) {
+    List<BusStop> list = new ArrayList<>();
+    String sql = "SELECT * FROM BusStops WHERE route_id = ? ORDER BY stop_order ASC";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, routeId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            BusStop stop = new BusStop();
+            stop.setStopId(rs.getInt("stop_id"));
+            stop.setStopName(rs.getString("stop_name"));
+            stop.setStopOrder(rs.getInt("stop_order"));
+            list.add(stop);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 }
