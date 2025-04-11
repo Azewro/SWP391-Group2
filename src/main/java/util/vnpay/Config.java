@@ -1,0 +1,84 @@
+package util.vnpay;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import jakarta.servlet.http.HttpServletRequest;
+
+public class Config {
+    // ✅ Cấu hình cố định
+    public static final String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+    public static final String vnp_Returnurl = "http://localhost:8080/SWP391_Group2_war_exploded/vnpay_return";
+    public static final String vnp_TmnCode = "4194L7A3"; // ✅ Mã Terminal ID bạn cung cấp
+    public static final String vnp_HashSecret = "SO9GU17ZV2LSU0BH7B6MHQPF4Q1GZTUM";
+    public static final String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+
+    // ✅ Hàm tạo hash SHA256
+    public static String sha256(String message) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(message.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder(2 * hash.length);
+            for (byte b : hash) sb.append(String.format("%02x", b & 0xff));
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    // ✅ Hàm tạo HMAC SHA512
+    public static String hmacSHA512(String key, String data) {
+        try {
+            if (key == null || data == null) throw new NullPointerException();
+            Mac hmac512 = Mac.getInstance("HmacSHA512");
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
+            hmac512.init(secretKey);
+            byte[] result = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder(2 * result.length);
+            for (byte b : result) sb.append(String.format("%02x", b & 0xff));
+            return sb.toString();
+        } catch (Exception ex) {
+            return "";
+        }
+    }
+
+    // ✅ Hàm build hashData + sinh chữ ký từ map tham số
+    public static String hashAllFields(Map<String, String> fields) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < fieldNames.size(); i++) {
+            String key = fieldNames.get(i);
+            String value = fields.get(key);
+            if (value != null && !value.isEmpty()) {
+                sb.append(key).append("=").append(value);
+                if (i < fieldNames.size() - 1) sb.append("&");
+            }
+        }
+        return hmacSHA512(vnp_HashSecret, sb.toString());
+    }
+
+    // ✅ Lấy IP client
+    public static String getIpAddress(HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            ipAddress = request.getRemoteAddr();
+        }
+        return ipAddress;
+    }
+
+    // ✅ Sinh mã giao dịch ngẫu nhiên
+    public static String getRandomNumber(int len) {
+        String chars = "0123456789";
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            sb.append(chars.charAt(rnd.nextInt(chars.length())));
+        }
+        return sb.toString();
+    }
+}
