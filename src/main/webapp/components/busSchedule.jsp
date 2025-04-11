@@ -21,6 +21,38 @@
             padding: 6px 14px; border-radius: 5px; cursor: pointer;
         }
         h1, h2 { text-align: center; margin-top: 30px; }
+        .pagination {
+    display: flex;
+    justify-content: center; /* căn giữa */
+    align-items: center;
+    gap: 8px;
+    margin: 20px auto;
+    flex-wrap: wrap;
+}
+
+.pagination a {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.pagination a:hover {
+    background-color: #ff7e29;
+    color: white;
+    border-color: #ff7e29;
+}
+
+.pagination .active {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+    font-weight: bold;
+}
+
     </style>
 </head>
 <body>
@@ -79,6 +111,23 @@
     </tbody>
 </table>
 
+<!-- PHÂN TRANG -->
+<div class="pagination">
+    <c:if test="${totalPages > 1}">
+        <c:forEach var="i" begin="1" end="${totalPages}">
+            <c:choose>
+                <c:when test="${i == currentPage}">
+                    <a href="?page=${i}" class="active">${i}</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="?page=${i}">${i}</a>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+    </c:if>
+</div>
+
+<!-- DANH SÁCH CHUYẾN XE -->
 <c:if test="${not empty busTrips}">
     <h2>Danh sách chuyến xe tương lai</h2>
     <table>

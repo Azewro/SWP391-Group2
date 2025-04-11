@@ -22,12 +22,13 @@ import util.DatabaseConnection;
  */
 public class BusScheduleDAO {
     public List<Route> getBusSchedules() throws SQLException {
-    Set<Route> routeSet = new HashSet<>();
-    String query = "SELECT DISTINCT r.route_id, r.route_name, l1.name AS start_location, "
+    List<Route> routeList = new ArrayList<>();
+    String query = "SELECT r.route_id, r.route_name, l1.name AS start_location, "
                  + "l2.name AS end_location, r.distance, r.estimated_duration, r.base_price "
                  + "FROM Routes r "
                  + "JOIN Locations l1 ON r.start_location_id = l1.location_id "
-                 + "JOIN Locations l2 ON r.end_location_id = l2.location_id";
+                 + "JOIN Locations l2 ON r.end_location_id = l2.location_id "
+                 + "ORDER BY r.route_id ASC";
 
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement ps = conn.prepareStatement(query);
@@ -49,10 +50,10 @@ public class BusScheduleDAO {
             route.setEstimatedDuration(rs.getInt("estimated_duration"));
             route.setBasePrice(rs.getBigDecimal("base_price"));
 
-            routeSet.add(route);
+            routeList.add(route);
         }
     }
-    return new ArrayList<>(routeSet); // Chuyển Set thành List để tránh trùng
+    return routeList;
 }
 
 }

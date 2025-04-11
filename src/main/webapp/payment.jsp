@@ -31,7 +31,7 @@
 
 <div class="box">
     <h2>Thanh toán đơn hàng #<%= orderId %></h2>
-    <p>Tổng tiền cần thanh toán: <strong><%= total %> đ</strong></p>
+    <p>Tổng tiền cần thanh toán: <strong><%= total %> VND</strong></p>
     <p>Phương thức: <em>Chuyển khoản / Ví điện tử / Tiền mặt</em></p>
 
     <!-- Nút giả lập đã thanh toán -->

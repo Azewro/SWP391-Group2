@@ -228,4 +228,18 @@ public static BusTrip getTripById(int tripId) {
     return trip;
 }
 
+
+    public static void updateAvailableSeats(int tripId, int delta) {
+        String query = "UPDATE BusTrips SET available_seats = available_seats + ? WHERE trip_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, delta); // nếu delta là âm → trừ chỗ
+            stmt.setInt(2, tripId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace(); // nên ghi log hoặc xử lý lỗi
+        }
+    }
+
 }

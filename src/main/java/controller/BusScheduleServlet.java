@@ -61,9 +61,26 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
     BusScheduleDAO dao = new BusScheduleDAO();
     try {
-        List<Route> busSchedules = dao.getBusSchedules();
-        request.setAttribute("busSchedules", busSchedules);
-        request.getRequestDispatcher("components/busSchedule.jsp").forward(request, response);
+        // Trong BusScheduleServlet.java hoặc tương tự
+int page = 1;
+int recordsPerPage = 10;
+if (request.getParameter("page") != null) {
+    page = Integer.parseInt(request.getParameter("page"));
+}
+
+List<Route> allRoutes = new BusScheduleDAO().getBusSchedules();
+int totalRoutes = allRoutes.size();
+int start = (page - 1) * recordsPerPage;
+int end = Math.min(start + recordsPerPage, totalRoutes);
+
+List<Route> paginatedRoutes = allRoutes.subList(start, end);
+
+// Gửi dữ liệu đến JSP
+request.setAttribute("busSchedules", paginatedRoutes);
+request.setAttribute("currentPage", page);
+request.setAttribute("totalPages", (int) Math.ceil(totalRoutes * 1.0 / recordsPerPage));
+request.getRequestDispatcher("components/busSchedule.jsp").forward(request, response);
+
     } catch (SQLException e) {
         e.printStackTrace();
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi tải dữ liệu lịch trình xe buýt.");

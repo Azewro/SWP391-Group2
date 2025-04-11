@@ -2,6 +2,7 @@ package controller;
 
 import dao.OrderDAO;
 import dao.TicketDAO;
+import dao.BusTripDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -74,8 +75,11 @@ public class BookingServlet extends HttpServlet {
             OrderDAO.addOrderDetail(orderId, ticketId, ticket.getPrice());
         }
 
+        // CẬP NHẬT AVAILABLE_SEATS cho chuyến xe
+        int seatsBooked = seatIdParams.length;
+        BusTripDAO.updateAvailableSeats(tripId, -seatsBooked); // Trừ chỗ ngồi đã đặt
+
         // Chuyển sang trang xác nhận
         response.sendRedirect("payment.jsp?orderId=" + orderId);
-
     }
 }
