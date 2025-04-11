@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.math.BigDecimal, dao.OrderDAO, java.util.*, model.Ticket" %>
 
@@ -37,6 +38,27 @@
     <!-- Nút giả lập đã thanh toán -->
     <a class="btn" href="confirmBooking.jsp?orderId=<%= orderId %>">Tôi đã thanh toán</a>
 </div>
+=======
+<%--
+  Created by IntelliJ IDEA.
+  User: admin
+  Date: 4/8/2025
+  Time: 11:20 PM
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+
+<form method="post" action="vnpay_payment">
+    <input type="hidden" name="amount" value="50000" />
+    <button type="submit">Thanh toán qua VNPAY</button>
+</form>
+
+>>>>>>> Stashed changes
 
 </body>
 </html>
