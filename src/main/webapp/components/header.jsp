@@ -145,7 +145,6 @@
                 <a class="nav-link text-white fw-bold" href="SearchBus">TÌM BUS</a>
                 <a class="nav-link text-white fw-bold" href="ticket-lookup">TRA CỨU VÉ</a>
                 <a class="nav-link text-white fw-bold" href="promotions">KHUYẾN MÃI</a>
-                 <a class="nav-link text-white fw-bold" href="search-trip">ĐẶT VÉ</a>
                 <a class="nav-link text-white fw-bold" href="SearchRoute">TUYẾN ĐƯỜNG</a>
             </nav>
 

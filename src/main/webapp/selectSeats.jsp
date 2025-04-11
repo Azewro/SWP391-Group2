@@ -218,30 +218,40 @@
     const basePrice = <%= trip.getCurrentPrice() %>;
     const totalSegments = <%= totalSegments %>;
 
-    function updatePrice() {
+    function calculatePrice() {
         const pickupOrder = parseInt(pickup.options[pickup.selectedIndex].dataset.order);
         const dropoffOrder = parseInt(dropoff.options[dropoff.selectedIndex].dataset.order);
         const seatCount = parseInt(seatCountSelect.value);
 
         if (dropoffOrder <= pickupOrder) {
+            errorMsg.textContent = "⚠️ Điểm trả phải sau điểm đón!";
             errorMsg.style.display = "block";
             priceDisplay.textContent = "0";
-            return false;
+            return;
         }
 
-        const segments = dropoffOrder - pickupOrder;
-        const pricePerTicket = Math.round((basePrice * segments) / totalSegments);
-        const totalPrice = pricePerTicket * seatCount;
-
-        priceDisplay.textContent = totalPrice;
-        errorMsg.style.display = "none";
-        return true;
+        const selectedSeats = document.querySelectorAll('input[name="seatIds"]:checked');
+        if (selectedSeats.length === seatCount) {
+            const segments = dropoffOrder - pickupOrder;
+            const pricePerTicket = Math.round((basePrice * segments) / totalSegments);
+            const totalPrice = pricePerTicket * seatCount;
+            priceDisplay.textContent = totalPrice;
+            errorMsg.style.display = "none";
+        } else {
+            priceDisplay.textContent = "0";
+        }
     }
 
-    pickup.addEventListener("change", updatePrice);
-    dropoff.addEventListener("change", updatePrice);
-    seatCountSelect.addEventListener("change", updatePrice);
-    window.addEventListener("load", updatePrice);
+    pickup.addEventListener("change", calculatePrice);
+    dropoff.addEventListener("change", calculatePrice);
+    seatCountSelect.addEventListener("change", () => {
+        uncheckAllSeats();
+        calculatePrice();
+    });
+
+    function uncheckAllSeats() {
+        checkboxes.forEach(cb => cb.checked = false);
+    }
 
     checkboxes.forEach(cb => {
         cb.addEventListener("change", function () {
@@ -250,11 +260,17 @@
 
             if (cb.checked && checked.length > max) {
                 cb.checked = false;
+                errorMsg.textContent = "⚠️ Số ghế vượt quá số vé đã chọn!";
                 errorMsg.style.display = "block";
                 setTimeout(() => errorMsg.style.display = "none", 2000);
+            } else {
+                calculatePrice(); // chỉ gọi khi người dùng tick ghế
             }
         });
     });
+
+    window.addEventListener("load", calculatePrice);
 </script>
+
 </body>
 </html>
