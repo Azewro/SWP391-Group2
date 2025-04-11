@@ -1,253 +1,113 @@
-<%-- 
-    Document   : busSchedule
-    Created on : 26 thg 2, 2025, 23:21:16
-    Author     : ktleg
---%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%
+    String today = LocalDate.now().toString(); // yyyy-MM-dd
+%>
 
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #fff;
-    }
-    .header {
-        background: #333;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 50px;
-        color: white;
-    }
-    .logo img {
-        height: 60px;
-    }
-    .nav-menu ul {
-        list-style: none;
-        display: flex;
-        gap: 25px;
-        padding: 0;
-    }
-    .nav-menu ul li a {
-        text-decoration: none;
-        color: white;
-        font-weight: bold;
-        font-size: 18px;
-        text-transform: uppercase;
-    }
-    .login-btn button {
-        background: white;
-        color: #ff6200;
-        border: none;
-        padding: 10px 25px;
-        border-radius: 25px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-    }
-    .login-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-        background: linear-gradient(180deg, #ff6200, #ff7e29);
-        padding: 50px;
-    }
-    .login-container {
-        background: white;
-        padding: 50px;
-        border-radius: 15px;
-        display: flex;
-        gap: 50px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        max-width: 850px;
-    }
-    .login-form form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    .input-group input {
-        border: 1px solid #ccc;
-        padding: 12px;
-        font-size: 16px;
-        width: 100%;
-        border-radius: 5px;
-    }
-    .login-form button {
-        background: #ff6200;
-        color: white;
-        padding: 14px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    .footer {
-        background: #f8f8f8;
-        padding: 30px;
-        text-align: center;
-    }
-    .footer-content {
-        display: flex;
-        justify-content: space-around;
-        padding: 20px;
-    }
-    .footer-links ul {
-        list-style: none;
-        padding: 0;
-    }
-    .footer-links ul li a {
-        text-decoration: none;
-        color: black;
-        font-size: 16px;
-    }
-    .search-bar {
-        display: flex;
-        justify-content: center;
-        margin: 20px 0;
-    }
-    .search-bar input {
-        width: 30%;
-        margin-right: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-    .search-bar button {
-        background-color: #ff7e29;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    table {
-        width: 80%;
-        margin: 20px auto;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 10px;
-        text-align: center;
-        border-bottom: 1px solid #ddd;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-    .route-row {
-        background-color: #ffefef;
-        font-weight: bold;
-        color: #e74c3c;
-    }
-    .search-button {
-        background-color: #ffe6e6;
-        color: #e74c3c;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
-    }
-</style>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <jsp:include page="header.jsp"/>
+<head>
+    <title>Lịch trình xe buýt</title>
+    <style>
+        body { font-family: Arial; margin: 0; background: #fff; }
+        table { width: 90%; margin: auto; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .route-row { background: #ffefef; font-weight: bold; color: #e74c3c; }
+        .search-button {
+            background: #ff7e29; color: white; border: none;
+            padding: 6px 14px; border-radius: 5px; cursor: pointer;
+        }
+        h1, h2 { text-align: center; margin-top: 30px; }
+    </style>
+</head>
+<body>
 
+<jsp:include page="header.jsp"/>
 
-        <div class="container">
-            <h1 class="text-center my-4">Lịch trình xe buýt</h1>
+<h1>Lịch trình các tuyến xe</h1>
 
-            <!-- Search Form -->
+<table>
+    <thead>
+    <tr>
+        <th>Tuyến xe</th>
+        <th>Loại</th>
+        <th>Quãng đường</th>
+        <th>Thời gian dự kiến</th>
+        <th>Giá vé</th>
+        <th>Ngày đi</th>
+        <th></th>
+        <th>Trạm</th>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="route" items="${busSchedules}">
+        <tr class="route-row">
+            <td>${route.startLocation.name} ⇄ ${route.endLocation.name}</td>
+            <td>${route.routeType != null ? route.routeType : "---"}</td>
+            <td>${route.distance} km</td>
+            <td>
+                <c:set var="hours" value="${route.estimatedDuration / 60}" />
+                <c:set var="minutes" value="${route.estimatedDuration % 60}" />
+                <fmt:formatNumber var="hoursInt" value="${hours}" maxFractionDigits="0"/>
+                ${hoursInt} giờ ${minutes} phút
+            </td>
+            <td>
+                <c:choose>
+                    <c:when test="${route.basePrice != null}">
+                        ${route.basePrice} đ
+                    </c:when>
+                    <c:otherwise>---</c:otherwise>
+                </c:choose>
+            </td>
+            <td>
+                <form action="trip-list" method="get" style="display:flex;gap:5px;align-items:center;">
+                    <input type="hidden" name="routeId" value="${route.routeId}" />
+                    <input type="date" name="departure_date" value="<%= today %>" min="<%= today %>" required />
+            </td>
+            <td>
+                    <button type="submit" class="search-button">Tìm chuyến xe</button>
+                </form>
+            </td>
+            <td>
+                <a href="bus-stop-locations?routeId=${route.routeId}">Xem trạm dừng</a>
+            </td>
+        </tr>
+    </c:forEach>
+    </tbody>
+</table>
 
-            <form action="find-routes" method="get" class="search-bar">
-                <input type="text" name="startLocation" placeholder="Nhập điểm đi" value="${param.startLocation}" />
-                <span>⇄</span>
-                <input type="text" name="endLocation" placeholder="Nhập điểm đến" value="${param.endLocation}" />
-                <button type="submit">Tìm kiếm</button>
-            </form>
+<c:if test="${not empty busTrips}">
+    <h2>Danh sách chuyến xe tương lai</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Mã chuyến</th>
+            <th>Khởi hành</th>
+            <th>Đến nơi</th>
+            <th>Số ghế trống</th>
+            <th>Giá vé</th>
+            <th>Chọn ghế</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="trip" items="${busTrips}">
+            <tr>
+                <td>#${trip.tripId}</td>
+                <td><fmt:formatDate value="${trip.departureTime}" pattern="dd/MM/yyyy HH:mm"/></td>
+                <td><fmt:formatDate value="${trip.arrivalTime}" pattern="dd/MM/yyyy HH:mm"/></td>
+                <td>${trip.availableSeats}</td>
+                <td>${trip.currentPrice} đ</td>
+                <td>
+                    <a href="select-seats.jsp?tripId=${trip.tripId}" class="search-button">Chọn ghế</a>
+                </td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</c:if>
 
-            <!-- Bus Schedule Table -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Tuyến xe</th>
-
-                        <th>Loại xe</th>
-
-                        <th>Quãng đường</th>
-                        <th>Thời gian hành trình</th>
-                        <th>Giá vé</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="route" items="${busSchedules}">
-                        <tr class="route-row">
-                            <td>${route.startLocation.name} ⇄ ${route.endLocation.name}</td>
-
-                            <td>${route.routeType != null ? route.routeType : "---"}</td>
-
-                            <td>${route.distance} km</td>
-                          <td>
-<c:set var="hours" value="${route.estimatedDuration / 60 -1}" />
-<c:set var="minutes" value="${route.estimatedDuration % 60}" />
-<fmt:formatNumber var="hoursInt" value="${hours}" maxFractionDigits="0"/>
-${hoursInt} giờ ${minutes} phút
-
-</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${route.basePrice != null}">
-                                        ${route.basePrice} đ
-                                    </c:when>
-                                    <c:otherwise>
-                                        ---
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td><button class="search-button">Tìm tuyến xe</button></td>
-                            <td>
-  <a href="bus-stop-locations?routeId=${route.routeId}">
-    Xem trạm dừng
-  </a>
-</td>
-
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </div>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="support-info">
-                    <h3>TRUNG TÂM TỔNG ĐÀI & CSKH</h3>
-                    <p class="hotline">1900 6067</p>
-                    <p>CÔNG TY CỔ PHẦN XE KHÁCH G2 Bus - G2 BUS LINES</p>
-                    <p>Địa chỉ: Hòa Lạc, Hà Nội, Việt Nam.</p>
-                    <p>Email: <a href="mailto:GPT@fpt.edu.vn">GPT@fpt.edu.vn</a></p>
-                    <p>Điện thoại: 0979605489</p>
-                </div>
-                <div class="footer-links">
-                    <ul>
-                        <li><a href="#">Về chúng tôi</a></li>
-                        <li><a href="#">Lịch trình</a></li>
-                        <li><a href="#">Tuyển dụng</a></li>
-                        <li><a href="#">Tin tức & Sự kiện</a></li>
-                        <li><a href="#">Mạng lưới văn phòng</a></li>
-                    </ul>
-                </div>
-            </div>
-        </footer>
-    </body>
+</body>
 </html>

@@ -1,5 +1,6 @@
 package dao;
 
+import java.math.BigDecimal;
 import model.*;
 import util.DatabaseConnection;
 import java.sql.*;
@@ -64,5 +65,43 @@ public class TicketDAO {
         }
 
         return null;
+    }
+    
+    public static BigDecimal getTicketPrice(int tripId) {
+        String sql = "SELECT current_price FROM BusTrips WHERE trip_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tripId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBigDecimal("current_price");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public static int createTicket(Ticket ticket) {
+        String sql = "INSERT INTO Tickets(user_id, trip_id, seat_id, price, status) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, ticket.getUser().getUserId());
+            ps.setInt(2, ticket.getTrip().getTripId());
+            ps.setInt(3, ticket.getSeat().getSeatId());
+            ps.setBigDecimal(4, ticket.getPrice());
+            ps.setString(5, ticket.getStatus());
+
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

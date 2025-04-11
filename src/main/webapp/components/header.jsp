@@ -144,9 +144,8 @@
                 <a class="nav-link text-white fw-bold" href="bus-schedule">LỊCH TRÌNH</a>
                 <a class="nav-link text-white fw-bold" href="SearchBus">TÌM BUS</a>
                 <a class="nav-link text-white fw-bold" href="ticket-lookup">TRA CỨU VÉ</a>
-                <a class="nav-link text-white fw-bold" href="#">TIN TỨC</a>
                 <a class="nav-link text-white fw-bold" href="promotions">KHUYẾN MÃI</a>
-                <a class="nav-link text-white fw-bold" href="#">HÓA ĐƠN</a>
+                 <a class="nav-link text-white fw-bold" href="search-trip">ĐẶT VÉ</a>
                 <a class="nav-link text-white fw-bold" href="SearchRoute">TUYẾN ĐƯỜNG</a>
             </nav>
 
@@ -160,7 +159,7 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                             <li><a class="dropdown-item" href="userprofile.jsp"><i class="bi bi-person"></i> Thông tin cá nhân</a></li>
-                            <li><a class="dropdown-item" href="CustomerOrder"><i class="bi bi-ticket"></i> Đơn hàng của tôi</a></li>
+                            <li><a class="dropdown-item" href="order-history"><i class="bi bi-ticket"></i> Đơn hàng của tôi</a></li>
                             <li><a class="dropdown-item" href="change-password.jsp"><i class="bi bi-key"></i> Đổi mật khẩu</a></li>
                             <li><a class="dropdown-item text-danger" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
                         </ul>
