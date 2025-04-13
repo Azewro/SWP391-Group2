@@ -9,6 +9,7 @@ import jakarta.servlet.http.*;
 import model.Ticket;
 
 import java.io.*;
+import javax.swing.text.Document;
 
 @WebServlet("/print-ticket")
 public class PrintTicketServlet extends HttpServlet {
