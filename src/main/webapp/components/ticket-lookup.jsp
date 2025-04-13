@@ -46,6 +46,7 @@
                             <th>Ghế</th>
                             <th>Giá vé</th>
                             <th>Trạng thái</th>
+                            <th>In vé</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,6 +60,9 @@
                                 <td>${ticket.seat.seatNumber}</td>
                                 <td>${ticket.price}</td>
                                 <td>${ticket.status}</td>
+                                <td><form method="get" action="print-ticket" target="_blank">
+                                    <button type="submit" class="btn btn-outline-success">📄 In thẻ vé (PDF)</button>
+                                </form></td>
                             </tr>
                         </c:forEach>
                     </tbody>

@@ -46,14 +46,8 @@ public class BookingServlet extends HttpServlet {
 
             Ticket ticket = new Ticket();
             ticket.setUser(user);
-            BusTrip trip = new BusTrip();
-            trip.setTripId(tripId);
-            ticket.setTrip(trip);
-
-            Seat seat = new Seat();
-            seat.setSeatId(seatId);
-            ticket.setSeat(seat);
-
+            ticket.setTrip(new BusTrip(tripId));
+            ticket.setSeat(new Seat(seatId));
             ticket.setPrice(price);
             ticket.setStatus("Pending");
 

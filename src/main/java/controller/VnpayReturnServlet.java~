@@ -1,4 +1,4 @@
-package controller.vnpay;
+package controller;
 
 public class VnpayReturnServlet {
 }

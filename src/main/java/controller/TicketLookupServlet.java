@@ -22,7 +22,12 @@ public class TicketLookupServlet extends HttpServlet {
         TicketDAO dao = new TicketDAO();
         List<Ticket> tickets = dao.findTickets(phone, ticketId); // ✅ gọi hàm trả về list
 
-        request.setAttribute("tickets", tickets); // ✅ gán list vào attribute
+        // ✅ Lưu ticket vào session để in PDF
+        if (ticket != null) {
+            request.getSession().setAttribute("ticket", ticket);
+        }
+
+        request.setAttribute("ticket", ticket);
         request.setAttribute("phone", phone);
         request.setAttribute("ticketId", ticketId);
 
