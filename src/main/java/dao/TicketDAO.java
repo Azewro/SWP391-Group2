@@ -4,68 +4,75 @@ import java.math.BigDecimal;
 import model.*;
 import util.DatabaseConnection;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TicketDAO {
-    public Ticket findTicket(String phone, String ticketIdInput) {
-        String sql = """
-            SELECT t.ticket_id, t.purchase_date, t.price, t.status,
-                   u.user_id, u.full_name, u.phone,
-                   s.seat_id, s.seat_number,
-                   bt.trip_id, bt.departure_time,
-                   r.route_id, r.route_name
-            FROM Tickets t
-            JOIN Users u ON t.user_id = u.user_id
-            JOIN Seats s ON t.seat_id = s.seat_id
-            JOIN BusTrips bt ON t.trip_id = bt.trip_id
-            JOIN Routes r ON bt.route_id = r.route_id
-            WHERE u.phone = ?
-              AND (CAST(t.ticket_id AS CHAR) = ? OR ? IS NULL OR ? = '')
-        """;
+    public List<Ticket> findTickets(String phone, String ticketIdInput) {
+    List<Ticket> tickets = new ArrayList<>();
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    String sql = """
+        SELECT t.ticket_id, t.purchase_date, t.price, t.status,
+               u.user_id, u.full_name, u.phone,
+               s.seat_id, s.seat_number,
+               bt.trip_id, bt.departure_time,
+               r.route_id, r.route_name
+        FROM Tickets t
+        JOIN Users u ON t.user_id = u.user_id
+        JOIN Seats s ON t.seat_id = s.seat_id
+        JOIN BusTrips bt ON t.trip_id = bt.trip_id
+        JOIN Routes r ON bt.route_id = r.route_id
+        WHERE u.phone = ?
+          AND (CAST(t.ticket_id AS CHAR) = ? OR ? IS NULL OR ? = '')
+    """;
 
-            ps.setString(1, phone);
-            ps.setString(2, ticketIdInput);
-            ps.setString(3, ticketIdInput);
-            ps.setString(4, ticketIdInput);
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                User user = new User();
-                user.setUserId(rs.getInt("user_id"));
-                user.setFullName(rs.getString("full_name"));
-                user.setPhone(rs.getString("phone"));
+        ps.setString(1, phone);
+        ps.setString(2, ticketIdInput);
+        ps.setString(3, ticketIdInput);
+        ps.setString(4, ticketIdInput);
 
-                Seat seat = new Seat();
-                seat.setSeatId(rs.getInt("seat_id"));
-                seat.setSeatNumber(rs.getInt("seat_number"));
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            User user = new User();
+            user.setUserId(rs.getInt("user_id"));
+            user.setFullName(rs.getString("full_name"));
+            user.setPhone(rs.getString("phone"));
 
-                Route route = new Route();
-                route.setRouteId(rs.getInt("route_id"));
-                route.setRouteName(rs.getString("route_name"));
+            Seat seat = new Seat();
+            seat.setSeatId(rs.getInt("seat_id"));
+            seat.setSeatNumber(rs.getInt("seat_number"));
 
-                BusTrip trip = new BusTrip();
-                trip.setTripId(rs.getInt("trip_id"));
-                trip.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
-                trip.setRoute(route);
+            Route route = new Route();
+            route.setRouteId(rs.getInt("route_id"));
+            route.setRouteName(rs.getString("route_name"));
 
-                return new Ticket(
-                    rs.getInt("ticket_id"),
-                    user,
-                    trip,
-                    seat,
-                    rs.getTimestamp("purchase_date").toLocalDateTime(),
-                    rs.getBigDecimal("price"),
-                    rs.getString("status")
-                );
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            BusTrip trip = new BusTrip();
+            trip.setTripId(rs.getInt("trip_id"));
+            trip.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
+            trip.setRoute(route);
+
+            Ticket ticket = new Ticket(
+                rs.getInt("ticket_id"),
+                user,
+                trip,
+                seat,
+                rs.getTimestamp("purchase_date").toLocalDateTime(),
+                rs.getBigDecimal("price"),
+                rs.getString("status")
+            );
+
+            tickets.add(ticket);
         }
-
-        return null;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return tickets;
+}
+
     
     public static BigDecimal getTicketPrice(int tripId) {
         String sql = "SELECT current_price FROM BusTrips WHERE trip_id = ?";

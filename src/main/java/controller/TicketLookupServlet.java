@@ -6,7 +6,9 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.Ticket;
+
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/ticket-lookup")
 public class TicketLookupServlet extends HttpServlet {
@@ -18,11 +20,12 @@ public class TicketLookupServlet extends HttpServlet {
         String ticketId = request.getParameter("ticketId");
 
         TicketDAO dao = new TicketDAO();
-        Ticket ticket = dao.findTicket(phone, ticketId);
+        List<Ticket> tickets = dao.findTickets(phone, ticketId); // ✅ gọi hàm trả về list
 
-        request.setAttribute("ticket", ticket);
+        request.setAttribute("tickets", tickets); // ✅ gán list vào attribute
         request.setAttribute("phone", phone);
         request.setAttribute("ticketId", ticketId);
+
         request.getRequestDispatcher("components/ticket-lookup.jsp").forward(request, response);
     }
 }
